@@ -594,10 +594,17 @@
 }
 
 .text-block-handle {
-  border: 1px solid var(--accent);
-  background: var(--accent-muted);
+  position: absolute;
+  border: 1.5px dashed var(--accent);
+  background: rgba(110, 140, 255, 0.08);
   cursor: move;
-  border-radius: 2px;
+  border-radius: 4px;
+  transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+
+.text-block-handle:hover {
+  background: rgba(110, 140, 255, 0.14);
+  border-color: var(--accent-bright);
 }
 
 .text-block-handle__resize {
@@ -606,9 +613,17 @@
   bottom: -5px;
   width: 10px;
   height: 10px;
-  background: var(--accent);
-  border-radius: 1px;
+  background: var(--slate-950);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
   cursor: nwse-resize;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+
+.text-block-handle__resize:hover {
+  transform: scale(1.25);
+  border-color: var(--accent-bright);
 }
 
 /* ─── Form controls ─── */
