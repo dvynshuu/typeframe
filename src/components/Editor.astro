@@ -1,0 +1,286 @@
+---
+import '../styles/editor.css';
+import { templates } from '../lib/templates';
+import { themes } from '../lib/themes';
+import { fontFamilies, fontWeights } from '../lib/typography';
+import { presetSizes } from '../lib/templates';
+import { aspectLabel } from '../utils/aspect';
+---
+
+<div class="app-shell" id="typeframe-editor">
+  <header class="app-header">
+    <div class="app-brand">
+      <div class="app-logo">
+        <svg class="app-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="logo-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0b0d13" />
+              <stop offset="100%" stop-color="#161a24" />
+            </linearGradient>
+            <linearGradient id="logo-border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(110, 140, 255, 0.3)" />
+              <stop offset="50%" stop-color="rgba(232, 236, 244, 0.05)" />
+              <stop offset="100%" stop-color="rgba(195, 124, 255, 0.25)" />
+            </linearGradient>
+            <linearGradient id="logo-brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6e8cff" />
+              <stop offset="100%" stop-color="#c37cff" />
+            </linearGradient>
+            <radialGradient id="logo-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(110, 140, 255, 0.35)" />
+              <stop offset="100%" stop-color="rgba(110, 140, 255, 0)" />
+            </radialGradient>
+          </defs>
+          <!-- Deep Obsidian Base Squircle -->
+          <rect class="logo-bg" x="1.5" y="1.5" width="29" height="29" rx="8" fill="url(#logo-bg-grad)" stroke="url(#logo-border-grad)" stroke-width="1"/>
+          
+          <!-- Subtle Grid/Alignment Dots in background -->
+          <circle cx="10" cy="10" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
+          <circle cx="22" cy="10" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
+          <circle cx="10" cy="22" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
+          <circle cx="22" cy="22" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
+
+          <!-- Radial Glow Behind the T -->
+          <circle class="logo-glow-effect" cx="16" cy="16" r="10" fill="url(#logo-glow)" />
+
+          <!-- Dynamic Crop Marks (the Frame) -->
+          <path class="crop-mark tl" d="M 5 9 V 5 H 9" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
+          <path class="crop-mark tr" d="M 27 9 V 5 H 23" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
+          <path class="crop-mark bl" d="M 5 23 V 27 H 9" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
+          <path class="crop-mark br" d="M 27 23 V 27 H 23" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
+
+          <!-- Styled Serif Letter 'T' with custom geometry -->
+          <path class="logo-t" d="M 10 10.5 H 22 C 23.5 10.5 24 11 24 13 C 24 13.5 23.5 13.5 22.5 13.5 C 20.5 13.5 17.5 13.5 17.5 14 V 20.5 C 17.5 21.5 18 21.8 19.5 22 V 23.5 H 12.5 V 22 C 14 21.8 14.5 21.5 14.5 20.5 V 14 C 14 13.5 11.5 13.5 9.5 13.5 C 8.5 13.5 8 13.5 8 13 C 8 11 8.5 10.5 10 10.5 Z" fill="url(#logo-brand-grad)" />
+        </svg>
+        <span class="app-logo-text">Typeframe</span>
+      </div>
+      <p class="app-tagline">Typography studio for shareable images</p>
+    </div>
+    <div class="header-actions">
+      <div class="export-format-pills" role="group" aria-label="Export format">
+        <button type="button" data-format="png" class="is-active">PNG</button>
+        <button type="button" data-format="jpeg">JPG</button>
+        <button type="button" data-format="webp">WebP</button>
+        <button type="button" data-format="svg">SVG</button>
+      </div>
+      <button type="button" class="btn-export" id="export-btn">
+        <span class="btn-export__icon" aria-hidden="true">↓</span>
+        <span class="btn-export__text">Export</span>
+      </button>
+    </div>
+  </header>
+
+  <aside class="panel panel--left">
+    <div class="panel-rail">
+      <span class="panel-rail__label">01</span>
+      <h2 class="panel-rail__title">Compose</h2>
+    </div>
+    <div class="panel-body">
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Words</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="mode-tabs" role="tablist" aria-label="Text mode">
+          <button type="button" data-mode="plain" class="is-active" role="tab">Plain</button>
+          <button type="button" data-mode="rich" role="tab">Rich</button>
+          <button type="button" data-mode="markdown" role="tab">Markdown</button>
+        </div>
+        <div class="compose-editor">
+          <textarea
+            id="text-input"
+            placeholder="Type a quote, headline, or thread…"
+            aria-label="Image text content"
+          >Design is not just what it looks like.
+Design is how it works.</textarea>
+        </div>
+        <p class="compose-hint">
+          Markdown: <kbd>**bold**</kbd> <kbd>*italic*</kbd> <kbd># heading</kbd>
+        </p>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Format</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="template-grid" role="list">
+          {templates.map((t) => (
+            <button
+              type="button"
+              role="listitem"
+              class:list={['template-chip', { 'is-active': t.id === 'quote-card' }]}
+              data-template={t.id}
+            >
+              <span class="template-chip__name">{t.name}</span>
+              <span class="template-chip__ratio">{aspectLabel(t.width, t.height)}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Atmosphere</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="theme-grid">
+          {themes.map((t) => (
+            <button
+              type="button"
+              class:list={['theme-card', { 'is-active': t.id === 'studio-dark' }]}
+              data-theme={t.id}
+            >
+              <span class="theme-card__swatch" style={`background: ${t.swatch}`} aria-hidden="true" />
+              <span class="theme-card__info">
+                <span class="theme-card__name">{t.name}</span>
+                <span class="theme-card__tagline">{t.tagline}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <main class="preview-stage" id="preview-stage">
+    <div class="preview-toolbar">
+      <span class="preview-toolbar__label">Artboard</span>
+      <span class="preview-toolbar__size" id="preview-size-label">1080 × 1080</span>
+      <span class="preview-toolbar__hint">Drag text to reposition</span>
+    </div>
+    <div class="preview-stage__glow" aria-hidden="true"></div>
+    <div class="preview-viewport">
+      <div class="preview-frame">
+        <div class="preview-frame__corners" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="preview-wrapper" id="preview-wrapper">
+          <canvas id="preview-canvas" class="preview-canvas" aria-label="Live image preview"></canvas>
+          <div class="preview-guides" aria-hidden="true"></div>
+          <div id="handles-layer"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel panel--right">
+    <div class="panel-rail">
+      <span class="panel-rail__label">02</span>
+      <h2 class="panel-rail__title">Refine</h2>
+    </div>
+    <div class="panel-body">
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Typography</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="field">
+          <label for="font-family">Typeface</label>
+          <select id="font-family">
+            {fontFamilies.map((f) => (
+              <option value={f.value}>{f.label}</option>
+            ))}
+          </select>
+        </div>
+        <div class="field">
+          <label for="font-weight">Weight</label>
+          <select id="font-weight">
+            {fontWeights.map((w) => (
+              <option value={w.value}>{w.label}</option>
+            ))}
+          </select>
+        </div>
+        <div class="field">
+          <label for="font-size">
+            Size <span class="field__value" id="font-size-val">42</span>
+          </label>
+          <input type="range" id="font-size" min="12" max="96" value="42" aria-valuetext="42 pixels" />
+        </div>
+        <div class="field">
+          <label for="line-height">
+            Leading <span class="field__value" id="line-height-val">1.4</span>
+          </label>
+          <input type="range" id="line-height" min="1" max="2.5" step="0.05" value="1.4" />
+        </div>
+        <div class="field">
+          <label for="letter-spacing">
+            Tracking <span class="field__value" id="letter-spacing-val">0</span>
+          </label>
+          <input type="range" id="letter-spacing" min="-0.05" max="0.2" step="0.01" value="0" />
+        </div>
+        <div class="field">
+          <span class="field__label">Alignment</span>
+          <div class="align-bar" role="group" aria-label="Text alignment">
+            <button type="button" data-align="left" title="Align left">⫷</button>
+            <button type="button" data-align="center" class="is-active" title="Align center">☰</button>
+            <button type="button" data-align="right" title="Align right">⫸</button>
+          </div>
+          <select id="text-align" class="sr-only" tabindex="-1" aria-hidden="true">
+            <option value="left">Left</option>
+            <option value="center" selected>Center</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Surface</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="field">
+          <label for="bg-type">Background</label>
+          <select id="bg-type">
+            <option value="solid">Solid</option>
+            <option value="gradient">Gradient</option>
+            <option value="mesh">Mesh</option>
+            <option value="glass">Glass</option>
+            <option value="noise">Grain</option>
+            <option value="image">Photo upload</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="solid-color">Fill color</label>
+          <input type="color" id="solid-color" value="#0f0f12" />
+        </div>
+        <div class="field">
+          <label for="bg-upload">Background image</label>
+          <input type="file" id="bg-upload" accept="image/*" />
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Dimensions</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="field">
+          <label for="preset-size">Preset</label>
+          <select id="preset-size">
+            {presetSizes.map((p) => (
+              <option value={p.id}>{p.label}</option>
+            ))}
+          </select>
+        </div>
+        <div class="field field--row">
+          <div>
+            <label for="custom-width">W</label>
+            <input type="number" id="custom-width" min="400" max="4096" value="1080" />
+          </div>
+          <div>
+            <label for="custom-height">H</label>
+            <input type="number" id="custom-height" min="400" max="4096" value="1080" />
+          </div>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <select id="export-format" class="sr-only" tabindex="-1" aria-hidden="true">
+    <option value="png">PNG</option>
+    <option value="jpeg">JPEG</option>
+    <option value="webp">WebP</option>
+    <option value="svg">SVG</option>
+  </select>
+</div>

@@ -1,0 +1,202 @@
+import type { Theme } from '../types';
+
+export const themes: Theme[] = [
+  {
+    id: 'studio-dark',
+    name: 'Studio Dark',
+    tagline: 'Obsidian space with periwinkle neon',
+    swatch: 'linear-gradient(135deg,#090b10 0%,#151a24 50%,#1a2235 100%)',
+    accent: '#6e8cff',
+    text: '#e8ecf4',
+    muted: '#7b8798',
+    background: {
+      type: 'gradient',
+      gradientStops: [
+        { color: '#090b10', position: 0 },
+        { color: '#11151e', position: 0.45 },
+        { color: '#151b29', position: 1 },
+      ],
+      gradientAngle: 165,
+    },
+    typography: {
+      fontFamily: '"Inter", system-ui, sans-serif',
+      fontWeight: 500,
+      letterSpacing: -0.01,
+    },
+    decorations: ['vignette', 'accent-rule', 'glow-orb'],
+  },
+  {
+    id: 'economist',
+    name: 'The Economist',
+    tagline: 'Strict grids & red hierarchy',
+    swatch: 'linear-gradient(180deg,#e3120b 0%,#f4f3ed 20%,#f4f3ed 100%)',
+    accent: '#e3120b',
+    text: '#111111',
+    muted: '#555555',
+    background: {
+      type: 'solid',
+      solidColor: '#f4f3ed',
+    },
+    typography: {
+      fontFamily: '"Playfair Display", Georgia, serif',
+      fontWeight: 700,
+      fontSize: 42,
+      lineHeight: 1.3,
+      letterSpacing: -0.02,
+      textAlign: 'left',
+    },
+    decorations: ['economist-header', 'column-rule'],
+  },
+  {
+    id: 'kinfolk',
+    name: 'Kinfolk',
+    tagline: 'Soft neutral linen & whitespace',
+    swatch: 'linear-gradient(180deg,#f5efe6,#ede6db)',
+    accent: '#606253',
+    text: '#2c2b2a',
+    muted: '#8e8c84',
+    background: {
+      type: 'noise',
+      solidColor: '#faf7f2',
+      gradientStops: [
+        { color: '#faf7f2', position: 0 },
+        { color: '#f3efe8', position: 1 },
+      ],
+      gradientAngle: 180,
+      noiseIntensity: 0.04,
+    },
+    typography: {
+      fontFamily: '"Instrument Serif", Georgia, serif',
+      fontWeight: 400,
+      lineHeight: 1.3,
+      fontSize: 48,
+      letterSpacing: -0.01,
+      textAlign: 'center',
+    },
+    decorations: ['grain', 'frame'],
+  },
+  {
+    id: 'apple-notes',
+    name: 'Apple Notes',
+    tagline: 'Clean centered note paper',
+    swatch: 'linear-gradient(180deg,#f9f9f6,#f1f1e8)',
+    accent: '#dca122',
+    text: '#1c1c1a',
+    muted: '#8a8a85',
+    background: {
+      type: 'noise',
+      solidColor: '#f9f9f6',
+      noiseIntensity: 0.03,
+    },
+    typography: {
+      fontFamily: '"Inter", system-ui, sans-serif',
+      fontWeight: 400,
+      lineHeight: 1.5,
+      fontSize: 36,
+      textAlign: 'center',
+    },
+    decorations: ['grain'],
+  },
+  {
+    id: 'japanese-editorial',
+    name: 'Japanese Editorial',
+    tagline: 'Asymmetry & vertical rhythm',
+    swatch: 'linear-gradient(180deg,#fafaf7,#e8e8df)',
+    accent: '#c73e3a',
+    text: '#1a1a1a',
+    muted: '#706e68',
+    background: {
+      type: 'solid',
+      solidColor: '#fafaf7',
+    },
+    typography: {
+      fontFamily: '"Source Serif 4", Georgia, serif',
+      fontWeight: 500,
+      fontSize: 38,
+      lineHeight: 1.6,
+      letterSpacing: 0.05,
+      textAlign: 'left',
+    },
+    decorations: ['vertical-grid', 'column-rule'],
+  },
+  {
+    id: 'architectural-digest',
+    name: 'Architectural Digest',
+    tagline: 'Luxury layout & geometry',
+    swatch: 'linear-gradient(135deg,#1c1a17,#302b26)',
+    accent: '#c5a059',
+    text: '#faf6ee',
+    muted: '#b0a390',
+    background: {
+      type: 'gradient',
+      gradientStops: [
+        { color: '#141311', position: 0 },
+        { color: '#23201d', position: 0.6 },
+        { color: '#1a1816', position: 1 },
+      ],
+      gradientAngle: 135,
+    },
+    typography: {
+      fontFamily: '"Cormorant Garamond", Georgia, serif',
+      fontWeight: 500,
+      fontSize: 46,
+      lineHeight: 1.25,
+      letterSpacing: 0.08,
+      textAlign: 'center',
+    },
+    decorations: ['double-frame', 'vignette'],
+  },
+  {
+    id: 'braun-studio',
+    name: 'Braun Studio',
+    tagline: 'Minimal modular functionality',
+    swatch: 'linear-gradient(180deg,#e3e3df,#c9c9c2)',
+    accent: '#eb5e28',
+    text: '#1a1a1a',
+    muted: '#666661',
+    background: {
+      type: 'solid',
+      solidColor: '#e8e8e3',
+    },
+    typography: {
+      fontFamily: '"IBM Plex Sans", system-ui, sans-serif',
+      fontWeight: 500,
+      fontSize: 38,
+      lineHeight: 1.45,
+      letterSpacing: -0.01,
+      textAlign: 'left',
+    },
+    decorations: ['braun-grid', 'braun-dials'],
+  },
+  {
+    id: 'bauhaus',
+    name: 'Bauhaus',
+    tagline: 'Primary asymmetrical geometry',
+    swatch: 'linear-gradient(135deg,#d62828 0%,#003049 100%)',
+    accent: '#d62828',
+    text: '#1b1b1b',
+    muted: '#4a4a4a',
+    background: {
+      type: 'noise',
+      solidColor: '#f4f0e6',
+      noiseIntensity: 0.06,
+    },
+    typography: {
+      fontFamily: '"IBM Plex Sans", system-ui, sans-serif',
+      fontWeight: 600,
+      fontSize: 44,
+      lineHeight: 1.2,
+      letterSpacing: -0.03,
+      textAlign: 'left',
+    },
+    decorations: ['bauhaus-shapes', 'column-rule'],
+  },
+];
+
+export function getTheme(id: string): Theme {
+  return themes.find((t) => t.id === id) ?? themes[0];
+}
+
+export function getThemeSwatch(id: string): string {
+  return getTheme(id).swatch;
+}

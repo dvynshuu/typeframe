@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Editor from '../components/Editor.astro';
+---
+
+<BaseLayout>
+  <Editor />
+  <script>
+    import { initEditor } from '../components/EditorApp';
+
+    const boot = () => {
+      const root = document.getElementById('typeframe-editor');
+      if (root) initEditor(root);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+      boot();
+    }
+  </script>
+</BaseLayout>

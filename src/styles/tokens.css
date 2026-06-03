@@ -1,0 +1,49 @@
+:root {
+  /* Cool press — blue-charcoal neutrals (not warm brown / copper) */
+  --slate-950: #090b10;
+  --slate-900: #0f1219;
+  --slate-850: #151a24;
+  --slate-800: #1c2330;
+  --slate-700: #2a3344;
+  --slate-600: #3d4a5c;
+  --mist: #e8ecf4;
+  --mist-dim: #c5cdd9;
+  --mist-muted: #7b8798;
+
+  /* Signature accent — steel periwinkle */
+  --peri: #6e8cff;
+  --peri-bright: #9eb4ff;
+  --peri-dim: rgba(110, 140, 255, 0.14);
+  --peri-glow: rgba(110, 140, 255, 0.22);
+
+  --bg-app: var(--slate-950);
+  --bg-panel: var(--slate-900);
+  --bg-surface: var(--slate-850);
+  --bg-inset: var(--slate-800);
+  --border-hairline: rgba(232, 236, 244, 0.07);
+  --border-soft: rgba(232, 236, 244, 0.12);
+  --border-active: rgba(110, 140, 255, 0.5);
+  --text-primary: var(--mist);
+  --text-secondary: #a8b3c4;
+  --text-muted: var(--mist-muted);
+  --accent: var(--peri);
+  --accent-bright: var(--peri-bright);
+  --accent-muted: var(--peri-dim);
+  --focus-ring: rgba(158, 180, 255, 0.55);
+
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', 'Source Serif 4', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition: 180ms var(--ease-out);
+  --shadow-artboard:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 4px 20px rgba(15, 25, 50, 0.35);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}

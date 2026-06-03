@@ -1,0 +1,68 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  line-height: 1.5;
+  background:
+    radial-gradient(ellipse 100% 70% at 80% -20%, rgba(110, 140, 255, 0.08), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 10% 100%, rgba(60, 90, 140, 0.06), transparent 45%),
+    var(--bg-app);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent-muted);
+  color: var(--text-primary);
+}
+
+/* Studio scrollbar */
+.panel::-webkit-scrollbar,
+.preview-viewport::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.panel::-webkit-scrollbar-thumb,
+.preview-viewport::-webkit-scrollbar-thumb {
+  background: var(--slate-600);
+  border-radius: 99px;
+}
+
+.panel::-webkit-scrollbar-track,
+.preview-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
