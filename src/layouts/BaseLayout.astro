@@ -4,9 +4,37 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  url?: string;
 }
 
-const { title = 'Typeframe — Text to Image', description = 'Turn words into beautiful shareable images. Premium typography-first creative tool.' } = Astro.props;
+const { 
+  title = 'Typeframe — Turn Text into Beautiful Shareable Images | Free Online Quote & Typographic Card Maker', 
+  description = 'Turn words into beautiful, shareable images with editorial typography, themes, and instant preview. Create typographic social posts, quote cards, and code snippets.',
+  url = 'https://typeframe.com'
+} = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Typeframe",
+  "description": description,
+  "url": url,
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "All",
+  "browserRequirements": "Requires a modern web browser with HTML5 Canvas and Javascript enabled.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Text to image conversion",
+    "Plain, rich, and markdown modes",
+    "Premium typography and font controls",
+    "Stunning background generators (Mesh, Gradient, Glass, Grain)",
+    "Pixel-perfect raster (PNG, JPEG, WebP) and vector (SVG) exports"
+  ]
+};
 ---
 
 <!doctype html>
@@ -14,7 +42,30 @@ const { title = 'Typeframe — Text to Image', description = 'Turn words into be
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0d13" />
+    <link rel="canonical" href={url} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${url}/favicon.svg`} />
+    <meta property="og:site_name" content="Typeframe" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={`${url}/favicon.svg`} />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +81,9 @@ const { title = 'Typeframe — Text to Image', description = 'Turn words into be
         rel="stylesheet"
       />
     </noscript>
-    <title>{title}</title>
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
     <slot />

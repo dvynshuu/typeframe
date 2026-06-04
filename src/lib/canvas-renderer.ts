@@ -36,7 +36,15 @@ export async function renderToCanvas(
   drawBackground(ctx, w, h, bg);
 
   if (bg.type === 'image' && bg.imageUrl) {
-    await drawBackgroundImage(ctx, w, h, bg.imageUrl, bg.imageOpacity ?? 0.85);
+    await drawBackgroundImage(
+      ctx,
+      w,
+      h,
+      bg.imageUrl,
+      bg.imageOpacity ?? 0.85,
+      bg.imageSizeMode ?? 'cover',
+      bg.imageScale ?? 1
+    );
   }
 
   if (bg.type === 'mesh' && bg.noiseIntensity) {

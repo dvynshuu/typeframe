@@ -156,7 +156,9 @@ export async function drawBackgroundImage(
   width: number,
   height: number,
   url: string,
-  opacity = 1
+  opacity = 1,
+  sizeMode: 'cover' | 'contain' | 'stretch' | 'original' = 'cover',
+  imageScale = 1
 ): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
@@ -164,9 +166,28 @@ export async function drawBackgroundImage(
     img.onload = () => {
       ctx.save();
       ctx.globalAlpha = opacity;
-      const scale = Math.max(width / img.width, height / img.height);
-      const sw = img.width * scale;
-      const sh = img.height * scale;
+      let sw = img.width;
+      let sh = img.height;
+      let scale = 1;
+
+      if (sizeMode === 'cover') {
+        scale = Math.max(width / img.width, height / img.height);
+      } else if (sizeMode === 'contain') {
+        scale = Math.min(width / img.width, height / img.height);
+      } else if (sizeMode === 'stretch') {
+        sw = width;
+        sh = height;
+        scale = 1;
+      } else if (sizeMode === 'original') {
+        scale = 1;
+      }
+
+      if (sizeMode !== 'stretch') {
+        scale *= imageScale;
+        sw = img.width * scale;
+        sh = img.height * scale;
+      }
+
       ctx.drawImage(img, (width - sw) / 2, (height - sh) / 2, sw, sh);
       ctx.restore();
       resolve();

@@ -13,6 +13,7 @@ html {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {
@@ -23,6 +24,7 @@ body {
     radial-gradient(ellipse 100% 70% at 80% -20%, rgba(110, 140, 255, 0.08), transparent 50%),
     radial-gradient(ellipse 80% 50% at 10% 100%, rgba(60, 90, 140, 0.06), transparent 45%),
     var(--bg-app);
+  overflow-x: hidden;
 }
 
 button,
@@ -49,20 +51,26 @@ button {
   color: var(--text-primary);
 }
 
-/* Studio scrollbar */
-.panel::-webkit-scrollbar,
-.preview-viewport::-webkit-scrollbar {
+/* Global custom scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--slate-700) transparent;
+}
+
+::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.panel::-webkit-scrollbar-thumb,
-.preview-viewport::-webkit-scrollbar-thumb {
-  background: var(--slate-600);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--slate-700);
   border-radius: 99px;
 }
 
-.panel::-webkit-scrollbar-track,
-.preview-viewport::-webkit-scrollbar-track {
-  background: transparent;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--slate-600);
 }

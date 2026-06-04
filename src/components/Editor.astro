@@ -52,7 +52,7 @@ import { aspectLabel } from '../utils/aspect';
           <!-- Styled Serif Letter 'T' with custom geometry -->
           <path class="logo-t" d="M 10 10.5 H 22 C 23.5 10.5 24 11 24 13 C 24 13.5 23.5 13.5 22.5 13.5 C 20.5 13.5 17.5 13.5 17.5 14 V 20.5 C 17.5 21.5 18 21.8 19.5 22 V 23.5 H 12.5 V 22 C 14 21.8 14.5 21.5 14.5 20.5 V 14 C 14 13.5 11.5 13.5 9.5 13.5 C 8.5 13.5 8 13.5 8 13 C 8 11 8.5 10.5 10 10.5 Z" fill="url(#logo-brand-grad)" />
         </svg>
-        <span class="app-logo-text">Typeframe</span>
+        <h1 class="app-logo-text">Typeframe</h1>
       </div>
       <p class="app-tagline">Typography studio for shareable images</p>
     </div>
@@ -247,6 +247,30 @@ Design is how it works.</textarea>
         <div class="field">
           <label for="bg-upload">Background image</label>
           <input type="file" id="bg-upload" accept="image/*" />
+        </div>
+        <!-- Image controls group, shown only when Photo upload is active -->
+        <div id="image-controls-group" style="display: none;">
+          <div class="field">
+            <label for="bg-image-size">Size Mode</label>
+            <select id="bg-image-size">
+              <option value="cover">Cover (Fill)</option>
+              <option value="contain">Contain (Fit)</option>
+              <option value="stretch">Stretch</option>
+              <option value="original">Original</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bg-image-scale">
+              Zoom <span class="field__value" id="bg-image-scale-val">100%</span>
+            </label>
+            <input type="range" id="bg-image-scale" min="10" max="300" value="100" />
+          </div>
+          <div class="field">
+            <label for="bg-image-opacity">
+              Opacity <span class="field__value" id="bg-image-opacity-val">90%</span>
+            </label>
+            <input type="range" id="bg-image-opacity" min="0" max="100" value="90" />
+          </div>
         </div>
       </section>
 

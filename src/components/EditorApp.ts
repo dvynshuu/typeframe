@@ -97,6 +97,25 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#preset-size', state.presetSize);
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
+
+  const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
+  if (imgGroup) {
+    imgGroup.style.display = state.background.type === 'image' ? 'block' : 'none';
+  }
+
+  if (state.background.type === 'image') {
+    setVal(root, '#bg-image-size', state.background.imageSizeMode ?? 'cover');
+    
+    const scale = state.background.imageScale ?? 1.0;
+    setVal(root, '#bg-image-scale', String(Math.round(scale * 100)));
+    const scaleLabel = root.querySelector('#bg-image-scale-val');
+    if (scaleLabel) scaleLabel.textContent = `${Math.round(scale * 100)}%`;
+    
+    const opacity = state.background.imageOpacity ?? 0.9;
+    setVal(root, '#bg-image-opacity', String(Math.round(opacity * 100)));
+    const opacityLabel = root.querySelector('#bg-image-opacity-val');
+    if (opacityLabel) opacityLabel.textContent = `${Math.round(opacity * 100)}%`;
+  }
 }
 
 function setVal(root: HTMLElement, sel: string, val: string): void {
@@ -231,14 +250,45 @@ function bindBackground(root: HTMLElement): void {
   root.querySelector('#bg-upload')?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
+
+    // Revoke old object URL if exists to prevent memory leak (fixes TD-09)
+    const oldBg = store.getState().background;
+    if (oldBg.imageUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(oldBg.imageUrl);
+    }
+
     const url = URL.createObjectURL(file);
     store.setState({
       background: {
         type: 'image',
         imageUrl: url,
         imageOpacity: 0.9,
+        imageScale: 1.0,
+        imageSizeMode: 'cover',
       },
     });
+  });
+
+  root.querySelector('#bg-image-size')?.addEventListener('change', (e) => {
+    const sizeMode = (e.target as HTMLSelectElement).value as any;
+    const bg = { ...store.getState().background, imageSizeMode: sizeMode };
+    store.setState({ background: bg });
+  });
+
+  root.querySelector('#bg-image-scale')?.addEventListener('input', (e) => {
+    const scaleVal = Number((e.target as HTMLInputElement).value) / 100;
+    const label = root.querySelector('#bg-image-scale-val');
+    if (label) label.textContent = `${Math.round(scaleVal * 100)}%`;
+    const bg = { ...store.getState().background, imageScale: scaleVal };
+    store.setState({ background: bg });
+  });
+
+  root.querySelector('#bg-image-opacity')?.addEventListener('input', (e) => {
+    const opacityVal = Number((e.target as HTMLInputElement).value) / 100;
+    const label = root.querySelector('#bg-image-opacity-val');
+    if (label) label.textContent = `${Math.round(opacityVal * 100)}%`;
+    const bg = { ...store.getState().background, imageOpacity: opacityVal };
+    store.setState({ background: bg });
   });
 }
 

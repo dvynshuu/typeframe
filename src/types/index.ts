@@ -64,6 +64,8 @@ export interface BackgroundConfig {
   imageOpacity?: number;
   noiseIntensity?: number;
   glassBlur?: number;
+  imageSizeMode?: 'cover' | 'contain' | 'stretch' | 'original';
+  imageScale?: number;
 }
 
 export interface TextBlock {
