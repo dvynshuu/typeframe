@@ -151,6 +151,9 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
 
+  const mastheadCheck = root.querySelector<HTMLInputElement>('#show-masthead');
+  if (mastheadCheck) mastheadCheck.checked = !!state.showMasthead;
+
   const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
   if (imgGroup) {
     imgGroup.style.display = state.background.type === 'image' ? 'block' : 'none';
@@ -207,6 +210,10 @@ function syncFormatPills(root: HTMLElement, format: string): void {
 function bindControls(root: HTMLElement): void {
   root.querySelector('#text-input')?.addEventListener('input', (e) => {
     store.setText((e.target as HTMLTextAreaElement).value);
+  });
+
+  root.querySelector('#show-masthead')?.addEventListener('change', (e) => {
+    store.setState({ showMasthead: (e.target as HTMLInputElement).checked });
   });
 
   root.querySelectorAll('[data-mode]').forEach((btn) => {
@@ -394,6 +401,12 @@ function updateHandles(
   state: ReturnType<EditorStore['getState']>
 ): void {
   if (!layer || !wrapper) return;
+
+  // Track currently focused element blockId to restore focus post-render
+  const activeBlockId = (document.activeElement instanceof HTMLElement) 
+    ? document.activeElement.dataset.blockId 
+    : null;
+
   layer.innerHTML = '';
   const canvas = wrapper.querySelector('canvas');
   if (!canvas || canvas.offsetWidth <= 0) return;
@@ -405,6 +418,9 @@ function updateHandles(
     const el = document.createElement('div');
     el.className = 'text-block-handle';
     el.dataset.blockId = block.id;
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', `Move text block`);
     el.style.left = `${offsetX + block.x * ratio}px`;
     el.style.top = `${offsetY + block.y * ratio}px`;
     el.style.width = `${block.width * ratio}px`;
@@ -415,6 +431,12 @@ function updateHandles(
     el.appendChild(resize);
     layer.appendChild(el);
   });
+
+  // Restore focus if it was active on this block
+  if (activeBlockId) {
+    const activeEl = layer.querySelector<HTMLElement>(`[data-block-id="${activeBlockId}"]`);
+    activeEl?.focus();
+  }
 }
 
 function bindDragResize(
@@ -434,6 +456,32 @@ function bindDragResize(
     if (!canvas) return 1;
     return canvas.getBoundingClientRect().width / state.width;
   };
+
+  // Keyboard nudging with arrow keys (1px / 10px with Shift)
+  layer.addEventListener('keydown', (e) => {
+    const handle = (e.target as HTMLElement).closest('.text-block-handle') as HTMLElement | null;
+    if (!handle || !handle.dataset.blockId) return;
+
+    const blockId = handle.dataset.blockId;
+    const block = store.getState().blocks.find((b) => b.id === blockId);
+    if (!block) return;
+
+    const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    if (!arrowKeys.includes(e.key)) return;
+
+    e.preventDefault();
+
+    const nudge = e.shiftKey ? 10 : 1;
+    let dx = 0;
+    let dy = 0;
+
+    if (e.key === 'ArrowUp') dy = -nudge;
+    if (e.key === 'ArrowDown') dy = nudge;
+    if (e.key === 'ArrowLeft') dx = -nudge;
+    if (e.key === 'ArrowRight') dx = nudge;
+
+    store.setBlockPosition(blockId, block.x + dx, block.y + dy);
+  });
 
   layer.addEventListener('pointerdown', (e) => {
     const target = e.target as HTMLElement;

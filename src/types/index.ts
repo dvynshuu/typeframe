@@ -132,6 +132,7 @@ export interface EditorState {
   presetSize: PresetSize;
   customWidth: number;
   customHeight: number;
+  showMasthead?: boolean;
 }
 
 export interface RenderOptions {

@@ -92,10 +92,17 @@ function getGrainPattern(ctx: CanvasRenderingContext2D, intensity: number): Canv
   const d = id.data;
   const step = 4;
 
+  // LCG Seeded PRNG for stable grain across frames
+  let s = 54321;
+  const rand = () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+
   for (let y = 0; y < size; y += step) {
     for (let x = 0; x < size; x += step) {
       const idx = (y * size + x) * 4;
-      const v = Math.random() * 40;
+      const v = rand() * 40;
       d[idx] = 255;
       d[idx + 1] = 255;
       d[idx + 2] = 255;
@@ -160,7 +167,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, w: number, h: number, accent: 
   ctx.restore();
 }
 
-function drawMasthead(ctx: CanvasRenderingContext2D, w: number, h: number, accent: string): void {
+export function drawMasthead(ctx: CanvasRenderingContext2D, w: number, h: number, accent: string): void {
   ctx.save();
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, w, h * 0.028);

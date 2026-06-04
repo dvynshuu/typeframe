@@ -25,6 +25,7 @@ const mockBaseState: EditorState = {
   presetSize: 'custom',
   customWidth: 1000,
   customHeight: 1000,
+  showMasthead: false,
 };
 
 describe('auto-layout', () => {

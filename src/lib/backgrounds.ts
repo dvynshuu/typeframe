@@ -135,8 +135,15 @@ export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number
   const id = nCtx.createImageData(size, size);
   const d = id.data;
 
+  // LCG Seeded PRNG for stable noise across frames
+  let s = 12345;
+  const rand = () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+
   for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * intensity;
+    const n = (rand() - 0.5) * intensity;
     if (n >= 0) {
       d[i] = 255;
       d[i + 1] = 255;

@@ -25,6 +25,7 @@ const mockBaseState: EditorState = {
   presetSize: '1080x1080',
   customWidth: 1080,
   customHeight: 1080,
+  showMasthead: false,
 };
 
 describe('url-state', () => {
@@ -48,6 +49,7 @@ describe('url-state', () => {
           type: 'solid',
           solidColor: '#ffffff',
         },
+        showMasthead: true,
       };
 
       const queryString = serializeState(state);
@@ -56,6 +58,7 @@ describe('url-state', () => {
       expect(queryString).toContain('temp=instagram-post');
       expect(queryString).toContain('theme=kinfolk');
       expect(queryString).toContain('color=%23ffffff');
+      expect(queryString).toContain('masthead=1');
 
       const restoredState = deserializeState(queryString, mockBaseState);
       expect(restoredState.text).toBe(state.text);
@@ -65,6 +68,7 @@ describe('url-state', () => {
       expect(restoredState.typography.fontSize).toBe(state.typography.fontSize);
       expect(restoredState.typography.textAlign).toBe(state.typography.textAlign);
       expect(restoredState.background.solidColor).toBe(state.background.solidColor);
+      expect(restoredState.showMasthead).toBe(true);
     });
 
     it('returns default state if query parameters are missing', () => {

@@ -23,6 +23,7 @@ export function createInitialState(): EditorState {
     presetSize: '1080x1080',
     customWidth: 1080,
     customHeight: 1080,
+    showMasthead: false,
   };
   state.blocks = computeAutoLayout(state);
   return state;

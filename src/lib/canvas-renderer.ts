@@ -1,6 +1,6 @@
 import type { EditorState, RenderOptions, Theme } from '../types';
 import { drawBackground, drawBackgroundImage, drawNoise } from './backgrounds';
-import { drawThemeDecorations } from './theme-decorations';
+import { drawThemeDecorations, drawMasthead } from './theme-decorations';
 import { getTheme } from './themes';
 import { parseText } from '../utils/text-parser';
 
@@ -52,6 +52,10 @@ export async function renderToCanvas(
   }
 
   drawThemeDecorations(ctx, w, h, theme);
+
+  if (state.showMasthead) {
+    drawMasthead(ctx, w, h, theme.accent);
+  }
 
   for (const block of state.blocks) {
     if (block.isCode) {

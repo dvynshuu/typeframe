@@ -23,6 +23,7 @@ export function serializeState(state: EditorState): string {
   params.set('w', String(state.width));
   params.set('h', String(state.height));
   params.set('preset', state.presetSize);
+  params.set('masthead', state.showMasthead ? '1' : '0');
   
   if (state.blocks[0]) {
     params.set('bx', String(Math.round(state.blocks[0].x)));
@@ -58,6 +59,7 @@ export function deserializeState(queryString: string, defaultState: EditorState)
   const width = Number(params.get('w')) || defaultState.width;
   const height = Number(params.get('h')) || defaultState.height;
   const presetSize = (params.get('preset') as PresetSize) ?? defaultState.presetSize;
+  const showMasthead = params.get('masthead') === '1';
   
   const background = {
     ...defaultState.background,
@@ -78,6 +80,7 @@ export function deserializeState(queryString: string, defaultState: EditorState)
     presetSize,
     customWidth: presetSize === 'custom' ? width : defaultState.customWidth,
     customHeight: presetSize === 'custom' ? height : defaultState.customHeight,
+    showMasthead,
   };
   
   // Re-calculate auto layout first
@@ -129,6 +132,7 @@ export function loadStateFromLocalStorage(defaultState: EditorState): EditorStat
         ...defaultState.background,
         ...(parsed.background ?? {}),
       },
+      showMasthead: parsed.showMasthead ?? defaultState.showMasthead,
       blocks: parsed.blocks ?? defaultState.blocks,
     };
   } catch (err) {

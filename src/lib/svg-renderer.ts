@@ -10,7 +10,11 @@ export function renderToSvg(state: EditorState): string {
   const bg = state.background;
   
   const bgMarkup = svgBackground(width, height, bg, theme);
-  const decorationsMarkup = svgDecorations(width, height, theme);
+  let decorationsMarkup = svgDecorations(width, height, theme);
+  if (state.showMasthead) {
+    decorationsMarkup += `  <rect width="${width}" height="${width * 0.028}" fill="${theme.accent}"/>\n`;
+    decorationsMarkup += `  <text x="${width * 0.08}" y="${height * 0.052}" fill="${theme.accent}" fill-opacity="0.6" font-family="'IBM Plex Sans', sans-serif" font-weight="600" font-size="${Math.round(height * 0.018)}" dominant-baseline="central">TYPEFRAME</text>\n`;
+  }
 
   const blocks = state.blocks
     .map((b) =>
