@@ -31,28 +31,4 @@ export async function exportImage(
   }
 }
 
-export async function exportViaWorker(
-  state: EditorState,
-  format: ExportFormat,
-  quality = 0.92
-): Promise<void> {
-  if (format === 'svg') {
-    return exportImage(state, format, quality);
-  }
 
-  const { default: ExportWorker } = await import('../workers/export.worker?worker');
-  const worker = new ExportWorker();
-  const offscreen = new OffscreenCanvas(state.width, state.height);
-
-  return new Promise((resolve, reject) => {
-    worker.onmessage = (e: MessageEvent<{ blob?: Blob; error?: string }>) => {
-      worker.terminate();
-      if (e.data.error) reject(new Error(e.data.error));
-      else if (e.data.blob) {
-        downloadBlob(e.data.blob, exportFilename(format, state.width, state.height));
-        resolve();
-      }
-    };
-    worker.postMessage({ state, format, quality }, []);
-  });
-}

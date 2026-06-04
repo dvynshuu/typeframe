@@ -85,7 +85,7 @@ function getGrainPattern(ctx: CanvasRenderingContext2D, intensity: number): Canv
     canvas.height = size;
   }
 
-  const gCtx = canvas.getContext('2d');
+  const gCtx = canvas.getContext('2d') as CanvasRenderingContext2D | null;
   if (!gCtx) return null;
 
   const id = gCtx.createImageData(size, size);

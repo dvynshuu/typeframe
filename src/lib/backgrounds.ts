@@ -129,7 +129,7 @@ export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number
     canvas.height = size;
   }
 
-  const nCtx = canvas.getContext('2d');
+  const nCtx = canvas.getContext('2d') as CanvasRenderingContext2D | null;
   if (!nCtx) return null;
 
   const id = nCtx.createImageData(size, size);
