@@ -92,6 +92,7 @@ function drawTextBlock(
         : block.x;
 
   for (const line of lines) {
+    const startY = y;
     const fs = line.heading ? fontSize * 1.35 : fontSize;
     const weight = line.bold || line.heading ? 700 : typography.fontWeight;
     const style = line.italic ? 'italic ' : '';
@@ -109,7 +110,7 @@ function drawTextBlock(
     }
     if (line.list) {
       ctx.fillStyle = theme.accent;
-      ctx.fillRect(block.x, y - lineHeight + fontSize * 0.35, 4, fontSize * 0.5);
+      ctx.fillRect(block.x, startY + fontSize * 0.35, 4, fontSize * 0.5);
       ctx.fillStyle = theme.text;
     }
   }

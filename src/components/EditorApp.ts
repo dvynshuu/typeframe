@@ -59,6 +59,12 @@ export function initEditor(root: HTMLElement): () => void {
   });
   if (previewStage) resizeObserver.observe(previewStage);
 
+  const fontLoadedHandler = () => {
+    const state = store.getState();
+    renderLoop.schedule(state);
+  };
+  document.fonts.addEventListener('loadingdone', fontLoadedHandler);
+
   bindControls(root);
   bindDragResize(handlesLayer, previewWrapper);
 
@@ -66,6 +72,7 @@ export function initEditor(root: HTMLElement): () => void {
     unsub();
     renderLoop.destroy();
     resizeObserver.disconnect();
+    document.fonts.removeEventListener('loadingdone', fontLoadedHandler);
   };
 }
 

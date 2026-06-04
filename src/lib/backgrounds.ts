@@ -113,21 +113,63 @@ function drawGlassOverlay(
   ctx.stroke();
 }
 
+const noisePatternCache = new Map<number, CanvasPattern>();
+
+export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number): CanvasPattern | null {
+  if (noisePatternCache.has(intensity)) {
+    return noisePatternCache.get(intensity)!;
+  }
+
+  const size = 256;
+  const canvas = typeof OffscreenCanvas !== 'undefined'
+    ? new OffscreenCanvas(size, size)
+    : document.createElement('canvas');
+  if (canvas instanceof HTMLCanvasElement) {
+    canvas.width = size;
+    canvas.height = size;
+  }
+
+  const nCtx = canvas.getContext('2d');
+  if (!nCtx) return null;
+
+  const id = nCtx.createImageData(size, size);
+  const d = id.data;
+
+  for (let i = 0; i < d.length; i += 4) {
+    const n = (Math.random() - 0.5) * intensity;
+    if (n >= 0) {
+      d[i] = 255;
+      d[i + 1] = 255;
+      d[i + 2] = 255;
+      d[i + 3] = Math.floor(n * 255);
+    } else {
+      d[i] = 0;
+      d[i + 1] = 0;
+      d[i + 2] = 0;
+      d[i + 3] = Math.floor(-n * 255);
+    }
+  }
+
+  nCtx.putImageData(id, 0, 0);
+  const pattern = ctx.createPattern(canvas as any, 'repeat');
+  if (pattern) {
+    noisePatternCache.set(intensity, pattern);
+  }
+  return pattern;
+}
+
 export function drawNoise(
   ctx: CanvasRenderingContext2D,
   w: number,
   h: number,
   intensity: number
 ): void {
-  const id = ctx.getImageData(0, 0, w, h);
-  const d = id.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * intensity * 255;
-    d[i] += n;
-    d[i + 1] += n;
-    d[i + 2] += n;
-  }
-  ctx.putImageData(id, 0, 0);
+  const pattern = getNoisePattern(ctx, intensity);
+  if (!pattern) return;
+  ctx.save();
+  ctx.fillStyle = pattern;
+  ctx.fillRect(0, 0, w, h);
+  ctx.restore();
 }
 
 function roundRect(
@@ -151,6 +193,8 @@ function roundRect(
   ctx.closePath();
 }
 
+export const imageCache = new Map<string, HTMLImageElement>();
+
 export async function drawBackgroundImage(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -160,39 +204,50 @@ export async function drawBackgroundImage(
   sizeMode: 'cover' | 'contain' | 'stretch' | 'original' = 'cover',
   imageScale = 1
 ): Promise<void> {
+  const draw = (img: HTMLImageElement) => {
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    let sw = img.width;
+    let sh = img.height;
+    let scale = 1;
+
+    if (sizeMode === 'cover') {
+      scale = Math.max(width / img.width, height / img.height);
+    } else if (sizeMode === 'contain') {
+      scale = Math.min(width / img.width, height / img.height);
+    } else if (sizeMode === 'stretch') {
+      sw = width;
+      sh = height;
+      scale = 1;
+    } else if (sizeMode === 'original') {
+      scale = 1;
+    }
+
+    if (sizeMode !== 'stretch') {
+      scale *= imageScale;
+      sw = img.width * scale;
+      sh = img.height * scale;
+    }
+
+    ctx.drawImage(img, (width - sw) / 2, (height - sh) / 2, sw, sh);
+    ctx.restore();
+  };
+
+  if (imageCache.has(url)) {
+    draw(imageCache.get(url)!);
+    return;
+  }
+
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      ctx.save();
-      ctx.globalAlpha = opacity;
-      let sw = img.width;
-      let sh = img.height;
-      let scale = 1;
-
-      if (sizeMode === 'cover') {
-        scale = Math.max(width / img.width, height / img.height);
-      } else if (sizeMode === 'contain') {
-        scale = Math.min(width / img.width, height / img.height);
-      } else if (sizeMode === 'stretch') {
-        sw = width;
-        sh = height;
-        scale = 1;
-      } else if (sizeMode === 'original') {
-        scale = 1;
-      }
-
-      if (sizeMode !== 'stretch') {
-        scale *= imageScale;
-        sw = img.width * scale;
-        sh = img.height * scale;
-      }
-
-      ctx.drawImage(img, (width - sw) / 2, (height - sh) / 2, sw, sh);
-      ctx.restore();
+      imageCache.set(url, img);
+      draw(img);
       resolve();
     };
     img.onerror = () => resolve();
     img.src = url;
   });
 }
+

@@ -69,17 +69,55 @@ function drawVignette(ctx: CanvasRenderingContext2D, w: number, h: number): void
   ctx.fillRect(0, 0, w, h);
 }
 
-function drawGrain(ctx: CanvasRenderingContext2D, w: number, h: number, intensity: number): void {
+const grainPatternCache = new Map<number, CanvasPattern>();
+
+function getGrainPattern(ctx: CanvasRenderingContext2D, intensity: number): CanvasPattern | null {
+  if (grainPatternCache.has(intensity)) {
+    return grainPatternCache.get(intensity)!;
+  }
+
+  const size = 256;
+  const canvas = typeof OffscreenCanvas !== 'undefined'
+    ? new OffscreenCanvas(size, size)
+    : document.createElement('canvas');
+  if (canvas instanceof HTMLCanvasElement) {
+    canvas.width = size;
+    canvas.height = size;
+  }
+
+  const gCtx = canvas.getContext('2d');
+  if (!gCtx) return null;
+
+  const id = gCtx.createImageData(size, size);
+  const d = id.data;
   const step = 4;
-  ctx.save();
-  ctx.globalAlpha = intensity;
-  for (let y = 0; y < h; y += step) {
-    for (let x = 0; x < w; x += step) {
+
+  for (let y = 0; y < size; y += step) {
+    for (let x = 0; x < size; x += step) {
+      const idx = (y * size + x) * 4;
       const v = Math.random() * 40;
-      ctx.fillStyle = `rgba(255,255,255,${v / 255})`;
-      ctx.fillRect(x, y, 1, 1);
+      d[idx] = 255;
+      d[idx + 1] = 255;
+      d[idx + 2] = 255;
+      d[idx + 3] = Math.floor(v);
     }
   }
+
+  gCtx.putImageData(id, 0, 0);
+  const pattern = ctx.createPattern(canvas as any, 'repeat');
+  if (pattern) {
+    grainPatternCache.set(intensity, pattern);
+  }
+  return pattern;
+}
+
+function drawGrain(ctx: CanvasRenderingContext2D, w: number, h: number, intensity: number): void {
+  const pattern = getGrainPattern(ctx, intensity);
+  if (!pattern) return;
+  ctx.save();
+  ctx.globalAlpha = intensity;
+  ctx.fillStyle = pattern;
+  ctx.fillRect(0, 0, w, h);
   ctx.restore();
 }
 
