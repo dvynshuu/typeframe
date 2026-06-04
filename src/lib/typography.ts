@@ -1,12 +1,12 @@
 import type { Typography } from '../types';
 
 export const fontFamilies = [
-  { value: '"DM Sans", system-ui, sans-serif', label: 'DM Sans' },
   { value: '"Inter", system-ui, sans-serif', label: 'Inter' },
   { value: '"IBM Plex Sans", system-ui, sans-serif', label: 'IBM Plex Sans' },
   { value: '"Source Serif 4", Georgia, serif', label: 'Source Serif' },
   { value: '"Playfair Display", Georgia, serif', label: 'Playfair Display' },
   { value: '"Cormorant Garamond", Georgia, serif', label: 'Cormorant' },
+  { value: '"Instrument Serif", Georgia, serif', label: 'Instrument Serif' },
   { value: '"JetBrains Mono", monospace', label: 'JetBrains Mono' },
 ];
 
@@ -19,7 +19,7 @@ export const fontWeights = [
 ];
 
 export const defaultTypography: Typography = {
-  fontFamily: '"DM Sans", system-ui, sans-serif',
+  fontFamily: '"Inter", system-ui, sans-serif',
   fontWeight: 500,
   fontSize: 42,
   lineHeight: 1.4,

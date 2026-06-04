@@ -9,6 +9,7 @@ import {
   formatDimensions,
 } from '../lib/preview-scale';
 import { exportImage } from '../utils/export';
+import { showToast } from '../utils/toast';
 import type {
   BackgroundType,
   ExportFormat,
@@ -337,6 +338,10 @@ function bindExport(root: HTMLElement): void {
     if (label) label.textContent = 'Rendering…';
     try {
       await exportImage(state, format);
+      showToast(`Image exported successfully as ${format.toUpperCase()}!`, 'success');
+    } catch (err: any) {
+      console.error('Export failed:', err);
+      showToast(`Failed to export: ${err?.message || 'unknown error'}`, 'error');
     } finally {
       btn?.classList.remove('is-loading');
       if (label && prev) label.textContent = prev;
