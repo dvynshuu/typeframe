@@ -1,4 +1,4 @@
-export function debounce<T extends (...args: unknown[]) => void>(
+export function debounce<T extends (...args: any[]) => void>(
   fn: T,
   ms: number
 ): (...args: Parameters<T>) => void {
@@ -9,7 +9,7 @@ export function debounce<T extends (...args: unknown[]) => void>(
   };
 }
 
-export function rafThrottle<T extends (...args: unknown[]) => void>(
+export function rafThrottle<T extends (...args: any[]) => void>(
   fn: T
 ): (...args: Parameters<T>) => void {
   let scheduled = false;

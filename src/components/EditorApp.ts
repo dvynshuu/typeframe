@@ -1,4 +1,4 @@
-import { EditorStore } from '../lib/state';
+import { EditorStore, createInitialState } from '../lib/state';
 import { themes } from '../lib/themes';
 import { templates, presetSizes } from '../lib/templates';
 import { fontFamilies, fontWeights } from '../lib/typography';
@@ -10,6 +10,13 @@ import {
 } from '../lib/preview-scale';
 import { exportImage } from '../utils/export';
 import { showToast } from '../utils/toast';
+import {
+  serializeState,
+  deserializeState,
+  saveStateToLocalStorage,
+  loadStateFromLocalStorage,
+} from '../utils/url-state';
+import { debounce } from '../hooks/use-debounce';
 import type {
   BackgroundType,
   ExportFormat,
@@ -19,7 +26,18 @@ import type {
   TextMode,
 } from '../types';
 
-const store = new EditorStore();
+// Establish default initial state and hydrate from URL or localStorage
+const defaultState = createInitialState();
+let hydratedState = defaultState;
+if (typeof window !== 'undefined') {
+  if (window.location.search) {
+    hydratedState = deserializeState(window.location.search, defaultState);
+  } else {
+    hydratedState = loadStateFromLocalStorage(defaultState);
+  }
+}
+
+const store = new EditorStore(hydratedState);
 
 export function initEditor(root: HTMLElement): () => void {
   const canvas = root.querySelector<HTMLCanvasElement>('#preview-canvas');
@@ -49,9 +67,30 @@ export function initEditor(root: HTMLElement): () => void {
     (state, scale) => syncPreviewChrome(state, scale)
   );
 
+  // Synchronize state changes to URL and localStorage (debounced)
+  const syncStorage = debounce((state: ReturnType<EditorStore['getState']>) => {
+    if (typeof window !== 'undefined') {
+      const query = serializeState(state);
+      window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+      saveStateToLocalStorage(state);
+    }
+  }, 300);
+
+  let lastImageUrl: string | undefined = hydratedState.background.imageUrl;
+
   const unsub = store.subscribe((state) => {
     renderLoop.schedule(state);
     syncForm(root, state);
+
+    // Revoke old blob URL if background image has changed
+    const currentImageUrl = state.background.imageUrl;
+    if (lastImageUrl && lastImageUrl !== currentImageUrl && lastImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(lastImageUrl);
+    }
+    lastImageUrl = currentImageUrl;
+
+    // Sync storage
+    syncStorage(state);
   });
 
   const resizeObserver = new ResizeObserver(() => {
@@ -74,6 +113,12 @@ export function initEditor(root: HTMLElement): () => void {
     renderLoop.destroy();
     resizeObserver.disconnect();
     document.fonts.removeEventListener('loadingdone', fontLoadedHandler);
+
+    // Revoke active blob URL on unmount to prevent leaks
+    const finalState = store.getState();
+    if (finalState.background.imageUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(finalState.background.imageUrl);
+    }
   };
 }
 
@@ -258,12 +303,6 @@ function bindBackground(root: HTMLElement): void {
   root.querySelector('#bg-upload')?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
-
-    // Revoke old object URL if exists to prevent memory leak (fixes TD-09)
-    const oldBg = store.getState().background;
-    if (oldBg.imageUrl?.startsWith('blob:')) {
-      URL.revokeObjectURL(oldBg.imageUrl);
-    }
 
     const url = URL.createObjectURL(file);
     store.setState({
