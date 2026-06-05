@@ -19,6 +19,7 @@ import {
 import { debounce } from '../hooks/use-debounce';
 import type {
   BackgroundType,
+  BackgroundConfig,
   ExportFormat,
   PresetSize,
   TemplateId,
@@ -81,6 +82,7 @@ export function initEditor(root: HTMLElement): () => void {
   const unsub = store.subscribe((state) => {
     renderLoop.schedule(state);
     syncForm(root, state);
+    updateScreenReaderDescription(state);
 
     // Revoke old blob URL if background image has changed
     const currentImageUrl = state.background.imageUrl;
@@ -108,6 +110,7 @@ export function initEditor(root: HTMLElement): () => void {
   bindControls(root);
   bindDragResize(handlesLayer, previewWrapper);
   bindFormattingToolbar(root);
+  bindBackdropPresets(root);
 
   return () => {
     unsub();
@@ -173,6 +176,22 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
     const opacityLabel = root.querySelector('#bg-image-opacity-val');
     if (opacityLabel) opacityLabel.textContent = `${Math.round(opacity * 100)}%`;
   }
+
+  // Sync backdrop preset active swatches
+  const currentBg = state.background;
+  root.querySelectorAll<HTMLButtonElement>('.preset-swatch').forEach((btn) => {
+    const p = btn.dataset.preset;
+    let isActive = false;
+    if (p === 'aurora-mesh' && currentBg.type === 'mesh' && currentBg.meshColors?.[2] === '#6e8cff') isActive = true;
+    if (p === 'sunset-glow' && currentBg.type === 'gradient' && currentBg.gradientStops?.[0]?.color === '#ff7e5f') isActive = true;
+    if (p === 'brutalist-grid' && currentBg.type === 'solid' && currentBg.solidColor === '#121214') isActive = true;
+    if (p === 'frosted-glass' && currentBg.type === 'glass') isActive = true;
+    if (p === 'obsidian-grain' && currentBg.type === 'noise' && currentBg.solidColor === '#090b10') isActive = true;
+    if (p === 'minimal-linen' && currentBg.type === 'noise' && currentBg.solidColor === '#faf7f2') isActive = true;
+    if (p === 'cyber-signal' && currentBg.type === 'mesh' && currentBg.meshColors?.[2] === '#00f5d4') isActive = true;
+
+    btn.classList.toggle('is-active', isActive);
+  });
 }
 
 function setVal(root: HTMLElement, sel: string, val: string): void {
@@ -645,6 +664,78 @@ function bindFormattingToolbar(root: HTMLElement): void {
       }
     }
   });
+}
+
+function bindBackdropPresets(root: HTMLElement): void {
+  root.querySelectorAll<HTMLButtonElement>('.preset-swatch').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const preset = btn.dataset.preset;
+      const currentBg = store.getState().background;
+      let background: BackgroundConfig = { ...currentBg };
+
+      if (preset === 'aurora-mesh') {
+        background = {
+          ...currentBg,
+          type: 'mesh',
+          meshColors: ['#0f172a', '#1e293b', '#6e8cff', '#c37cff'],
+          noiseIntensity: 0.04,
+        };
+      } else if (preset === 'sunset-glow') {
+        background = {
+          ...currentBg,
+          type: 'gradient',
+          gradientStops: [
+            { color: '#ff7e5f', position: 0 },
+            { color: '#feb47b', position: 1 },
+          ],
+          gradientAngle: 135,
+        };
+      } else if (preset === 'brutalist-grid') {
+        background = {
+          ...currentBg,
+          type: 'solid',
+          solidColor: '#121214',
+        };
+      } else if (preset === 'frosted-glass') {
+        background = {
+          ...currentBg,
+          type: 'glass',
+          meshColors: ['#1e293b', '#0f172a', '#334155', '#1e3a5f'],
+          glassBlur: 20,
+        };
+      } else if (preset === 'obsidian-grain') {
+        background = {
+          ...currentBg,
+          type: 'noise',
+          solidColor: '#090b10',
+          noiseIntensity: 0.06,
+        };
+      } else if (preset === 'minimal-linen') {
+        background = {
+          ...currentBg,
+          type: 'noise',
+          solidColor: '#faf7f2',
+          noiseIntensity: 0.04,
+        };
+      } else if (preset === 'cyber-signal') {
+        background = {
+          ...currentBg,
+          type: 'mesh',
+          meshColors: ['#090b10', '#120024', '#00f5d4', '#7b2cbf'],
+          noiseIntensity: 0.05,
+        };
+      }
+      store.setState({ background });
+    });
+  });
+}
+
+function updateScreenReaderDescription(state: ReturnType<EditorStore['getState']>): void {
+  const srEl = document.getElementById('sr-preview-description');
+  if (!srEl) return;
+  const theme = themes.find((t) => t.id === state.themeId)?.name || state.themeId;
+  const template = templates.find((t) => t.id === state.templateId)?.name || state.templateId;
+  srEl.textContent = `Live preview updated: ${template} layout in ${theme} theme. Background type is ${state.background.type}. Content: "${state.text}".`;
 }
 
 export { store, templates, themes, fontFamilies, fontWeights, presetSizes };

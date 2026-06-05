@@ -990,4 +990,47 @@ input[type='range']::-moz-range-thumb {
   font-family: var(--font-mono);
 }
 
+/* ─── Backdrop Presets Swatches Gallery ─── */
+.presets-gallery {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.preset-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--border-soft);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+  position: relative;
+}
+
+.preset-swatch::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  transition: border-color 150ms var(--ease-out);
+}
+
+.preset-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+.preset-swatch:focus-visible {
+  outline: none;
+}
+
+.preset-swatch:focus-visible::after,
+.preset-swatch.is-active::after {
+  border-color: var(--accent);
+}
+
+
 

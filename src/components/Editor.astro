@@ -235,6 +235,18 @@ Design is how it works.</textarea>
           <span class="panel-section__line" aria-hidden="true"></span>
         </div>
         <div class="field">
+          <label>Curated Swatches</label>
+          <div class="presets-gallery">
+            <button type="button" class="preset-swatch" data-preset="aurora-mesh" title="Aurora Mesh" style="background: radial-gradient(circle at 20% 20%, #6e8cff, #c37cff);"></button>
+            <button type="button" class="preset-swatch" data-preset="sunset-glow" title="Sunset Glow" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);"></button>
+            <button type="button" class="preset-swatch" data-preset="brutalist-grid" title="Brutalist Grid" style="background: #121214; border: 1px dashed rgba(232,236,244,0.3);"></button>
+            <button type="button" class="preset-swatch" data-preset="frosted-glass" title="Frosted Glass" style="background: linear-gradient(135deg, #1e293b, #1e3a5f); border: 1.5px solid rgba(255,255,255,0.45);"></button>
+            <button type="button" class="preset-swatch" data-preset="obsidian-grain" title="Obsidian Grain" style="background: #090b10; border: 1px solid rgba(232,236,244,0.1);"></button>
+            <button type="button" class="preset-swatch" data-preset="minimal-linen" title="Minimal Linen" style="background: #faf7f2; border: 1px solid #ccc;"></button>
+            <button type="button" class="preset-swatch" data-preset="cyber-signal" title="Cyber Signal" style="background: radial-gradient(circle at 80% 80%, #00f5d4, #7b2cbf);"></button>
+          </div>
+        </div>
+        <div class="field">
           <label for="bg-type">Background</label>
           <select id="bg-type">
             <option value="solid">Solid</option>
@@ -325,4 +337,5 @@ Design is how it works.</textarea>
     <option value="webp">WebP</option>
     <option value="svg">SVG</option>
   </select>
+  <div id="sr-preview-description" class="sr-only" aria-live="polite"></div>
 </div>
