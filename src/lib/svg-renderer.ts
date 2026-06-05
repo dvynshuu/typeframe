@@ -4,6 +4,61 @@ import { parseText } from '../utils/text-parser';
 import { escapeXml } from '../utils/dom';
 import { imageCache } from './backgrounds';
 
+let measureCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
+
+function getMeasureContext(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null {
+  if (measureCtx) return measureCtx;
+  if (typeof OffscreenCanvas !== 'undefined') {
+    try {
+      const canvas = new OffscreenCanvas(1, 1);
+      measureCtx = canvas.getContext('2d');
+    } catch (e) {}
+  }
+  if (!measureCtx && typeof document !== 'undefined') {
+    try {
+      const canvas = document.createElement('canvas');
+      measureCtx = canvas.getContext('2d');
+    } catch (e) {}
+  }
+  return measureCtx;
+}
+
+function measureSpacedTextWidth(
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null,
+  text: string,
+  spacing: number
+): number {
+  if (!ctx || typeof ctx.measureText !== 'function') {
+    return text.length * 8 + (text.length - 1) * spacing;
+  }
+  if (spacing === 0) return ctx.measureText(text).width;
+  const chars = text.split('');
+  return chars.reduce((s, c) => s + ctx.measureText(c).width + spacing, -spacing);
+}
+
+function wrapText(
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null,
+  text: string,
+  maxWidth: number,
+  spacing: number
+): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    const testWidth = measureSpacedTextWidth(ctx, test, spacing);
+    if (testWidth > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines.length ? lines : [''];
+}
+
 export function renderToSvg(state: EditorState): string {
   const { width, height } = state;
   const theme = getTheme(state.themeId);
@@ -65,9 +120,13 @@ function svgDefs(w: number, h: number, bg: EditorState['background'], theme: The
       { id: 2, x: 0.5, y: 0.85, r: 0.6 },
       { id: 3, x: 0.1, y: 0.75, r: 0.45 },
     ];
+    const maxDim = Math.max(w, h);
     blobs.forEach((b) => {
       const c = colors[b.id] ?? colors[0];
-      defs += `<radialGradient id="mesh-blob-${b.id}" cx="${b.x * 100}%" cy="${b.y * 100}%" r="${b.r * 100}%" fx="${b.x * 100}%" fy="${b.y * 100}%">
+      const cx = b.x * w;
+      const cy = b.y * h;
+      const r = b.r * maxDim;
+      defs += `<radialGradient id="mesh-blob-${b.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${r}" fx="${cx}" fy="${cy}">
         <stop offset="0%" stop-color="${c}" stop-opacity="0.8"/>
         <stop offset="60%" stop-color="${c}" stop-opacity="0.27"/>
         <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
@@ -77,7 +136,11 @@ function svgDefs(w: number, h: number, bg: EditorState['background'], theme: The
 
   // Vignette gradient
   if (theme.decorations?.includes('vignette')) {
-    defs += `<radialGradient id="vignette-grad" cx="50%" cy="50%" r="72%">
+    const cx = w / 2;
+    const cy = h / 2;
+    const innerR = h * 0.2;
+    const outerR = Math.max(w, h) * 0.72;
+    defs += `<radialGradient id="vignette-grad" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${outerR}" fx="${cx}" fy="${cy}" fr="${innerR}">
       <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
       <stop offset="100%" stop-color="black" stop-opacity="0.55"/>
     </radialGradient>\n`;
@@ -85,7 +148,10 @@ function svgDefs(w: number, h: number, bg: EditorState['background'], theme: The
 
   // Glow orb gradient
   if (theme.decorations?.includes('glow-orb')) {
-    defs += `<radialGradient id="glow-orb-grad" cx="85%" cy="15%" r="45%" fx="85%" fy="15%">
+    const cx = w * 0.85;
+    const cy = h * 0.15;
+    const r = w * 0.45;
+    defs += `<radialGradient id="glow-orb-grad" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${r}" fx="${cx}" fy="${cy}">
       <stop offset="0%" stop-color="${theme.accent}" stop-opacity="0.27"/>
       <stop offset="50%" stop-color="${theme.accent}" stop-opacity="0.07"/>
       <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
@@ -100,7 +166,7 @@ function svgDefs(w: number, h: number, bg: EditorState['background'], theme: The
       <stop offset="80%" stop-color="${theme.accent}"/>
       <stop offset="100%" stop-color="${theme.accent}" stop-opacity="0"/>
     </linearGradient>
-    <radialGradient id="accent-rule-glow" cx="50%" cy="92%" r="35%">
+    <radialGradient id="accent-rule-glow" gradientUnits="userSpaceOnUse" cx="${w / 2}" cy="${h * 0.92}" r="${w * 0.35}" fx="${w / 2}" fy="${h * 0.92}">
       <stop offset="0%" stop-color="${theme.accent}" stop-opacity="0.2"/>
       <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
     </radialGradient>\n`;
@@ -338,29 +404,41 @@ function svgTextBlock(
         ? block.x + block.width
         : block.x;
 
-  let currentY = block.y;
+  const measureCtx = getMeasureContext();
+  const letterSpacing = typography.letterSpacing * typography.fontSize;
   const bullets: string[] = [];
-  
-  const tspans = lines
-    .map((line, i) => {
-      const fs = line.heading ? typography.fontSize * 1.35 : typography.fontSize;
-      const weight = line.bold || line.heading ? 700 : typography.fontWeight;
-      const style = line.italic ? ' font-style="italic"' : '';
-      
-      const step = i === 0 ? typography.fontSize : (lines[i-1].heading ? (typography.fontSize * 1.35 * 1.2) : (typography.fontSize * typography.lineHeight));
-      
-      if (line.list) {
-        bullets.push(`<rect x="${block.x}" y="${currentY + step * 0.35}" width="4" height="${typography.fontSize * 0.5}" fill="${theme.accent}"/>`);
-      }
-      
-      currentY += step;
-      
-      return `<tspan x="${x}" dy="${i === 0 ? typography.fontSize : step}" font-size="${fs}" font-weight="${weight}"${style}>${escapeXml(line.text)}</tspan>`;
-    })
-    .join('');
+  const tspans: string[] = [];
 
-  const textMarkup = `<text x="${x}" y="${block.y}" fill="${theme.text}" font-family="${typography.fontFamily}" font-size="${typography.fontSize}" text-anchor="${anchor}" letter-spacing="${typography.letterSpacing}em">${tspans}</text>`;
-  
+  let currentY = block.y;
+  let isFirstTspan = true;
+
+  lines.forEach((line) => {
+    const fs = line.heading ? typography.fontSize * 1.35 : typography.fontSize;
+    const weight = line.bold || line.heading ? 700 : typography.fontWeight;
+    const style = line.italic ? ' font-style="italic"' : '';
+    const lh = line.heading ? fs * 1.2 : typography.fontSize * typography.lineHeight;
+
+    if (measureCtx && typeof measureCtx.measureText === 'function') {
+      const fontStyle = line.italic ? 'italic ' : '';
+      measureCtx.font = `${fontStyle}${weight} ${fs}px ${typography.fontFamily}`;
+    }
+
+    const wrapped = wrapText(measureCtx, line.text, block.width, letterSpacing);
+
+    if (line.list) {
+      bullets.push(`<rect x="${block.x}" y="${currentY + typography.fontSize * 0.35}" width="4" height="${typography.fontSize * 0.5}" fill="${theme.accent}"/>`);
+    }
+
+    wrapped.forEach((segment) => {
+      const dy = isFirstTspan ? typography.fontSize : lh;
+      isFirstTspan = false;
+      tspans.push(`<tspan x="${x}" dy="${dy}" font-size="${fs}" font-weight="${weight}"${style}>${escapeXml(segment)}</tspan>`);
+      currentY += lh;
+    });
+  });
+
+  const textMarkup = `<text x="${x}" y="${block.y}" fill="${theme.text}" font-family="${typography.fontFamily}" font-size="${typography.fontSize}" text-anchor="${anchor}" letter-spacing="${typography.letterSpacing}em">${tspans.join('')}</text>`;
+
   return [...bullets, textMarkup].join('\n');
 }
 

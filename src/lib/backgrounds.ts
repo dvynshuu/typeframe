@@ -1,7 +1,7 @@
 import type { BackgroundConfig } from '../types';
 
 export function drawBackground(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   width: number,
   height: number,
   bg: BackgroundConfig
@@ -43,7 +43,7 @@ export function drawBackground(
 }
 
 function drawLinearGradient(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   w: number,
   h: number,
   bg: BackgroundConfig
@@ -67,7 +67,7 @@ function drawLinearGradient(
 }
 
 function drawMeshGradient(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   w: number,
   h: number,
   bg: BackgroundConfig
@@ -99,7 +99,7 @@ function drawMeshGradient(
 }
 
 function drawGlassOverlay(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   w: number,
   h: number,
   _blur: number
@@ -115,7 +115,10 @@ function drawGlassOverlay(
 
 const noisePatternCache = new Map<number, CanvasPattern>();
 
-export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number): CanvasPattern | null {
+export function getNoisePattern(
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+  intensity: number
+): CanvasPattern | null {
   if (noisePatternCache.has(intensity)) {
     return noisePatternCache.get(intensity)!;
   }
@@ -129,7 +132,7 @@ export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number
     canvas.height = size;
   }
 
-  const nCtx = canvas.getContext('2d') as CanvasRenderingContext2D | null;
+  const nCtx = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
   if (!nCtx) return null;
 
   const id = nCtx.createImageData(size, size);
@@ -166,7 +169,7 @@ export function getNoisePattern(ctx: CanvasRenderingContext2D, intensity: number
 }
 
 export function drawNoise(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   w: number,
   h: number,
   intensity: number
@@ -180,7 +183,7 @@ export function drawNoise(
 }
 
 function roundRect(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
@@ -200,10 +203,10 @@ function roundRect(
   ctx.closePath();
 }
 
-export const imageCache = new Map<string, HTMLImageElement>();
+export const imageCache = new Map<string, HTMLImageElement | ImageBitmap>();
 
 export async function drawBackgroundImage(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   width: number,
   height: number,
   url: string,
@@ -211,7 +214,7 @@ export async function drawBackgroundImage(
   sizeMode: 'cover' | 'contain' | 'stretch' | 'original' = 'cover',
   imageScale = 1
 ): Promise<void> {
-  const draw = (img: HTMLImageElement) => {
+  const draw = (img: HTMLImageElement | ImageBitmap) => {
     ctx.save();
     ctx.globalAlpha = opacity;
     let sw = img.width;
@@ -242,6 +245,19 @@ export async function drawBackgroundImage(
 
   if (imageCache.has(url)) {
     draw(imageCache.get(url)!);
+    return;
+  }
+
+  if (typeof Image === 'undefined') {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const img = await createImageBitmap(blob);
+      imageCache.set(url, img);
+      draw(img);
+    } catch (err) {
+      console.error('Failed to load image in worker:', err);
+    }
     return;
   }
 
