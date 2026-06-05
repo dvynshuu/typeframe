@@ -6,7 +6,7 @@ const mockState: EditorState = {
   text: 'This is a very long line that should wrap on multiple lines inside the SVG output.',
   textMode: 'plain',
   templateId: 'quote-card',
-  themeId: 'midnight',
+  themeId: 'studio-dark',
   typography: {
     fontFamily: 'Inter',
     fontWeight: 500,

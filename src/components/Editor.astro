@@ -87,6 +87,11 @@ import { aspectLabel } from '../utils/aspect';
           <button type="button" data-mode="markdown" role="tab">Markdown</button>
         </div>
         <div class="compose-editor">
+          <div class="editor-formatting-toolbar" id="formatting-toolbar" role="toolbar" aria-label="Text formatting">
+            <button type="button" data-action="bold" title="Bold (Ctrl+B)">B</button>
+            <button type="button" data-action="italic" title="Italic (Ctrl+I)">I</button>
+            <button type="button" data-action="heading" title="Heading (Ctrl+H)">H</button>
+          </div>
           <textarea
             id="text-input"
             placeholder="Type a quote, headline, or thread…"

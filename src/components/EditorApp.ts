@@ -107,6 +107,7 @@ export function initEditor(root: HTMLElement): () => void {
 
   bindControls(root);
   bindDragResize(handlesLayer, previewWrapper);
+  bindFormattingToolbar(root);
 
   return () => {
     unsub();
@@ -527,6 +528,122 @@ function bindDragResize(
   window.addEventListener('pointerup', () => {
     dragId = null;
     resizeId = null;
+  });
+}
+
+function bindFormattingToolbar(root: HTMLElement): void {
+  const textarea = root.querySelector<HTMLTextAreaElement>('#text-input');
+  const toolbar = root.querySelector<HTMLDivElement>('#formatting-toolbar');
+  if (!textarea || !toolbar) return;
+
+  const updateToolbarVisibility = () => {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    if (start !== undefined && end !== undefined && end > start) {
+      toolbar.classList.add('is-active');
+    } else {
+      toolbar.classList.remove('is-active');
+    }
+  };
+
+  textarea.addEventListener('select', updateToolbarVisibility);
+  textarea.addEventListener('mouseup', updateToolbarVisibility);
+  textarea.addEventListener('keyup', updateToolbarVisibility);
+
+  document.addEventListener('mousedown', (e) => {
+    const target = e.target as HTMLElement;
+    if (!textarea.contains(target) && !toolbar.contains(target)) {
+      toolbar.classList.remove('is-active');
+    }
+  });
+
+  const formatSelection = (action: 'bold' | 'italic' | 'heading') => {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    if (start === undefined || end === undefined || start === end) return;
+
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    const beforeText = text.substring(0, start);
+    const afterText = text.substring(end);
+
+    const activeMode = store.getState().textMode;
+    let targetMode = activeMode;
+
+    if (activeMode === 'plain') {
+      targetMode = 'rich';
+      store.setTextMode('rich');
+    }
+
+    let replacement = selectedText;
+    if (action === 'bold') {
+      if (targetMode === 'markdown') {
+        replacement = selectedText.startsWith('**') && selectedText.endsWith('**')
+          ? selectedText.slice(2, -2)
+          : `**${selectedText}**`;
+      } else {
+        replacement = selectedText.startsWith('<b>') && selectedText.endsWith('</b>')
+          ? selectedText.slice(3, -4)
+          : `<b>${selectedText}</b>`;
+      }
+    } else if (action === 'italic') {
+      if (targetMode === 'markdown') {
+        replacement = selectedText.startsWith('*') && selectedText.endsWith('*')
+          ? selectedText.slice(1, -1)
+          : `*${selectedText}*`;
+      } else {
+        replacement = selectedText.startsWith('<i>') && selectedText.endsWith('</i>')
+          ? selectedText.slice(3, -4)
+          : `<i>${selectedText}</i>`;
+      }
+    } else if (action === 'heading') {
+      if (targetMode === 'markdown') {
+        replacement = selectedText.startsWith('# ')
+          ? selectedText.slice(2)
+          : selectedText.startsWith('## ')
+          ? selectedText.slice(3)
+          : selectedText.startsWith('### ')
+          ? selectedText.slice(4)
+          : `### ${selectedText}`;
+      } else {
+        replacement = selectedText.startsWith('<h3>') && selectedText.endsWith('</h3>')
+          ? selectedText.slice(4, -5)
+          : `<h3>${selectedText}</h3>`;
+      }
+    }
+
+    const newText = beforeText + replacement + afterText;
+    textarea.value = newText;
+    store.setText(newText);
+
+    textarea.focus();
+    textarea.setSelectionRange(start, start + replacement.length);
+    updateToolbarVisibility();
+  };
+
+  toolbar.querySelectorAll<HTMLButtonElement>('button[data-action]').forEach((btn) => {
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const action = btn.dataset.action as 'bold' | 'italic' | 'heading';
+      formatSelection(action);
+    });
+  });
+
+  textarea.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
+      if (e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        formatSelection('bold');
+      }
+      if (e.key === 'i' || e.key === 'I') {
+        e.preventDefault();
+        formatSelection('italic');
+      }
+      if (e.key === 'h' || e.key === 'H') {
+        e.preventDefault();
+        formatSelection('heading');
+      }
+    }
   });
 }
 
