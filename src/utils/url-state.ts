@@ -36,6 +36,7 @@ export function serializeState(state: EditorState): string {
   if (ty.lineHeight !== dty.lineHeight) compact.lh = ty.lineHeight;
   if (ty.letterSpacing !== dty.letterSpacing) compact.ls = ty.letterSpacing;
   if (ty.textAlign !== dty.textAlign) compact.align = ty.textAlign;
+  if (ty.textColor !== dty.textColor) compact.tx = ty.textColor;
 
   // Background
   const bg = state.background;
@@ -85,6 +86,7 @@ export function deserializeState(queryString: string, defaultState: EditorState)
       lineHeight: compact.lh !== undefined ? Number(compact.lh) : defaultState.typography.lineHeight,
       letterSpacing: compact.ls !== undefined ? Number(compact.ls) : defaultState.typography.letterSpacing,
       textAlign: compact.align !== undefined ? compact.align : defaultState.typography.textAlign,
+      textColor: compact.tx !== undefined ? compact.tx : defaultState.typography.textColor,
     };
 
     const bgType = compact.bg !== undefined ? compact.bg : defaultState.background.type;
@@ -149,6 +151,7 @@ function deserializeLegacyState(params: URLSearchParams, defaultState: EditorSta
     lineHeight: Number(params.get('lh')) || defaultState.typography.lineHeight,
     letterSpacing: Number(params.get('ls')) || defaultState.typography.letterSpacing,
     textAlign: (params.get('align') as TextAlign) ?? defaultState.typography.textAlign,
+    textColor: params.get('tx') ?? defaultState.typography.textColor,
   };
 
   const bgType = (params.get('bg') as BackgroundType) ?? defaultState.background.type;

@@ -15,7 +15,7 @@ export function createInitialState(): EditorState {
     textMode: 'plain',
     templateId: 'quote-card',
     themeId: 'studio-dark',
-    typography: { ...defaultTypography, ...defaultTemplate.defaultTypography },
+    typography: { ...defaultTypography, ...defaultTemplate.defaultTypography, textColor: defaultTheme.text },
     background: { ...defaultTheme.background },
     blocks: [],
     width: defaultTemplate.width,
@@ -87,7 +87,7 @@ export class EditorStore {
     this.setState({
       themeId: id,
       background: structuredClone(theme.background),
-      typography: { ...this.state.typography, ...theme.typography },
+      typography: { ...this.state.typography, ...theme.typography, textColor: theme.text },
     });
   }
 

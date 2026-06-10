@@ -423,21 +423,54 @@ function svgTextBlock(
       measureCtx.font = `${fontStyle}${weight} ${fs}px ${typography.fontFamily}`;
     }
 
+    const charStyles: { bold?: boolean; italic?: boolean; color?: string }[] = [];
+    if (line.spans) {
+      for (const span of line.spans) {
+        for (let i = 0; i < span.text.length; i++) {
+          charStyles.push({ bold: span.bold, italic: span.italic, color: span.color });
+        }
+      }
+    }
+
     const wrapped = wrapText(measureCtx, line.text, block.width, letterSpacing);
+    let origIdx = 0;
 
     if (line.list) {
       bullets.push(`<rect x="${block.x}" y="${currentY + typography.fontSize * 0.35}" width="4" height="${typography.fontSize * 0.5}" fill="${theme.accent}"/>`);
     }
 
-    wrapped.forEach((segment) => {
+    wrapped.forEach((segmentText) => {
+      const segments: { text: string; bold?: boolean; italic?: boolean; color?: string }[] = [];
+      for (let i = 0; i < segmentText.length; i++) {
+        const char = segmentText[i];
+        while (origIdx < line.text.length && line.text[origIdx] !== char && (line.text[origIdx] === ' ' || line.text[origIdx] === '\n')) {
+          origIdx++;
+        }
+        const style = charStyles[origIdx] || {};
+        const lastSeg = segments[segments.length - 1];
+        if (lastSeg && lastSeg.bold === style.bold && lastSeg.italic === style.italic && lastSeg.color === style.color) {
+          lastSeg.text += char;
+        } else {
+          segments.push({ text: char, ...style });
+        }
+        origIdx++;
+      }
+
+      const segmentTspans = segments.map((seg) => {
+        const segFill = seg.color ? ` fill="${seg.color}"` : '';
+        const segWeight = seg.bold ? ' font-weight="700"' : '';
+        const segStyle = seg.italic ? ' font-style="italic"' : '';
+        return `<tspan${segFill}${segWeight}${segStyle}>${escapeXml(seg.text)}</tspan>`;
+      }).join('');
+
       const dy = isFirstTspan ? typography.fontSize : lh;
       isFirstTspan = false;
-      tspans.push(`<tspan x="${x}" dy="${dy}" font-size="${fs}" font-weight="${weight}"${style}>${escapeXml(segment)}</tspan>`);
+      tspans.push(`<tspan x="${x}" dy="${dy}" font-size="${fs}" font-weight="${weight}"${style}>${segmentTspans}</tspan>`);
       currentY += lh;
     });
   });
 
-  const textMarkup = `<text x="${x}" y="${block.y}" fill="${theme.text}" font-family="${typography.fontFamily}" font-size="${typography.fontSize}" text-anchor="${anchor}" letter-spacing="${typography.letterSpacing}em">${tspans.join('')}</text>`;
+  const textMarkup = `<text x="${x}" y="${block.y}" fill="${typography.textColor || theme.text}" font-family="${typography.fontFamily}" font-size="${typography.fontSize}" text-anchor="${anchor}" letter-spacing="${typography.letterSpacing}em">${tspans.join('')}</text>`;
 
   return [...bullets, textMarkup].join('\n');
 }
@@ -449,7 +482,7 @@ function svgCodeBlock(
 ): string {
   const lines = block.content.split('\n');
   const lh = state.typography.fontSize * state.typography.lineHeight;
-  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', theme.text];
+  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', state.typography.textColor || theme.text];
   
   const tspans = lines
     .map((line, i) => {

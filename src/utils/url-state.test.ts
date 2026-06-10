@@ -44,6 +44,7 @@ describe('url-state', () => {
           lineHeight: 1.5,
           letterSpacing: 0.05,
           textAlign: 'left',
+          textColor: '#ff0000',
         },
         background: {
           type: 'solid',
@@ -63,6 +64,7 @@ describe('url-state', () => {
       expect(restoredState.themeId).toBe(state.themeId);
       expect(restoredState.typography.fontSize).toBe(state.typography.fontSize);
       expect(restoredState.typography.textAlign).toBe(state.typography.textAlign);
+      expect(restoredState.typography.textColor).toBe(state.typography.textColor);
       expect(restoredState.background.solidColor).toBe(state.background.solidColor);
       expect(restoredState.showMasthead).toBe(true);
     });

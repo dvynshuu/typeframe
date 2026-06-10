@@ -1032,5 +1032,53 @@ input[type='range']::-moz-range-thumb {
   border-color: var(--accent);
 }
 
+/* Toolbar Color Picker */
+.toolbar-color-picker-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.toolbar-color-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  transition: background var(--transition), color var(--transition);
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toolbar-color-btn:hover {
+  background: var(--slate-700);
+  color: var(--text-primary);
+}
+
+.color-icon-letter {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: -3px;
+}
+
+.color-icon-indicator {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 3px;
+  border-radius: 99px;
+  background-color: var(--accent);
+  transition: background-color var(--transition);
+}
+
 
 

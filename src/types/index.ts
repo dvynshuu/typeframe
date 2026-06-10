@@ -47,6 +47,7 @@ export interface Typography {
   lineHeight: number;
   letterSpacing: number;
   textAlign: TextAlign;
+  textColor?: string;
 }
 
 export interface GradientStop {

@@ -146,6 +146,11 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#line-height', String(state.typography.lineHeight));
   setVal(root, '#letter-spacing', String(state.typography.letterSpacing));
   setVal(root, '#text-align', state.typography.textAlign);
+  const currentTheme = themes.find((t) => t.id === state.themeId);
+  const color = state.typography.textColor || currentTheme?.text || '#ffffff';
+  setVal(root, '#text-color', color);
+  const indicator = root.querySelector<HTMLElement>('#text-color-indicator');
+  if (indicator) indicator.style.backgroundColor = color;
   syncSliderLabels(root, state);
   syncAlignButtons(root, state.typography.textAlign);
   setVal(root, '#bg-type', state.background.type);
@@ -555,6 +560,10 @@ function bindFormattingToolbar(root: HTMLElement): void {
   const toolbar = root.querySelector<HTMLDivElement>('#formatting-toolbar');
   if (!textarea || !toolbar) return;
 
+  root.querySelector('#text-color-btn')?.addEventListener('click', () => {
+    root.querySelector<HTMLInputElement>('#text-color')?.click();
+  });
+
   const updateToolbarVisibility = () => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
@@ -564,6 +573,49 @@ function bindFormattingToolbar(root: HTMLElement): void {
       toolbar.classList.remove('is-active');
     }
   };
+
+  const formatColorSelection = (color: string) => {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    if (start === undefined || end === undefined || start === end) return;
+
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    const beforeText = text.substring(0, start);
+    const afterText = text.substring(end);
+
+    const activeMode = store.getState().textMode;
+
+    if (activeMode === 'plain') {
+      store.setTextMode('rich');
+    }
+
+    const cleanText = selectedText.replace(/<span style="color:\s*#[a-fA-F0-9]{3,8}">/gi, '').replace(/<\/span>/gi, '');
+    const replacement = `<span style="color:${color}">${cleanText}</span>`;
+
+    const newText = beforeText + replacement + afterText;
+    textarea.value = newText;
+    store.setText(newText);
+
+    textarea.focus();
+    textarea.setSelectionRange(start, start + replacement.length);
+    updateToolbarVisibility();
+  };
+
+  const colorInput = root.querySelector<HTMLInputElement>('#text-color');
+  colorInput?.addEventListener('input', (e) => {
+    const color = (e.target as HTMLInputElement).value;
+    const indicator = root.querySelector<HTMLElement>('#text-color-indicator');
+    if (indicator) indicator.style.backgroundColor = color;
+    formatColorSelection(color);
+  });
+
+  colorInput?.addEventListener('change', (e) => {
+    const color = (e.target as HTMLInputElement).value;
+    const indicator = root.querySelector<HTMLElement>('#text-color-indicator');
+    if (indicator) indicator.style.backgroundColor = color;
+    formatColorSelection(color);
+  });
 
   textarea.addEventListener('select', updateToolbarVisibility);
   textarea.addEventListener('mouseup', updateToolbarVisibility);

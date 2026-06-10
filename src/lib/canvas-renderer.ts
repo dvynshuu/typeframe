@@ -82,18 +82,11 @@ function drawTextBlock(
   const letterSpacing = typography.letterSpacing * fontSize;
 
   ctx.save();
-  ctx.fillStyle = theme.text;
   ctx.textBaseline = 'top';
-  ctx.textAlign = align;
-  ctx.font = `${typography.fontWeight} ${fontSize}px ${typography.fontFamily}`;
+  // Note: we don't set ctx.textAlign here because we align manually when drawing segments
+  ctx.textAlign = 'left';
 
   let y = block.y;
-  const x =
-    align === 'center'
-      ? block.x + block.width / 2
-      : align === 'right'
-        ? block.x + block.width
-        : block.x;
 
   for (const line of lines) {
     const startY = y;
@@ -102,20 +95,90 @@ function drawTextBlock(
     const style = line.italic ? 'italic ' : '';
     ctx.font = `${style}${weight} ${fs}px ${typography.fontFamily}`;
 
-    const wrapped = wrapText(ctx, line.text, block.width);
-    for (const segment of wrapped) {
-      if (letterSpacing !== 0) {
-        drawSpacedText(ctx, segment, x, y, letterSpacing, align);
-      } else {
-        ctx.fillText(segment, x, y);
+    // Build character style map
+    const charStyles: { bold?: boolean; italic?: boolean; color?: string }[] = [];
+    if (line.spans) {
+      for (const span of line.spans) {
+        for (let i = 0; i < span.text.length; i++) {
+          charStyles.push({ bold: span.bold, italic: span.italic, color: span.color });
+        }
       }
+    }
+
+    const wrapped = wrapText(ctx, line.text, block.width);
+    let origIdx = 0;
+
+    for (const segmentText of wrapped) {
+      // Build styled segments for this wrapped line
+      const segments: { text: string; bold?: boolean; italic?: boolean; color?: string }[] = [];
+      for (let i = 0; i < segmentText.length; i++) {
+        const char = segmentText[i];
+        while (origIdx < line.text.length && line.text[origIdx] !== char && (line.text[origIdx] === ' ' || line.text[origIdx] === '\n')) {
+          origIdx++;
+        }
+        const style = charStyles[origIdx] || {};
+        const lastSeg = segments[segments.length - 1];
+        if (lastSeg && lastSeg.bold === style.bold && lastSeg.italic === style.italic && lastSeg.color === style.color) {
+          lastSeg.text += char;
+        } else {
+          segments.push({ text: char, ...style });
+        }
+        origIdx++;
+      }
+
+      // Calculate total width of the line segment
+      let totalWidth = 0;
+      const segmentWidths: number[] = [];
+
+      for (const seg of segments) {
+        const segFs = line.heading ? fontSize * 1.35 : fontSize;
+        const segWeight = seg.bold || line.heading ? 700 : typography.fontWeight;
+        const segStyle = seg.italic ? 'italic ' : '';
+        ctx.font = `${segStyle}${segWeight} ${segFs}px ${typography.fontFamily}`;
+
+        let w = 0;
+        if (letterSpacing !== 0) {
+          w = seg.text.split('').reduce((s, c) => s + ctx.measureText(c).width + letterSpacing, -letterSpacing);
+        } else {
+          w = ctx.measureText(seg.text).width;
+        }
+        segmentWidths.push(w);
+        totalWidth += w;
+      }
+
+      let startX = block.x;
+      if (align === 'center') {
+        startX = block.x + (block.width - totalWidth) / 2;
+      } else if (align === 'right') {
+        startX = block.x + block.width - totalWidth;
+      }
+
+      // Draw each segment of the wrapped line
+      for (let sIdx = 0; sIdx < segments.length; sIdx++) {
+        const seg = segments[sIdx];
+        const segFs = line.heading ? fontSize * 1.35 : fontSize;
+        const segWeight = seg.bold || line.heading ? 700 : typography.fontWeight;
+        const segStyle = seg.italic ? 'italic ' : '';
+
+        ctx.font = `${segStyle}${segWeight} ${segFs}px ${typography.fontFamily}`;
+        ctx.fillStyle = seg.color || typography.textColor || theme.text;
+
+        if (letterSpacing !== 0) {
+          drawSpacedText(ctx, seg.text, startX, y, letterSpacing, 'left');
+        } else {
+          ctx.fillText(seg.text, startX, y);
+        }
+
+        startX += segmentWidths[sIdx];
+      }
+
       y += (line.heading ? fs * 1.2 : lineHeight);
       if (y > block.y + block.height) break;
     }
+
     if (line.list) {
       ctx.fillStyle = theme.accent;
       ctx.fillRect(block.x, startY + fontSize * 0.35, 4, fontSize * 0.5);
-      ctx.fillStyle = theme.text;
     }
   }
   ctx.restore();
@@ -144,7 +207,7 @@ function drawCodeBlock(
   ctx.textAlign = 'left';
 
   let y = block.y + pad;
-  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', theme.text];
+  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', state.typography.textColor || theme.text];
 
   lines.forEach((line, i) => {
     const color = colors[i % colors.length];

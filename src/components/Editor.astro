@@ -91,6 +91,13 @@ import { aspectLabel } from '../utils/aspect';
             <button type="button" data-action="bold" title="Bold (Ctrl+B)">B</button>
             <button type="button" data-action="italic" title="Italic (Ctrl+I)">I</button>
             <button type="button" data-action="heading" title="Heading (Ctrl+H)">H</button>
+            <div class="toolbar-color-picker-wrapper">
+              <button type="button" class="toolbar-color-btn" title="Text Color" id="text-color-btn">
+                <span class="color-icon-letter">A</span>
+                <span class="color-icon-indicator" id="text-color-indicator"></span>
+              </button>
+              <input type="color" id="text-color" class="sr-only" value="#e8ecf4" />
+            </div>
           </div>
           <textarea
             id="text-input"
