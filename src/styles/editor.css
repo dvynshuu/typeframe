@@ -177,6 +177,43 @@
   line-height: 1;
 }
 
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), border-color var(--transition), color var(--transition), transform 120ms var(--ease-out);
+}
+
+.btn-share:hover {
+  background: var(--bg-inset);
+  border-color: var(--border-soft);
+  color: var(--text-primary);
+}
+
+.btn-share:active {
+  transform: scale(0.98);
+}
+
+.btn-share__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  transition: color var(--transition);
+}
+
+.btn-share:hover .btn-share__icon {
+  color: var(--accent-bright);
+}
+
 /* ─── Panels ─── */
 .panel {
   display: flex;

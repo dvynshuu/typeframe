@@ -263,8 +263,21 @@ function bindControls(root: HTMLElement): void {
   bindAlign(root);
   bindBackground(root);
   bindExport(root);
+  bindShare(root);
   bindFormatPills(root);
   bindPreset(root);
+}
+
+function bindShare(root: HTMLElement): void {
+  root.querySelector('#share-btn')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      showToast('Shareable studio link copied to clipboard!', 'success');
+    } catch (err: any) {
+      console.error('Share failed:', err);
+      showToast(`Failed to copy link: ${err?.message || 'unknown error'}`, 'error');
+    }
+  });
 }
 
 function bindAlign(root: HTMLElement): void {

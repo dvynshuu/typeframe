@@ -57,6 +57,14 @@ import { aspectLabel } from '../utils/aspect';
       <p class="app-tagline">Typography studio for shareable images</p>
     </div>
     <div class="header-actions">
+      <button type="button" class="btn-share" id="share-btn" title="Copy shareable link to clipboard">
+        <span class="btn-share__icon" aria-hidden="true">
+          <svg class="btn-share__svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px; display: block;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186.012-.006a2.25 2.25 0 1 0-.012.006Zm0 2.186.012.006a2.25 2.25 0 1 1-.012-.006Zm0 0 4.283 2.14m-4.283-4.28a4.25 4.25 0 0 0 4.282-2.14m0 0a2.25 2.25 0 1 0 0-2.186m0 2.186.012-.006a2.25 2.25 0 1 1-.012.006Zm0-2.186-.012-.006a2.25 2.25 0 1 0 .012.006Z" />
+          </svg>
+        </span>
+        <span class="btn-share__text">Share</span>
+      </button>
       <div class="export-format-pills" role="group" aria-label="Export format">
         <button type="button" data-format="png" class="is-active">PNG</button>
         <button type="button" data-format="jpeg">JPG</button>

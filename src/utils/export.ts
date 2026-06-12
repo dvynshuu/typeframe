@@ -35,7 +35,7 @@ function exportViaWorker(
         worker.terminate();
       });
 
-      worker.postMessage({ state, format, quality });
+      worker.postMessage({ state, format, quality, origin: typeof window !== 'undefined' ? window.location.origin : undefined });
     } catch (err) {
       reject(err);
     }
