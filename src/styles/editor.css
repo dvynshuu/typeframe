@@ -1117,5 +1117,44 @@ input[type='range']::-moz-range-thumb {
   transition: background-color var(--transition);
 }
 
+.dimensions-lock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.custom-size-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0 !important;
+}
+
+.btn-lock-ratio {
+  background: transparent;
+  border: none;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition), background var(--transition);
+}
+
+.btn-lock-ratio:hover {
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+}
+
+.btn-lock-ratio[aria-pressed="true"] {
+  color: var(--accent-bright);
+}
+
+
 
 

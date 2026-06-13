@@ -385,6 +385,30 @@ function bindBackground(root: HTMLElement): void {
 }
 
 function bindPreset(root: HTMLElement): void {
+  let isRatioLocked = false;
+  let lockedRatio = 1.0;
+
+  const lockBtn = root.querySelector('#lock-ratio-btn') as HTMLButtonElement | null;
+  const widthInput = root.querySelector('#custom-width') as HTMLInputElement | null;
+  const heightInput = root.querySelector('#custom-height') as HTMLInputElement | null;
+
+  if (lockBtn) {
+    lockBtn.addEventListener('click', () => {
+      isRatioLocked = !isRatioLocked;
+      lockBtn.setAttribute('aria-pressed', String(isRatioLocked));
+      const icon = lockBtn.querySelector('.lock-icon');
+      if (icon) icon.textContent = isRatioLocked ? '🔒' : '🔓';
+      
+      const text = lockBtn.childNodes[lockBtn.childNodes.length - 1];
+      if (text) text.textContent = isRatioLocked ? ' Locked' : ' Unlocked';
+
+      if (isRatioLocked) {
+        const state = store.getState();
+        lockedRatio = state.width / state.height;
+      }
+    });
+  }
+
   root.querySelector('#preset-size')?.addEventListener('change', (e) => {
     const preset = (e.target as HTMLSelectElement).value as PresetSize;
     if (preset === 'custom') {
@@ -392,12 +416,23 @@ function bindPreset(root: HTMLElement): void {
       return;
     }
     const p = presetSizes.find((s) => s.id === preset);
-    if (p) store.setState({ presetSize: preset, width: p.width, height: p.height });
+    if (p) {
+      store.setState({ presetSize: preset, width: p.width, height: p.height });
+      if (isRatioLocked) {
+        lockedRatio = p.width / p.height;
+      }
+    }
   });
 
-  const applyCustom = () => {
-    const w = Number((root.querySelector('#custom-width') as HTMLInputElement)?.value) || 1080;
-    const h = Number((root.querySelector('#custom-height') as HTMLInputElement)?.value) || 1080;
+  const handleWidthChange = () => {
+    const w = Number(widthInput?.value) || 1080;
+    let h = Number(heightInput?.value) || 1080;
+
+    if (isRatioLocked) {
+      h = Math.round(w / lockedRatio);
+      if (heightInput) heightInput.value = String(h);
+    }
+
     store.setState({
       presetSize: 'custom',
       customWidth: w,
@@ -406,8 +441,29 @@ function bindPreset(root: HTMLElement): void {
       height: h,
     });
   };
-  root.querySelector('#custom-width')?.addEventListener('change', applyCustom);
-  root.querySelector('#custom-height')?.addEventListener('change', applyCustom);
+
+  const handleHeightChange = () => {
+    let w = Number(widthInput?.value) || 1080;
+    const h = Number(heightInput?.value) || 1080;
+
+    if (isRatioLocked) {
+      w = Math.round(h * lockedRatio);
+      if (widthInput) widthInput.value = String(w);
+    }
+
+    store.setState({
+      presetSize: 'custom',
+      customWidth: w,
+      customHeight: h,
+      width: w,
+      height: h,
+    });
+  };
+
+  widthInput?.addEventListener('input', handleWidthChange);
+  heightInput?.addEventListener('input', handleHeightChange);
+  widthInput?.addEventListener('change', handleWidthChange);
+  heightInput?.addEventListener('change', handleHeightChange);
 }
 
 function bindExport(root: HTMLElement): void {
@@ -510,15 +566,24 @@ function bindDragResize(
     e.preventDefault();
 
     const nudge = e.shiftKey ? 10 : 1;
-    let dx = 0;
-    let dy = 0;
 
-    if (e.key === 'ArrowUp') dy = -nudge;
-    if (e.key === 'ArrowDown') dy = nudge;
-    if (e.key === 'ArrowLeft') dx = -nudge;
-    if (e.key === 'ArrowRight') dx = nudge;
-
-    store.setBlockPosition(blockId, block.x + dx, block.y + dy);
+    if (e.ctrlKey || e.metaKey) {
+      let dw = 0;
+      let dh = 0;
+      if (e.key === 'ArrowUp') dh = -nudge;
+      if (e.key === 'ArrowDown') dh = nudge;
+      if (e.key === 'ArrowLeft') dw = -nudge;
+      if (e.key === 'ArrowRight') dw = nudge;
+      store.setBlockSize(blockId, Math.max(100, block.width + dw), Math.max(60, block.height + dh));
+    } else {
+      let dx = 0;
+      let dy = 0;
+      if (e.key === 'ArrowUp') dy = -nudge;
+      if (e.key === 'ArrowDown') dy = nudge;
+      if (e.key === 'ArrowLeft') dx = -nudge;
+      if (e.key === 'ArrowRight') dx = nudge;
+      store.setBlockPosition(blockId, block.x + dx, block.y + dy);
+    }
   });
 
   layer.addEventListener('pointerdown', (e) => {

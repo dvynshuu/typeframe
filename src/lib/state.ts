@@ -84,9 +84,21 @@ export class EditorStore {
 
   setTheme(id: ThemeId): void {
     const theme = getTheme(id);
+    const currentBg = this.state.background;
+    const background = currentBg.type === 'image'
+      ? {
+          ...structuredClone(theme.background),
+          type: 'image' as const,
+          imageUrl: currentBg.imageUrl,
+          imageOpacity: currentBg.imageOpacity,
+          imageScale: currentBg.imageScale,
+          imageSizeMode: currentBg.imageSizeMode,
+        }
+      : structuredClone(theme.background);
+
     this.setState({
       themeId: id,
-      background: structuredClone(theme.background),
+      background,
       typography: { ...this.state.typography, ...theme.typography, textColor: theme.text },
     });
   }

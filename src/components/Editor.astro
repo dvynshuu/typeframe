@@ -332,14 +332,22 @@ Design is how it works.</textarea>
             ))}
           </select>
         </div>
-        <div class="field field--row">
-          <div>
-            <label for="custom-width">W</label>
-            <input type="number" id="custom-width" min="400" max="4096" value="1080" />
+        <div class="field">
+          <div class="dimensions-lock-row">
+            <label class="custom-size-label">Custom Size</label>
+            <button type="button" class="btn-lock-ratio" id="lock-ratio-btn" title="Lock aspect ratio" aria-pressed="false">
+              <span class="lock-icon" aria-hidden="true">🔓</span> Unlocked
+            </button>
           </div>
-          <div>
-            <label for="custom-height">H</label>
-            <input type="number" id="custom-height" min="400" max="4096" value="1080" />
+          <div class="field field--row">
+            <div>
+              <label for="custom-width">W</label>
+              <input type="number" id="custom-width" min="400" max="4096" value="1080" />
+            </div>
+            <div>
+              <label for="custom-height">H</label>
+              <input type="number" id="custom-height" min="400" max="4096" value="1080" />
+            </div>
           </div>
         </div>
       </section>

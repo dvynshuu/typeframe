@@ -322,7 +322,7 @@ function svgDecorations(w: number, h: number, theme: Theme): string {
         break;
       }
       case 'masthead':
-        markup += `  <rect width="${w}" height="${h * 0.028}" fill="${accent}"/>\n`;
+        markup += `  <rect width="${w}" height="${w * 0.028}" fill="${accent}"/>\n`;
         markup += `  <text x="${w * 0.08}" y="${h * 0.052}" fill="${accent}" fill-opacity="0.6" font-family="'IBM Plex Sans', sans-serif" font-weight="600" font-size="${Math.round(h * 0.018)}" dominant-baseline="central">TYPEFRAME</text>\n`;
         break;
       case 'glow-orb':
