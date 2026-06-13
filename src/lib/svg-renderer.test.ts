@@ -58,4 +58,9 @@ describe('svg-renderer', () => {
     expect(tspanCount).toBeGreaterThan(1);
     expect(svg).toContain('letter-spacing="0.05em"');
   });
+
+  it('should match the visual structural snapshot of the rendered SVG', () => {
+    const svg = renderToSvg(mockState);
+    expect(svg).toMatchSnapshot();
+  });
 });

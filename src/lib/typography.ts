@@ -27,9 +27,4 @@ export const defaultTypography: Typography = {
   textAlign: 'center',
 };
 
-export function mergeTypography(
-  base: Typography,
-  overrides: Partial<Typography>
-): Typography {
-  return { ...base, ...overrides };
-}
+

@@ -1,0 +1,65 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`svg-renderer > should match the visual structural snapshot of the rendered SVG 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+  <defs>
+    <radialGradient id="mesh-blob-0" gradientUnits="userSpaceOnUse" cx="200" cy="300" r="550" fx="200" fy="300">
+        <stop offset="0%" stop-color="#0b0d13" stop-opacity="0.8"/>
+        <stop offset="60%" stop-color="#0b0d13" stop-opacity="0.27"/>
+        <stop offset="100%" stop-color="#0b0d13" stop-opacity="0"/>
+      </radialGradient>
+<radialGradient id="mesh-blob-1" gradientUnits="userSpaceOnUse" cx="800" cy="200" r="500" fx="800" fy="200">
+        <stop offset="0%" stop-color="#161a24" stop-opacity="0.8"/>
+        <stop offset="60%" stop-color="#161a24" stop-opacity="0.27"/>
+        <stop offset="100%" stop-color="#161a24" stop-opacity="0"/>
+      </radialGradient>
+<radialGradient id="mesh-blob-2" gradientUnits="userSpaceOnUse" cx="500" cy="850" r="600" fx="500" fy="850">
+        <stop offset="0%" stop-color="#6e8cff" stop-opacity="0.8"/>
+        <stop offset="60%" stop-color="#6e8cff" stop-opacity="0.27"/>
+        <stop offset="100%" stop-color="#6e8cff" stop-opacity="0"/>
+      </radialGradient>
+<radialGradient id="mesh-blob-3" gradientUnits="userSpaceOnUse" cx="100" cy="750" r="450" fx="100" fy="750">
+        <stop offset="0%" stop-color="#c37cff" stop-opacity="0.8"/>
+        <stop offset="60%" stop-color="#c37cff" stop-opacity="0.27"/>
+        <stop offset="100%" stop-color="#c37cff" stop-opacity="0"/>
+      </radialGradient>
+<radialGradient id="vignette-grad" gradientUnits="userSpaceOnUse" cx="500" cy="500" r="720" fx="500" fy="500" fr="200">
+      <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.55"/>
+    </radialGradient>
+<radialGradient id="glow-orb-grad" gradientUnits="userSpaceOnUse" cx="850" cy="150" r="450" fx="850" fy="150">
+      <stop offset="0%" stop-color="#6e8cff" stop-opacity="0.27"/>
+      <stop offset="50%" stop-color="#6e8cff" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+<linearGradient id="accent-rule-line" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6e8cff" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#6e8cff"/>
+      <stop offset="80%" stop-color="#6e8cff"/>
+      <stop offset="100%" stop-color="#6e8cff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="accent-rule-glow" gradientUnits="userSpaceOnUse" cx="500" cy="920" r="350" fx="500" fy="920">
+      <stop offset="0%" stop-color="#6e8cff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+
+  </defs>
+  <rect width="1000" height="1000" fill="#0b0d13"/>
+  <rect width="1000" height="1000" fill="url(#mesh-blob-0)"/>
+  <rect width="1000" height="1000" fill="url(#mesh-blob-1)"/>
+  <rect width="1000" height="1000" fill="url(#mesh-blob-2)"/>
+  <rect width="1000" height="1000" fill="url(#mesh-blob-3)"/>
+  <rect width="1000" height="1000" fill="white" filter="url(#noise-filter)"/>
+
+    <rect width="1000" height="1000" fill="url(#vignette-grad)"/>
+  <rect y="80" width="1000" height="2" fill="url(#accent-rule-line)"/>
+  <rect y="500" width="1000" height="500" fill="url(#accent-rule-glow)"/>
+  <rect width="1000" height="1000" fill="url(#glow-orb-grad)"/>
+  <rect width="1000" height="28" fill="#6e8cff"/>
+  <text x="80" y="52" fill="#6e8cff" fill-opacity="0.6" font-family="'IBM Plex Sans', sans-serif" font-weight="600" font-size="18" dominant-baseline="central">TYPEFRAME</text>
+
+  <text x="280" y="300" fill="#e8ecf4" font-family="Inter" font-size="42" text-anchor="middle" letter-spacing="0.05em"><tspan x="280" dy="42" font-size="42" font-weight="500"><tspan>This is a very long line that should</tspan></tspan><tspan x="280" dy="58.8" font-size="42" font-weight="500"><tspan>wrap on multiple lines inside the SVG</tspan></tspan><tspan x="280" dy="58.8" font-size="42" font-weight="500"><tspan>output.</tspan></tspan></text>
+  <rect x="440" y="880" width="120" height="3" fill="#6e8cff"/>
+</svg>"
+`;

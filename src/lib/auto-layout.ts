@@ -1,4 +1,4 @@
-import type { EditorState, TextBlock, Template } from '../types';
+import type { EditorState, TextBlock } from '../types';
 import { parseText, isCodeContent } from '../utils/text-parser';
 import { getTemplate } from './templates';
 
@@ -77,18 +77,4 @@ function estimateHeight(text: string, fontSize: number): number {
   return lines * fontSize * 1.4 + fontSize * 2;
 }
 
-export function applyTemplateLayout(
-  state: EditorState,
-  template: Template
-): Partial<EditorState> {
-  return {
-    width: template.width,
-    height: template.height,
-    typography: { ...state.typography, ...template.defaultTypography },
-    blocks: computeAutoLayout({
-      ...state,
-      width: template.width,
-      height: template.height,
-    }),
-  };
-}
+

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { computeAutoLayout, applyTemplateLayout } from './auto-layout';
-import type { EditorState, Template } from '../types';
+import { computeAutoLayout } from './auto-layout';
+import type { EditorState } from '../types';
 
 const mockBaseState: EditorState = {
   text: 'Design is how it works.',
@@ -68,26 +68,5 @@ describe('auto-layout', () => {
     });
   });
 
-  describe('applyTemplateLayout', () => {
-    it('applies template specifications to editor state', () => {
-      const template: Template = {
-        id: 'instagram-story',
-        name: 'Instagram Story',
-        width: 1080,
-        height: 1920,
-        description: 'Tall layout',
-        defaultTypography: {
-          fontSize: 48,
-          textAlign: 'center',
-        },
-        layoutHint: 'centered',
-      };
 
-      const result = applyTemplateLayout(mockBaseState, template);
-      expect(result.width).toBe(1080);
-      expect(result.height).toBe(1920);
-      expect(result.typography?.fontSize).toBe(48);
-      expect(result.blocks).toHaveLength(1);
-    });
-  });
 });
