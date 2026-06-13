@@ -160,8 +160,6 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
 
-  const mastheadCheck = root.querySelector<HTMLInputElement>('#show-masthead');
-  if (mastheadCheck) mastheadCheck.checked = !!state.showMasthead;
 
   const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
   if (imgGroup) {
@@ -237,9 +235,6 @@ function bindControls(root: HTMLElement): void {
     store.setText((e.target as HTMLTextAreaElement).value);
   });
 
-  root.querySelector('#show-masthead')?.addEventListener('change', (e) => {
-    store.setState({ showMasthead: (e.target as HTMLInputElement).checked });
-  });
 
   root.querySelectorAll('[data-mode]').forEach((btn) => {
     btn.addEventListener('click', () => {

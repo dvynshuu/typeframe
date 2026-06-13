@@ -693,7 +693,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.field input:not([type='range']):not([type='color']):not([type='file']),
+.field input:not([type='range']):not([type='color']):not([type='file']):not([type='checkbox']),
 .field select {
   width: 100%;
   padding: 0.5rem 0.65rem;
