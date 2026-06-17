@@ -73,4 +73,29 @@ export async function exportImage(
   }
 }
 
+export async function copyImageToClipboard(state: EditorState): Promise<void> {
+  let blob: Blob;
+  try {
+    // Clipboard API requires PNG format for image pasting in most browsers
+    blob = await exportViaWorker(state, 'png', 1.0);
+  } catch (err) {
+    console.warn('Worker export for clipboard failed, falling back to main thread:', err);
+    const canvas = document.createElement('canvas');
+    await renderToCanvas(canvas, state, { scale: 1 });
+    const p = new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((b) => {
+        if (b) resolve(b);
+        else reject(new Error('Failed to convert canvas to blob'));
+      }, 'image/png');
+    });
+    blob = await p;
+  }
+  
+  await navigator.clipboard.write([
+    new ClipboardItem({
+      [blob.type]: blob
+    })
+  ]);
+}
+
 

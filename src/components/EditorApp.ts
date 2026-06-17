@@ -8,7 +8,7 @@ import {
   computePreviewScale,
   formatDimensions,
 } from '../lib/preview-scale';
-import { exportImage } from '../utils/export';
+import { exportImage, copyImageToClipboard } from '../utils/export';
 import { showToast } from '../utils/toast';
 import {
   serializeState,
@@ -83,6 +83,7 @@ export function initEditor(root: HTMLElement): () => void {
     renderLoop.schedule(state);
     syncForm(root, state);
     updateScreenReaderDescription(state);
+    updateChecklist(root, state);
 
     // Revoke old blob URL if background image has changed
     const currentImageUrl = state.background.imageUrl;
@@ -258,6 +259,9 @@ function bindControls(root: HTMLElement): void {
   bindAlign(root);
   bindBackground(root);
   bindExport(root);
+  bindCopyImage(root);
+  bindShuffle(root);
+  bindGuideDrawer(root);
   bindShare(root);
   bindFormatPills(root);
   bindPreset(root);
@@ -473,6 +477,8 @@ function bindExport(root: HTMLElement): void {
     if (label) label.textContent = 'Rendering…';
     try {
       await exportImage(state, format);
+      sessionExportedOrCopied = true;
+      updateChecklist(root, store.getState());
       showToast(`Image exported successfully as ${format.toUpperCase()}!`, 'success');
     } catch (err: any) {
       console.error('Export failed:', err);
@@ -852,6 +858,117 @@ function bindBackdropPresets(root: HTMLElement): void {
       }
       store.setState({ background });
     });
+  });
+}
+
+let sessionExportedOrCopied = false;
+
+function updateChecklist(root: HTMLElement, state: ReturnType<EditorStore['getState']>): void {
+  const defaultText = 'Design is not just what it looks like.\nDesign is how it works.';
+  const step1 = state.text.trim().length > 0 && state.text !== defaultText;
+
+  const t = state.typography;
+  const step2 = t.fontSize !== 42 || t.textAlign !== 'center' || t.lineHeight !== 1.4 || t.fontFamily !== '"Inter", system-ui, sans-serif' || t.fontWeight !== 500 || t.letterSpacing !== 0;
+
+  const step3 = state.themeId !== 'studio-dark' || state.background.type !== 'gradient';
+
+  const step4 = sessionExportedOrCopied;
+
+  const steps = [step1, step2, step3, step4];
+  const completedCount = steps.filter(Boolean).length;
+
+  const progressText = root.querySelector('#checklist-progress-text');
+  if (progressText) {
+    progressText.textContent = `${completedCount} of 4 completed`;
+  }
+
+  const progressBar = root.querySelector<HTMLElement>('#checklist-progress-fill');
+  if (progressBar) {
+    progressBar.style.width = `${(completedCount / 4) * 100}%`;
+  }
+
+  [1, 2, 3, 4].forEach((num) => {
+    const el = root.querySelector(`#checklist-step-${num}`);
+    if (el) {
+      const isDone = steps[num - 1];
+      el.classList.toggle('is-completed', isDone);
+    }
+  });
+
+  const checklistCard = root.querySelector('.checklist-card');
+  if (checklistCard) {
+    checklistCard.classList.toggle('is-all-completed', completedCount === 4);
+  }
+}
+
+function bindShuffle(root: HTMLElement): void {
+  root.querySelector('#shuffle-btn')?.addEventListener('click', () => {
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+    const randomFont = fontFamilies[Math.floor(Math.random() * fontFamilies.length)];
+    const randomWeight = fontWeights[Math.floor(Math.random() * fontWeights.length)];
+    const randomAlign = ['left', 'center', 'right'][Math.floor(Math.random() * 3)] as 'left' | 'center' | 'right';
+
+    store.setTheme(randomTheme.id);
+
+    const currentTypography = store.getState().typography;
+    store.setState({
+      typography: {
+        ...currentTypography,
+        fontFamily: randomFont.value,
+        fontWeight: randomWeight.value,
+        textAlign: randomAlign,
+      }
+    });
+
+    showToast('Styles randomized! 🎲', 'success');
+  });
+}
+
+function bindCopyImage(root: HTMLElement): void {
+  root.querySelector('#copy-img-btn')?.addEventListener('click', async () => {
+    const btn = root.querySelector('#copy-img-btn');
+    const state = store.getState();
+    btn?.classList.add('is-loading');
+    const label = btn?.querySelector('.btn-copy-img__text');
+    const prev = label?.textContent;
+    if (label) label.textContent = 'Copying…';
+    try {
+      await copyImageToClipboard(state);
+      sessionExportedOrCopied = true;
+      updateChecklist(root, store.getState());
+      showToast('Image copied to clipboard successfully! 📋', 'success');
+    } catch (err: any) {
+      console.error('Copy to clipboard failed:', err);
+      showToast(`Clipboard copy failed: ${err?.message || 'unknown error'}`, 'error');
+    } finally {
+      btn?.classList.remove('is-loading');
+      if (label && prev) label.textContent = prev;
+    }
+  });
+}
+
+function bindGuideDrawer(root: HTMLElement): void {
+  const drawer = root.querySelector('#seo-info-drawer');
+  const openBtn = root.querySelector('#guide-btn');
+  const closeBtn = root.querySelector('#seo-drawer-close-btn');
+  const closeBackdrop = root.querySelector('#seo-drawer-close-btn-backdrop');
+
+  const toggle = () => {
+    if (drawer) {
+      const isOpen = drawer.classList.contains('is-open');
+      drawer.classList.toggle('is-open', !isOpen);
+      openBtn?.setAttribute('aria-expanded', String(!isOpen));
+    }
+  };
+
+  openBtn?.addEventListener('click', toggle);
+  closeBtn?.addEventListener('click', toggle);
+  closeBackdrop?.addEventListener('click', toggle);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer?.classList.contains('is-open')) {
+      toggle();
+    }
   });
 }
 

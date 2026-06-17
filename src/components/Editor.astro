@@ -5,6 +5,7 @@ import { themes } from '../lib/themes';
 import { fontFamilies, fontWeights } from '../lib/typography';
 import { presetSizes } from '../lib/templates';
 import { aspectLabel } from '../utils/aspect';
+import SeoContent from './SeoContent.astro';
 ---
 
 <div class="app-shell" id="typeframe-editor">
@@ -57,6 +58,14 @@ import { aspectLabel } from '../utils/aspect';
       <p class="app-tagline">Typography studio for shareable images</p>
     </div>
     <div class="header-actions">
+      <button type="button" class="btn-guide" id="guide-btn" title="Open SEO Guide & FAQs">
+        <span class="btn-guide__icon" aria-hidden="true">💡</span>
+        <span class="btn-guide__text">Guide & FAQ</span>
+      </button>
+      <button type="button" class="btn-shuffle" id="shuffle-btn" title="Surprise Me (Randomize layout, font & theme)">
+        <span class="btn-shuffle__icon" aria-hidden="true">🎲</span>
+        <span class="btn-shuffle__text">Surprise Me</span>
+      </button>
       <button type="button" class="btn-share" id="share-btn" title="Copy shareable link to clipboard">
         <span class="btn-share__icon" aria-hidden="true">
           <svg class="btn-share__svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px; display: block;">
@@ -71,6 +80,10 @@ import { aspectLabel } from '../utils/aspect';
         <button type="button" data-format="webp">WebP</button>
         <button type="button" data-format="svg" class="has-tooltip" data-tooltip="SVG exports are vector-only and approximate gradients & mesh effects.">SVG</button>
       </div>
+      <button type="button" class="btn-copy-img" id="copy-img-btn" title="Copy high-res image to clipboard">
+        <span class="btn-copy-img__icon" aria-hidden="true">📋</span>
+        <span class="btn-copy-img__text">Copy Image</span>
+      </button>
       <button type="button" class="btn-export" id="export-btn">
         <span class="btn-export__icon" aria-hidden="true">↓</span>
         <span class="btn-export__text">Export</span>
@@ -158,6 +171,38 @@ Design is how it works.</textarea>
               </span>
             </button>
           ))}
+      </section>
+
+      <section class="panel-section checklist-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Creator Progress</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-header">
+            <span class="checklist-progress-text" id="checklist-progress-text">0 of 4 completed</span>
+            <div class="checklist-progress-bar">
+              <div class="checklist-progress-fill" id="checklist-progress-fill" style="width: 0%"></div>
+            </div>
+          </div>
+          <ul class="checklist-items" role="list">
+            <li class="checklist-item" id="checklist-step-1">
+              <span class="checklist-checkbox"></span>
+              <span class="checklist-text">Compose your message</span>
+            </li>
+            <li class="checklist-item" id="checklist-step-2">
+              <span class="checklist-checkbox"></span>
+              <span class="checklist-text">Style typography</span>
+            </li>
+            <li class="checklist-item" id="checklist-step-3">
+              <span class="checklist-checkbox"></span>
+              <span class="checklist-text">Select background atmosphere</span>
+            </li>
+            <li class="checklist-item" id="checklist-step-4">
+              <span class="checklist-checkbox"></span>
+              <span class="checklist-text">Copy or export image</span>
+            </li>
+          </ul>
         </div>
       </section>
     </div>
@@ -349,4 +394,5 @@ Design is how it works.</textarea>
     <option value="svg">SVG</option>
   </select>
   <div id="sr-preview-description" class="sr-only" aria-live="polite"></div>
+  <SeoContent />
 </div>

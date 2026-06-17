@@ -35,6 +35,53 @@ const jsonLd = {
     "Pixel-perfect raster (PNG, JPEG, WebP) and vector (SVG) exports"
   ]
 };
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Typeframe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Typeframe is a premium online typography studio that lets you turn words and quotes into beautiful, shareable social media images. It offers editorial layouts, rich text/markdown support, hand-crafted mesh or gradient backdrops, and instant high-resolution exports."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Typeframe free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Typeframe is 100% free to use with no account registration, watermark, or hidden fees. All designs are rendered locally in your browser and exported in high quality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What formats does Typeframe support for export?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Typeframe supports exporting in PNG, JPEG, and WebP raster formats, as well as scalable vector SVG format, making it suitable for LinkedIn, Twitter, Instagram, and blogs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Typeframe support markdown formatting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Typeframe features full Markdown support. You can use standard formatting syntax like bold (**text**), italic (*text*), and headings (# heading) to stylize specific parts of your text block."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are my designs kept private?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Typeframe runs entirely client-side. Your text inputs, background photo uploads, and configuration are processed locally in your browser and are never uploaded to any server. Your data remains yours."
+      }
+    }
+  ]
+};
 ---
 
 <!doctype html>
@@ -48,6 +95,7 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
+    <meta name="keywords" content="text to image converter, online quote card maker, typographic social post generator, quote card generator, image from text, typography card builder, custom background social graphics, elegant typography images" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0b0d13" />
     <link rel="canonical" href={url} />
@@ -182,7 +230,8 @@ const jsonLd = {
     </style>
 
     <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqJsonLd)}></script>
   </head>
   <body>
     <slot />
