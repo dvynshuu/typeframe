@@ -1,4 +1,4 @@
-import type { Theme, ThemeDecoration } from '../types';
+import type { Theme } from '../types';
 
 export function drawThemeDecorations(
   ctx: CanvasRenderingContext2D,
@@ -55,7 +55,7 @@ export function drawThemeDecorations(
         drawBraunDials(ctx, w, h, theme.accent);
         break;
       case 'bauhaus-shapes':
-        drawBauhausShapes(ctx, w, h, theme.accent);
+        drawBauhausShapes(ctx, w, h);
         break;
     }
   }
@@ -348,7 +348,7 @@ function drawBraunDials(ctx: CanvasRenderingContext2D, w: number, h: number, acc
   ctx.restore();
 }
 
-function drawBauhausShapes(ctx: CanvasRenderingContext2D, w: number, h: number, accent: string): void {
+function drawBauhausShapes(ctx: CanvasRenderingContext2D, w: number, h: number): void {
   ctx.save();
   
   // Dynamic top-right primary red-yellow glow circle

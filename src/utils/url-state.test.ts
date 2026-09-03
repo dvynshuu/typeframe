@@ -81,6 +81,36 @@ describe('url-state', () => {
       expect(restored.showMasthead).toBe(true);
     });
 
+    it('serializes and deserializes studio frames and author profile', () => {
+      const state: EditorState = {
+        ...mockBaseState,
+        frameStyle: 'macos',
+        cardPadding: 64,
+        cardRadius: 20,
+        cardShadow: 'glow',
+        exportScale: 4,
+        author: {
+          name: 'Sarah Connor',
+          handle: '@sconnor',
+          verified: true,
+          showSignature: true,
+        },
+      };
+
+      const queryString = serializeState(state);
+      const restored = deserializeState(queryString, mockBaseState);
+
+      expect(restored.frameStyle).toBe('macos');
+      expect(restored.cardPadding).toBe(64);
+      expect(restored.cardRadius).toBe(20);
+      expect(restored.cardShadow).toBe('glow');
+      expect(restored.exportScale).toBe(4);
+      expect(restored.author?.name).toBe('Sarah Connor');
+      expect(restored.author?.handle).toBe('@sconnor');
+      expect(restored.author?.verified).toBe(true);
+      expect(restored.author?.showSignature).toBe(true);
+    });
+
     it('returns default state if query parameters are missing', () => {
       const restored = deserializeState('', mockBaseState);
       expect(restored).toEqual(mockBaseState);

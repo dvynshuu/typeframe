@@ -23,6 +23,7 @@ const { initialTool } = Astro.props;
   data-initial-theme={initialTool?.themeId}
   data-initial-mode={initialTool?.textMode}
   data-initial-text={initialTool?.defaultText ? encodeURIComponent(initialTool.defaultText) : undefined}
+  data-mobile-view="compose"
 >
   <header class="app-header">
     <div class="app-brand">
@@ -82,15 +83,15 @@ const { initialTool } = Astro.props;
       )}
     </div>
     <div class="header-actions">
-      <button type="button" class="btn-guide" id="guide-btn" title="Open SEO Guide & FAQs">
+      <button type="button" class="btn-guide has-tooltip" id="guide-btn" data-tooltip="Guide & FAQs" aria-label="Open SEO Guide & FAQs">
         <span class="btn-guide__icon" aria-hidden="true">💡</span>
         <span class="btn-guide__text">Guide & FAQ</span>
       </button>
-      <button type="button" class="btn-shuffle" id="shuffle-btn" title="Surprise Me (Randomize layout, font & theme)">
+      <button type="button" class="btn-shuffle has-tooltip" id="shuffle-btn" data-tooltip="Surprise Me (Randomize)" aria-label="Surprise Me (Randomize layout, font & theme)">
         <span class="btn-shuffle__icon" aria-hidden="true">🎲</span>
         <span class="btn-shuffle__text">Surprise Me</span>
       </button>
-      <button type="button" class="btn-share" id="share-btn" title="Copy shareable link to clipboard">
+      <button type="button" class="btn-share has-tooltip" id="share-btn" data-tooltip="Copy shareable studio link" aria-label="Copy shareable link to clipboard">
         <span class="btn-share__icon" aria-hidden="true">
           <svg class="btn-share__svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px; display: block;">
             <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186.012-.006a2.25 2.25 0 1 0-.012.006Zm0 2.186.012.006a2.25 2.25 0 1 1-.012-.006Zm0 0 4.283 2.14m-4.283-4.28a4.25 4.25 0 0 0 4.282-2.14m0 0a2.25 2.25 0 1 0 0-2.186m0 2.186.012-.006a2.25 2.25 0 1 1-.012.006Zm0-2.186-.012-.006a2.25 2.25 0 1 0 .012.006Z" />
@@ -98,24 +99,53 @@ const { initialTool } = Astro.props;
         </span>
         <span class="btn-share__text">Share</span>
       </button>
+      <div class="export-scale-pills" role="group" aria-label="Export Resolution Scale">
+        <button type="button" data-export-scale="1" class="has-tooltip" data-tooltip="Standard resolution (1x)" aria-label="Export at 1x resolution">1x</button>
+        <button type="button" data-export-scale="2" class="is-active has-tooltip" data-tooltip="Retina HD crisp export (2x)" aria-label="Export at 2x Retina resolution">2x HD</button>
+        <button type="button" data-export-scale="4" class="has-tooltip" data-tooltip="Ultra-HD 4K print & studio quality (4x)" aria-label="Export at 4x Ultra-HD resolution">4x 4K</button>
+      </div>
       <div class="export-format-pills" role="group" aria-label="Export format">
         <button type="button" data-format="png" class="is-active">PNG</button>
         <button type="button" data-format="jpeg">JPG</button>
         <button type="button" data-format="webp">WebP</button>
-        <button type="button" data-format="svg" class="has-tooltip" data-tooltip="SVG exports are vector-only and approximate gradients & mesh effects.">SVG</button>
+        <button type="button" data-format="svg" class="has-tooltip" data-tooltip="SVG exports are vector-only" aria-label="SVG vector export">SVG</button>
       </div>
-      <button type="button" class="btn-copy-img" id="copy-img-btn" title="Copy high-res image to clipboard">
+      <div class="mobile-format-select-wrapper">
+        <select id="mobile-export-format" aria-label="Export format">
+          <option value="png">PNG</option>
+          <option value="jpeg">JPG</option>
+          <option value="webp">WebP</option>
+          <option value="svg">SVG</option>
+        </select>
+      </div>
+      <button type="button" class="btn-copy-img has-tooltip" id="copy-img-btn" data-tooltip="Copy high-res image to clipboard" aria-label="Copy high-res image to clipboard">
         <span class="btn-copy-img__icon" aria-hidden="true">📋</span>
         <span class="btn-copy-img__text">Copy Image</span>
       </button>
-      <button type="button" class="btn-export" id="export-btn">
+      <button type="button" class="btn-export" id="export-btn" title="Export image (Ctrl+Enter)">
         <span class="btn-export__icon" aria-hidden="true">↓</span>
         <span class="btn-export__text">Export</span>
       </button>
     </div>
   </header>
 
-  <aside class="panel panel--left">
+  <!-- Mobile Studio Segmented Controller (<= 900px) -->
+  <nav class="mobile-studio-nav" aria-label="Studio sections" role="tablist">
+    <button type="button" class="mobile-nav-tab is-active" data-view="compose" role="tab" aria-selected="true" aria-controls="panel-compose">
+      <span class="mobile-nav-tab__icon" aria-hidden="true">✍️</span>
+      <span class="mobile-nav-tab__label">Compose</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" data-view="artboard" role="tab" aria-selected="false" aria-controls="preview-stage">
+      <span class="mobile-nav-tab__icon" aria-hidden="true">🖼️</span>
+      <span class="mobile-nav-tab__label">Artboard</span>
+    </button>
+    <button type="button" class="mobile-nav-tab" data-view="style" role="tab" aria-selected="false" aria-controls="panel-style">
+      <span class="mobile-nav-tab__icon" aria-hidden="true">🎨</span>
+      <span class="mobile-nav-tab__label">Style</span>
+    </button>
+  </nav>
+
+  <aside class="panel panel--left" id="panel-compose">
     <div class="panel-rail">
       <span class="panel-rail__label">01</span>
       <h2 class="panel-rail__title">Compose</h2>
@@ -238,6 +268,10 @@ Design is how it works.</textarea>
       <span class="preview-toolbar__size" id="preview-size-label">1080 × 1080</span>
       <span class="preview-toolbar__hint">Drag text to reposition</span>
     </div>
+    <div class="mobile-artboard-shortcuts">
+      <button type="button" class="btn-jump-tab" data-jump="compose">✍️ Edit Words</button>
+      <button type="button" class="btn-jump-tab" data-jump="style">🎨 Adjust Style</button>
+    </div>
     <div class="preview-stage__glow" aria-hidden="true"></div>
     <div class="preview-viewport">
       <div class="preview-frame">
@@ -253,7 +287,7 @@ Design is how it works.</textarea>
     </div>
   </main>
 
-  <aside class="panel panel--right">
+  <aside class="panel panel--right" id="panel-style">
     <div class="panel-rail">
       <span class="panel-rail__label">02</span>
       <h2 class="panel-rail__title">Refine</h2>
@@ -381,6 +415,96 @@ Design is how it works.</textarea>
         </div>
       </section>
 
+      <section class="panel-section">
+        <div class="panel-section__head">
+          <h3 class="panel-section__title">Studio Frame</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </div>
+
+        <div class="field">
+          <label>Frame Style</label>
+          <div class="frame-style-grid" role="group" aria-label="Studio Frame Style">
+            <button type="button" class="frame-style-btn is-active" data-frame="none" title="Edge-to-Edge Canvas">
+              <span class="frame-btn-icon">▢</span>
+              <span class="frame-btn-label">None</span>
+            </button>
+            <button type="button" class="frame-style-btn" data-frame="macos" title="macOS Window Mockup">
+              <span class="frame-btn-icon">💻</span>
+              <span class="frame-btn-label">macOS</span>
+            </button>
+            <button type="button" class="frame-style-btn" data-frame="glass" title="Frosted Acrylic Glass">
+              <span class="frame-btn-icon">✨</span>
+              <span class="frame-btn-label">Glass</span>
+            </button>
+            <button type="button" class="frame-style-btn" data-frame="browser" title="Browser Chrome Mockup">
+              <span class="frame-btn-icon">🌐</span>
+              <span class="frame-btn-label">Browser</span>
+            </button>
+            <button type="button" class="frame-style-btn" data-frame="tweet" title="Social Quote / Tweet Card">
+              <span class="frame-btn-icon">💬</span>
+              <span class="frame-btn-label">Tweet</span>
+            </button>
+            <button type="button" class="frame-style-btn" data-frame="editorial" title="Editorial Gallery Frame">
+              <span class="frame-btn-icon">🏛️</span>
+              <span class="frame-btn-label">Editorial</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="frame-options-group" class="frame-options-group" style="display: none;">
+          <div class="field">
+            <label for="card-padding">
+              Card Margin <span class="field__value" id="card-padding-val">56px</span>
+            </label>
+            <input type="range" id="card-padding" min="16" max="120" step="4" value="56" />
+          </div>
+
+          <div class="field">
+            <label for="card-radius">
+              Corner Radius <span class="field__value" id="card-radius-val">16px</span>
+            </label>
+            <input type="range" id="card-radius" min="0" max="36" step="2" value="16" />
+          </div>
+
+          <div class="field">
+            <label for="card-shadow">Shadow Depth</label>
+            <select id="card-shadow">
+              <option value="none">None (Flat)</option>
+              <option value="subtle">Subtle Soft</option>
+              <option value="float" selected>3D Studio Float</option>
+              <option value="glow">Cyber Neon Glow</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Author Attribution -->
+        <div class="field field--author">
+          <div class="field field--checkbox">
+            <label class="checkbox-control" for="author-signature-toggle">
+              <input type="checkbox" id="author-signature-toggle" />
+              <span class="checkbox-text">Show Author Attribution</span>
+            </label>
+          </div>
+          <div id="author-inputs-group" class="author-inputs-group" style="display: none;">
+            <div class="field field--row author-name-row">
+              <div>
+                <label for="author-name">Name</label>
+                <input type="text" id="author-name" placeholder="Alex Rivera" value="Alex Rivera" />
+              </div>
+              <div>
+                <label for="author-handle">Handle</label>
+                <input type="text" id="author-handle" placeholder="@arivera" value="@arivera" />
+              </div>
+            </div>
+            <div class="field field--checkbox" style="margin-top: 6px;">
+              <label class="checkbox-control" for="author-verified-toggle">
+                <input type="checkbox" id="author-verified-toggle" checked />
+                <span class="checkbox-text">Verified Badge (✓)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section class="panel-section">
         <div class="panel-section__head">
@@ -413,9 +537,23 @@ Design is how it works.</textarea>
             </div>
           </div>
         </div>
+        <div class="field">
+          <label for="panel-export-format">Export Format</label>
+          <select id="panel-export-format">
+            <option value="png">PNG (Lossless High Quality)</option>
+            <option value="jpeg">JPG (Standard Photo / Social)</option>
+            <option value="webp">WebP (Next-Gen Compact)</option>
+            <option value="svg">SVG (Scalable Vector)</option>
+          </select>
+        </div>
       </section>
     </div>
   </aside>
+
+  <button type="button" class="btn-floating-preview" id="floating-preview-btn" title="View Artboard">
+    <span class="btn-floating-preview__icon" aria-hidden="true">👁️</span>
+    <span class="btn-floating-preview__text">Preview Artboard</span>
+  </button>
 
   <select id="export-format" class="sr-only" tabindex="-1" aria-hidden="true">
     <option value="png">PNG</option>

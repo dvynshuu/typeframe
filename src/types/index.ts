@@ -40,6 +40,26 @@ export type PresetSize =
 
 export type TextAlign = 'left' | 'center' | 'right';
 
+export type FrameStyle =
+  | 'none'
+  | 'macos'
+  | 'glass'
+  | 'browser'
+  | 'tweet'
+  | 'editorial';
+
+export type CardShadow = 'none' | 'subtle' | 'float' | 'glow';
+
+export type ExportScaleMultiplier = 1 | 2 | 4;
+
+export interface AuthorProfile {
+  name: string;
+  handle: string;
+  verified?: boolean;
+  avatarUrl?: string;
+  showSignature?: boolean;
+}
+
 export interface Typography {
   fontFamily: string;
   fontWeight: number;
@@ -134,10 +154,17 @@ export interface EditorState {
   customWidth: number;
   customHeight: number;
   showMasthead?: boolean;
+  frameStyle?: FrameStyle;
+  cardPadding?: number;
+  cardRadius?: number;
+  cardShadow?: CardShadow;
+  exportScale?: ExportScaleMultiplier;
+  author?: AuthorProfile;
 }
 
 export interface RenderOptions {
   scale?: number;
+  dpr?: number;
   forExport?: boolean;
 }
 
@@ -146,6 +173,7 @@ export interface ExportRequest {
   width: number;
   height: number;
   quality?: number;
+  scaleMultiplier?: ExportScaleMultiplier;
   state: EditorState;
 }
 
@@ -154,3 +182,4 @@ export interface ExportResult {
   svg?: string;
   filename: string;
 }
+

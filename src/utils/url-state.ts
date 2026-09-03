@@ -49,6 +49,21 @@ export function serializeState(state: EditorState): string {
   if (state.presetSize !== defaultState.presetSize) compact.preset = state.presetSize;
   if (state.showMasthead !== defaultState.showMasthead) compact.masthead = state.showMasthead ? 1 : 0;
 
+  // Studio Mockup & Frame
+  if (state.frameStyle !== defaultState.frameStyle) compact.frame = state.frameStyle;
+  if (state.cardPadding !== defaultState.cardPadding) compact.cpad = state.cardPadding;
+  if (state.cardRadius !== defaultState.cardRadius) compact.crad = state.cardRadius;
+  if (state.cardShadow !== defaultState.cardShadow) compact.csh = state.cardShadow;
+  if (state.exportScale !== defaultState.exportScale) compact.xscale = state.exportScale;
+
+  // Author Attribution
+  if (state.author) {
+    if (state.author.name !== defaultState.author?.name) compact.an = state.author.name;
+    if (state.author.handle !== defaultState.author?.handle) compact.ah = state.author.handle;
+    if (state.author.verified !== defaultState.author?.verified) compact.av = state.author.verified ? 1 : 0;
+    if (state.author.showSignature !== defaultState.author?.showSignature) compact.as = state.author.showSignature ? 1 : 0;
+  }
+
   if (state.blocks[0]) {
     compact.bx = Math.round(state.blocks[0].x);
     compact.by = Math.round(state.blocks[0].y);
@@ -97,6 +112,21 @@ export function deserializeState(queryString: string, defaultState: EditorState)
     const presetSize = compact.preset !== undefined ? compact.preset : defaultState.presetSize;
     const showMasthead = compact.masthead === 1;
 
+    // Studio Mockup & Frame
+    const frameStyle = compact.frame !== undefined ? compact.frame : defaultState.frameStyle;
+    const cardPadding = compact.cpad !== undefined ? Number(compact.cpad) : defaultState.cardPadding;
+    const cardRadius = compact.crad !== undefined ? Number(compact.crad) : defaultState.cardRadius;
+    const cardShadow = compact.csh !== undefined ? compact.csh : defaultState.cardShadow;
+    const exportScale = compact.xscale !== undefined ? (Number(compact.xscale) as 1 | 2 | 4) : defaultState.exportScale;
+
+    // Author Attribution
+    const author = {
+      name: compact.an !== undefined ? compact.an : defaultState.author?.name ?? 'Alex Rivera',
+      handle: compact.ah !== undefined ? compact.ah : defaultState.author?.handle ?? '@arivera',
+      verified: compact.av !== undefined ? compact.av === 1 : defaultState.author?.verified ?? true,
+      showSignature: compact.as !== undefined ? compact.as === 1 : defaultState.author?.showSignature ?? false,
+    };
+
     const background = {
       ...defaultState.background,
       type: bgType,
@@ -117,6 +147,12 @@ export function deserializeState(queryString: string, defaultState: EditorState)
       customWidth: presetSize === 'custom' ? width : defaultState.customWidth,
       customHeight: presetSize === 'custom' ? height : defaultState.customHeight,
       showMasthead,
+      frameStyle,
+      cardPadding,
+      cardRadius,
+      cardShadow,
+      exportScale,
+      author,
     };
 
     state.blocks = computeAutoLayout(state);
@@ -231,6 +267,15 @@ export function loadStateFromLocalStorage(defaultState: EditorState): EditorStat
         ...(parsed.background ?? {}),
       },
       showMasthead: parsed.showMasthead ?? defaultState.showMasthead,
+      frameStyle: parsed.frameStyle ?? defaultState.frameStyle,
+      cardPadding: parsed.cardPadding ?? defaultState.cardPadding,
+      cardRadius: parsed.cardRadius ?? defaultState.cardRadius,
+      cardShadow: parsed.cardShadow ?? defaultState.cardShadow,
+      exportScale: parsed.exportScale ?? defaultState.exportScale,
+      author: {
+        ...defaultState.author,
+        ...(parsed.author ?? {}),
+      },
       blocks: parsed.blocks ?? defaultState.blocks,
     };
   } catch (err) {

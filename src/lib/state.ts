@@ -1,4 +1,14 @@
-import type { EditorState, TemplateId, ThemeId, TextMode, PresetSize } from '../types';
+import type {
+  EditorState,
+  TemplateId,
+  ThemeId,
+  TextMode,
+  PresetSize,
+  FrameStyle,
+  CardShadow,
+  ExportScaleMultiplier,
+  AuthorProfile,
+} from '../types';
 import { defaultTypography } from './typography';
 import { getTemplate } from './templates';
 import { getTheme } from './themes';
@@ -24,6 +34,17 @@ export function createInitialState(): EditorState {
     customWidth: 1080,
     customHeight: 1080,
     showMasthead: false,
+    frameStyle: 'none',
+    cardPadding: 56,
+    cardRadius: 16,
+    cardShadow: 'float',
+    exportScale: 2,
+    author: {
+      name: 'Alex Rivera',
+      handle: '@arivera',
+      verified: true,
+      showSignature: false,
+    },
   };
   state.blocks = computeAutoLayout(state);
   return state;
@@ -56,7 +77,9 @@ export class EditorStore {
       partial.templateId !== undefined ||
       partial.textMode !== undefined ||
       partial.width !== undefined ||
-      partial.height !== undefined
+      partial.height !== undefined ||
+      partial.frameStyle !== undefined ||
+      partial.cardPadding !== undefined
     ) {
       this.state.blocks = computeAutoLayout(this.state);
     }
@@ -116,6 +139,32 @@ export class EditorStore {
     );
     this.notify();
   }
+
+  setFrameStyle(frameStyle: FrameStyle): void {
+    this.setState({ frameStyle });
+  }
+
+  setCardPadding(cardPadding: number): void {
+    this.setState({ cardPadding });
+  }
+
+  setCardRadius(cardRadius: number): void {
+    this.setState({ cardRadius });
+  }
+
+  setCardShadow(cardShadow: CardShadow): void {
+    this.setState({ cardShadow });
+  }
+
+  setExportScale(exportScale: ExportScaleMultiplier): void {
+    this.setState({ exportScale });
+  }
+
+  setAuthor(author: Partial<AuthorProfile>): void {
+    const current = this.state.author ?? { name: '', handle: '', verified: true, showSignature: false };
+    this.setState({ author: { ...current, ...author } });
+  }
+
 
   private notify(): void {
     const s = this.state;

@@ -49,14 +49,17 @@ async function ensureFontsLoaded(origin: string) {
   fontsLoaded = true;
 }
 
-self.addEventListener('message', async (e: MessageEvent<{ state: EditorState; format: ExportFormat; quality?: number; origin?: string }>) => {
-  const { state, format, quality = 0.92, origin = self.location.origin } = e.data;
+self.addEventListener('message', async (e: MessageEvent<{ state: EditorState; format: ExportFormat; quality?: number; origin?: string; scaleMultiplier?: number }>) => {
+  const { state, format, quality = 0.92, origin = self.location.origin, scaleMultiplier } = e.data;
+  const multiplier = scaleMultiplier || state.exportScale || 2;
   try {
     // Dynamically register fonts in worker scope before drawing
     await ensureFontsLoaded(origin);
 
-    const canvas = new OffscreenCanvas(state.width, state.height);
-    await renderToCanvas(canvas, state, { scale: 1 });
+    const exportW = Math.round(state.width * multiplier);
+    const exportH = Math.round(state.height * multiplier);
+    const canvas = new OffscreenCanvas(exportW, exportH);
+    await renderToCanvas(canvas, state, { scale: multiplier });
     
     const mime = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
     const blob = await canvas.convertToBlob({ type: mime, quality });
@@ -65,3 +68,4 @@ self.addEventListener('message', async (e: MessageEvent<{ state: EditorState; fo
     self.postMessage({ type: 'error', error: err.message || String(err) });
   }
 });
+

@@ -25,7 +25,6 @@ import type {
   TemplateId,
   ThemeId,
   TextMode,
-  EditorState,
 } from '../types';
 
 // Establish default initial state and hydrate from URL or localStorage
@@ -40,6 +39,8 @@ if (typeof window !== 'undefined') {
 }
 
 const store = new EditorStore(hydratedState);
+
+let currentExportFormat: ExportFormat = 'png';
 
 function applyToolPresetIfNeeded(root: HTMLElement): void {
   if (typeof window === 'undefined' || window.location.search || !root.dataset.toolSlug) {
@@ -206,13 +207,65 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   syncAlignButtons(root, state.typography.textAlign);
   setVal(root, '#bg-type', state.background.type);
   setVal(root, '#solid-color', state.background.solidColor ?? '#0f0f12');
-  setVal(root, '#export-format', 'png');
+  setVal(root, '#export-format', currentExportFormat);
+  setVal(root, '#mobile-export-format', currentExportFormat);
+  setVal(root, '#panel-export-format', currentExportFormat);
   setVal(root, '#preset-size', state.presetSize);
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
 
   const mastheadCheck = root.querySelector<HTMLInputElement>('#show-masthead-toggle');
   if (mastheadCheck) mastheadCheck.checked = Boolean(state.showMasthead);
+
+  // Studio Frames & Mockup Options
+  const currentFrame = state.frameStyle ?? 'none';
+  root.querySelectorAll<HTMLButtonElement>('[data-frame]').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.frame === currentFrame);
+  });
+  const frameOptionsGroup = root.querySelector<HTMLDivElement>('#frame-options-group');
+  if (frameOptionsGroup) {
+    frameOptionsGroup.style.display = currentFrame !== 'none' ? 'block' : 'none';
+  }
+
+  setVal(root, '#card-padding', String(state.cardPadding ?? 56));
+  const cardPadVal = root.querySelector('#card-padding-val');
+  if (cardPadVal) cardPadVal.textContent = `${state.cardPadding ?? 56}px`;
+
+  setVal(root, '#card-radius', String(state.cardRadius ?? 16));
+  const cardRadVal = root.querySelector('#card-radius-val');
+  if (cardRadVal) cardRadVal.textContent = `${state.cardRadius ?? 16}px`;
+
+  setVal(root, '#card-shadow', state.cardShadow ?? 'float');
+
+  // Export resolution scale pills (1x, 2x HD, 4x 4K)
+  const currentScale = state.exportScale ?? 2;
+  root.querySelectorAll<HTMLButtonElement>('[data-export-scale]').forEach((btn) => {
+    btn.classList.toggle('is-active', Number(btn.dataset.exportScale) === currentScale);
+  });
+
+  // Author Attribution
+  const authorSigToggle = root.querySelector<HTMLInputElement>('#author-signature-toggle');
+  if (authorSigToggle) authorSigToggle.checked = Boolean(state.author?.showSignature);
+
+  const authorGroup = root.querySelector<HTMLDivElement>('#author-inputs-group');
+  if (authorGroup) {
+    authorGroup.style.display = (state.author?.showSignature || currentFrame === 'tweet') ? 'block' : 'none';
+  }
+
+  const authorNameInput = root.querySelector<HTMLInputElement>('#author-name');
+  if (authorNameInput && authorNameInput !== document.activeElement) {
+    authorNameInput.value = state.author?.name ?? 'Alex Rivera';
+  }
+
+  const authorHandleInput = root.querySelector<HTMLInputElement>('#author-handle');
+  if (authorHandleInput && authorHandleInput !== document.activeElement) {
+    authorHandleInput.value = state.author?.handle ?? '@arivera';
+  }
+
+  const authorVerifiedToggle = root.querySelector<HTMLInputElement>('#author-verified-toggle');
+  if (authorVerifiedToggle) {
+    authorVerifiedToggle.checked = state.author?.verified !== false;
+  }
 
   const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
   if (imgGroup) {
@@ -276,18 +329,20 @@ function syncAlignButtons(root: HTMLElement, align: string): void {
   });
 }
 
-function syncFormatPills(root: HTMLElement, format: string): void {
+function syncFormatPills(root: HTMLElement, format: ExportFormat): void {
+  currentExportFormat = format;
   root.querySelectorAll<HTMLButtonElement>('[data-format]').forEach((btn) => {
     btn.classList.toggle('is-active', btn.dataset.format === format);
   });
   setVal(root, '#export-format', format);
+  setVal(root, '#mobile-export-format', format);
+  setVal(root, '#panel-export-format', format);
 }
 
 function bindControls(root: HTMLElement): void {
   root.querySelector('#text-input')?.addEventListener('input', (e) => {
     store.setText((e.target as HTMLTextAreaElement).value);
   });
-
 
   root.querySelectorAll('[data-mode]').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -311,6 +366,9 @@ function bindControls(root: HTMLElement): void {
   bindAlign(root);
   bindBackground(root);
   bindMastheadToggle(root);
+  bindFrames(root);
+  bindResolutionScale(root);
+  bindAuthor(root);
   bindExport(root);
   bindCopyImage(root);
   bindShuffle(root);
@@ -318,6 +376,70 @@ function bindControls(root: HTMLElement): void {
   bindShare(root);
   bindFormatPills(root);
   bindPreset(root);
+  bindMobileStudioNav(root);
+  bindGlobalShortcuts(root);
+}
+
+function bindFrames(root: HTMLElement): void {
+  root.querySelectorAll<HTMLButtonElement>('[data-frame]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const frame = (btn.dataset.frame || 'none') as any;
+      store.setFrameStyle(frame);
+    });
+  });
+
+  const padInput = root.querySelector<HTMLInputElement>('#card-padding');
+  padInput?.addEventListener('input', () => {
+    const val = Number(padInput.value);
+    store.setCardPadding(val);
+    const label = root.querySelector('#card-padding-val');
+    if (label) label.textContent = `${val}px`;
+  });
+
+  const radInput = root.querySelector<HTMLInputElement>('#card-radius');
+  radInput?.addEventListener('input', () => {
+    const val = Number(radInput.value);
+    store.setCardRadius(val);
+    const label = root.querySelector('#card-radius-val');
+    if (label) label.textContent = `${val}px`;
+  });
+
+  const shadowSelect = root.querySelector<HTMLSelectElement>('#card-shadow');
+  shadowSelect?.addEventListener('change', () => {
+    store.setCardShadow(shadowSelect.value as any);
+  });
+}
+
+function bindResolutionScale(root: HTMLElement): void {
+  root.querySelectorAll<HTMLButtonElement>('[data-export-scale]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const scale = Number(btn.dataset.exportScale) as 1 | 2 | 4;
+      store.setExportScale(scale);
+      showToast(`Export resolution set to ${scale === 4 ? '4x Ultra-HD 4K' : scale === 2 ? '2x Retina HD' : '1x Standard'}`, 'info');
+    });
+  });
+}
+
+function bindAuthor(root: HTMLElement): void {
+  const sigToggle = root.querySelector<HTMLInputElement>('#author-signature-toggle');
+  sigToggle?.addEventListener('change', () => {
+    store.setAuthor({ showSignature: sigToggle.checked });
+  });
+
+  const nameInput = root.querySelector<HTMLInputElement>('#author-name');
+  nameInput?.addEventListener('input', () => {
+    store.setAuthor({ name: nameInput.value });
+  });
+
+  const handleInput = root.querySelector<HTMLInputElement>('#author-handle');
+  handleInput?.addEventListener('input', () => {
+    store.setAuthor({ handle: handleInput.value });
+  });
+
+  const verifiedToggle = root.querySelector<HTMLInputElement>('#author-verified-toggle');
+  verifiedToggle?.addEventListener('change', () => {
+    store.setAuthor({ verified: verifiedToggle.checked });
+  });
 }
 
 function bindMastheadToggle(root: HTMLElement): void {
@@ -377,6 +499,16 @@ function bindFormatPills(root: HTMLElement): void {
       const format = (btn as HTMLButtonElement).dataset.format as ExportFormat;
       syncFormatPills(root, format);
     });
+  });
+
+  root.querySelector('#mobile-export-format')?.addEventListener('change', (e) => {
+    const format = (e.target as HTMLSelectElement).value as ExportFormat;
+    syncFormatPills(root, format);
+  });
+
+  root.querySelector('#panel-export-format')?.addEventListener('change', (e) => {
+    const format = (e.target as HTMLSelectElement).value as ExportFormat;
+    syncFormatPills(root, format);
   });
 }
 
@@ -678,6 +810,7 @@ function bindDragResize(
       startBlock = { ...block };
       startX = e.clientX;
       startY = e.clientY;
+      target.setPointerCapture?.(e.pointerId);
       e.preventDefault();
       return;
     }
@@ -688,7 +821,8 @@ function bindDragResize(
       startBlock = { x: block.x, y: block.y, width: block.width, height: block.height };
       startX = e.clientX;
       startY = e.clientY;
-      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      handle.setPointerCapture?.(e.pointerId);
+      e.preventDefault();
     }
   });
 
@@ -708,10 +842,12 @@ function bindDragResize(
     }
   });
 
-  window.addEventListener('pointerup', () => {
+  const handlePointerEnd = () => {
     dragId = null;
     resizeId = null;
-  });
+  };
+  window.addEventListener('pointerup', handlePointerEnd);
+  window.addEventListener('pointercancel', handlePointerEnd);
 }
 
 function bindFormattingToolbar(root: HTMLElement): void {
@@ -1035,6 +1171,10 @@ function bindGuideDrawer(root: HTMLElement): void {
 
   const toggle = () => {
     if (drawer) {
+      if (window.innerWidth <= 900) {
+        drawer.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
       const isOpen = drawer.classList.contains('is-open');
       drawer.classList.toggle('is-open', !isOpen);
       openBtn?.setAttribute('aria-expanded', String(!isOpen));
@@ -1048,6 +1188,77 @@ function bindGuideDrawer(root: HTMLElement): void {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && drawer?.classList.contains('is-open')) {
       toggle();
+    }
+  });
+}
+
+function bindMobileStudioNav(root: HTMLElement): void {
+  let previousNonArtboardView: 'compose' | 'style' = 'compose';
+
+  const setView = (view: 'compose' | 'artboard' | 'style') => {
+    root.dataset.mobileView = view;
+
+    root.querySelectorAll<HTMLButtonElement>('.mobile-nav-tab').forEach((tab) => {
+      const isActive = tab.dataset.view === view;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+
+    const floatingBtn = root.querySelector<HTMLButtonElement>('#floating-preview-btn');
+    if (floatingBtn) {
+      const label = floatingBtn.querySelector('.btn-floating-preview__text');
+      const icon = floatingBtn.querySelector('.btn-floating-preview__icon');
+      if (view === 'artboard') {
+        if (label) label.textContent = previousNonArtboardView === 'compose' ? 'Edit Words' : 'Adjust Style';
+        if (icon) icon.textContent = previousNonArtboardView === 'compose' ? '✍️' : '🎨';
+        floatingBtn.title = 'Switch back to editor';
+      } else {
+        previousNonArtboardView = view;
+        if (label) label.textContent = 'Preview Artboard';
+        if (icon) icon.textContent = '👁️';
+        floatingBtn.title = 'View Artboard';
+      }
+    }
+
+    if (view === 'artboard') {
+      const stage = root.querySelector<HTMLDivElement>('#preview-stage');
+      if (stage) {
+        // Force immediate render update for the newly visible stage dimensions
+        const state = store.getState();
+        store.setState({ ...state });
+      }
+    }
+  };
+
+  root.querySelectorAll<HTMLButtonElement>('.mobile-nav-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const view = tab.dataset.view as 'compose' | 'artboard' | 'style';
+      if (view) setView(view);
+    });
+  });
+
+  root.querySelectorAll<HTMLButtonElement>('.btn-jump-tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.jump as 'compose' | 'style';
+      if (target) setView(target);
+    });
+  });
+
+  root.querySelector('#floating-preview-btn')?.addEventListener('click', () => {
+    const current = root.dataset.mobileView;
+    if (current === 'artboard') {
+      setView(previousNonArtboardView);
+    } else {
+      setView('artboard');
+    }
+  });
+}
+
+function bindGlobalShortcuts(root: HTMLElement): void {
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      root.querySelector<HTMLButtonElement>('#export-btn')?.click();
     }
   });
 }

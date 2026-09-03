@@ -42,6 +42,33 @@ export function drawBackground(
   ctx.restore();
 }
 
+export function colorWithAlpha(color: string, alpha: number): string {
+  const trimmed = color.trim();
+  if (trimmed.startsWith('#')) {
+    let hex = trimmed.slice(1);
+    if (hex.length === 3) {
+      hex = hex.split('').map((c) => c + c).join('');
+    }
+    if (hex.length >= 6) {
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+  } else if (trimmed.startsWith('rgb(')) {
+    const parts = trimmed.slice(4, -1).split(',').map((p) => p.trim());
+    if (parts.length >= 3) {
+      return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
+    }
+  } else if (trimmed.startsWith('rgba(')) {
+    const parts = trimmed.slice(5, -1).split(',').map((p) => p.trim());
+    if (parts.length >= 3) {
+      return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
+    }
+  }
+  return color;
+}
+
 function drawLinearGradient(
   ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   w: number,
@@ -64,6 +91,9 @@ function drawLinearGradient(
   stops.forEach((s) => grad.addColorStop(s.position, s.color));
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
+  
+  // Anti-banding micro-dithering
+  drawNoise(ctx, w, h, 0.015);
 }
 
 function drawMeshGradient(
@@ -90,12 +120,15 @@ function drawMeshGradient(
       b.y * h,
       b.r * Math.max(w, h)
     );
-    g.addColorStop(0, b.c + 'cc');
-    g.addColorStop(0.6, b.c + '44');
+    g.addColorStop(0, colorWithAlpha(b.c, 0.8));
+    g.addColorStop(0.6, colorWithAlpha(b.c, 0.28));
     g.addColorStop(1, 'transparent');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
   });
+
+  // Anti-banding micro-dithering
+  drawNoise(ctx, w, h, 0.018);
 }
 
 function drawGlassOverlay(

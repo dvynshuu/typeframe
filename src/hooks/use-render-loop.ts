@@ -11,20 +11,18 @@ export function createRenderLoop(
   destroy: () => void;
 } {
   let pending: EditorState | null = null;
-  let running = false;
-
   const flush = rafThrottle(async () => {
     if (!pending) return;
     const canvas = getCanvas();
     if (!canvas) return;
     const state = pending;
     const scale = getPreviewScale();
-    running = true;
+    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2.5) : 1;
     try {
-      await renderToCanvas(canvas, state, { scale });
+      await renderToCanvas(canvas, state, { scale, dpr });
       onAfterRender?.(state, scale);
-    } finally {
-      running = false;
+    } catch (err) {
+      console.error('Render error:', err);
     }
   });
 
