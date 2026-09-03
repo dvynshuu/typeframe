@@ -25,6 +25,7 @@ import type {
   TemplateId,
   ThemeId,
   TextMode,
+  EditorState,
 } from '../types';
 
 // Establish default initial state and hydrate from URL or localStorage
@@ -40,7 +41,56 @@ if (typeof window !== 'undefined') {
 
 const store = new EditorStore(hydratedState);
 
+function applyToolPresetIfNeeded(root: HTMLElement): void {
+  if (typeof window === 'undefined' || window.location.search || !root.dataset.toolSlug) {
+    return;
+  }
+  const templateId = root.dataset.initialTemplate as TemplateId | undefined;
+  const themeId = root.dataset.initialTheme as ThemeId | undefined;
+  const textMode = root.dataset.initialMode as TextMode | undefined;
+  const encodedText = root.dataset.initialText;
+  const text = encodedText ? decodeURIComponent(encodedText) : undefined;
+
+  const current = store.getState();
+  const nextTemplateId = templateId || current.templateId;
+  const nextThemeId = themeId || current.themeId;
+  const nextTextMode = textMode || current.textMode;
+  const nextText = text !== undefined ? text : current.text;
+
+  const t = templates.find((item) => item.id === nextTemplateId) ?? templates[0];
+  const th = themes.find((item) => item.id === nextThemeId) ?? themes[0];
+
+  const presetSize: PresetSize = (t.width === 1080 && t.height === 1080)
+    ? '1080x1080'
+    : (t.width === 1080 && t.height === 1350)
+    ? '1080x1350'
+    : (t.width === 1080 && t.height === 1920)
+    ? '1080x1920'
+    : (t.width === 1920 && t.height === 1080)
+    ? '1920x1080'
+    : 'custom';
+
+  store.setState({
+    text: nextText,
+    textMode: nextTextMode,
+    templateId: nextTemplateId,
+    themeId: nextThemeId,
+    width: t.width,
+    height: t.height,
+    presetSize,
+    typography: {
+      ...current.typography,
+      ...th.typography,
+      ...t.defaultTypography,
+      textColor: th.text,
+    },
+    background: structuredClone(th.background),
+  });
+}
+
 export function initEditor(root: HTMLElement): () => void {
+  applyToolPresetIfNeeded(root);
+
   const canvas = root.querySelector<HTMLCanvasElement>('#preview-canvas');
   const previewWrapper = root.querySelector<HTMLDivElement>('#preview-wrapper');
   const previewStage = root.querySelector<HTMLDivElement>('#preview-stage');
@@ -161,6 +211,8 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
 
+  const mastheadCheck = root.querySelector<HTMLInputElement>('#show-masthead-toggle');
+  if (mastheadCheck) mastheadCheck.checked = Boolean(state.showMasthead);
 
   const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
   if (imgGroup) {
@@ -258,6 +310,7 @@ function bindControls(root: HTMLElement): void {
   bindTypography(root);
   bindAlign(root);
   bindBackground(root);
+  bindMastheadToggle(root);
   bindExport(root);
   bindCopyImage(root);
   bindShuffle(root);
@@ -267,11 +320,38 @@ function bindControls(root: HTMLElement): void {
   bindPreset(root);
 }
 
+function bindMastheadToggle(root: HTMLElement): void {
+  const check = root.querySelector<HTMLInputElement>('#show-masthead-toggle');
+  if (!check) return;
+  check.checked = Boolean(store.getState().showMasthead);
+  check.addEventListener('change', () => {
+    store.setState({ showMasthead: check.checked });
+  });
+}
+
 function bindShare(root: HTMLElement): void {
   root.querySelector('#share-btn')?.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      showToast('Shareable studio link copied to clipboard!', 'success');
+      const state = store.getState();
+      const query = serializeState(state);
+      const shareUrl = `${window.location.origin}${window.location.pathname}?${query}`;
+
+      if (navigator.share && window.matchMedia('(max-width: 768px)').matches) {
+        try {
+          await navigator.share({
+            title: 'Typeframe Card',
+            text: 'Check out this typographic design made on Typeframe:',
+            url: shareUrl,
+          });
+          showToast('Shared successfully!', 'success');
+          return;
+        } catch (e: any) {
+          if (e.name === 'AbortError') return;
+        }
+      }
+
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('Shareable studio link copied to clipboard! 🔗', 'success');
     } catch (err: any) {
       console.error('Share failed:', err);
       showToast(`Failed to copy link: ${err?.message || 'unknown error'}`, 'error');

@@ -1570,6 +1570,63 @@ input[type='range']::-moz-range-thumb {
   }
 }
 
+/* ─── App Brand Link & Tool Header Badges ─── */
+.app-brand-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+}
 
+.header-tool-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0 2.65rem;
+}
 
+.header-tool-badge__pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6e8cff;
+  background: rgba(110, 140, 255, 0.12);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
 
+.header-tool-badge__title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary, #a1a9b8);
+  white-space: nowrap;
+}
+
+/* ─── Creator Mark Checkbox ─── */
+.field--checkbox {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-hairline, rgba(232, 236, 244, 0.08));
+}
+
+.checkbox-control {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-control input[type="checkbox"] {
+  accent-color: #6e8cff;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary, #e8ecf4);
+}

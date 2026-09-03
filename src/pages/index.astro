@@ -1,10 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Editor from '../components/Editor.astro';
+import ToolDirectory from '../components/ToolDirectory.astro';
 ---
 
 <BaseLayout>
   <Editor />
+  
+  <aside class="home-tool-directory-wrapper" aria-label="Explore Studios">
+    <ToolDirectory variant="grid" />
+  </aside>
+
   <script>
     import { initEditor } from '../components/EditorApp';
 
@@ -20,3 +26,13 @@ import Editor from '../components/Editor.astro';
     }
   </script>
 </BaseLayout>
+
+<style>
+  .home-tool-directory-wrapper {
+    background: #080a0f;
+    border-top: 1px solid rgba(232, 236, 244, 0.08);
+    padding: 3rem 1.5rem 5rem;
+    position: relative;
+    z-index: 10;
+  }
+</style>

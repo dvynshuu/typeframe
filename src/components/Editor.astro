@@ -6,12 +6,28 @@ import { fontFamilies, fontWeights } from '../lib/typography';
 import { presetSizes } from '../lib/templates';
 import { aspectLabel } from '../utils/aspect';
 import SeoContent from './SeoContent.astro';
+import type { ToolConfig } from '../data/tools';
+
+interface Props {
+  initialTool?: ToolConfig;
+}
+
+const { initialTool } = Astro.props;
 ---
 
-<div class="app-shell" id="typeframe-editor">
+<div 
+  class="app-shell" 
+  id="typeframe-editor"
+  data-tool-slug={initialTool?.slug}
+  data-initial-template={initialTool?.templateId}
+  data-initial-theme={initialTool?.themeId}
+  data-initial-mode={initialTool?.textMode}
+  data-initial-text={initialTool?.defaultText ? encodeURIComponent(initialTool.defaultText) : undefined}
+>
   <header class="app-header">
     <div class="app-brand">
-      <div class="app-logo">
+      <a href="/" class="app-brand-link" title="Typeframe Home">
+        <div class="app-logo">
         <svg class="app-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="logo-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -53,9 +69,17 @@ import SeoContent from './SeoContent.astro';
           <!-- Styled Serif Letter 'T' with custom geometry -->
           <path class="logo-t" d="M 10 10.5 H 22 C 23.5 10.5 24 11 24 13 C 24 13.5 23.5 13.5 22.5 13.5 C 20.5 13.5 17.5 13.5 17.5 14 V 20.5 C 17.5 21.5 18 21.8 19.5 22 V 23.5 H 12.5 V 22 C 14 21.8 14.5 21.5 14.5 20.5 V 14 C 14 13.5 11.5 13.5 9.5 13.5 C 8.5 13.5 8 13.5 8 13 C 8 11 8.5 10.5 10 10.5 Z" fill="url(#logo-brand-grad)" />
         </svg>
-        <h1 class="app-logo-text">Typeframe</h1>
-      </div>
-      <p class="app-tagline">Typography studio for shareable images</p>
+          <h1 class="app-logo-text">Typeframe</h1>
+        </div>
+      </a>
+      {initialTool ? (
+        <div class="header-tool-badge">
+          <span class="header-tool-badge__pill">{initialTool.badge}</span>
+          <span class="header-tool-badge__title">{initialTool.h1}</span>
+        </div>
+      ) : (
+        <p class="app-tagline">Typography studio for shareable images</p>
+      )}
     </div>
     <div class="header-actions">
       <button type="button" class="btn-guide" id="guide-btn" title="Open SEO Guide & FAQs">
@@ -349,6 +373,12 @@ Design is how it works.</textarea>
             <input type="range" id="bg-image-opacity" min="0" max="100" value="90" />
           </div>
         </div>
+        <div class="field field--checkbox">
+          <label class="checkbox-control" for="show-masthead-toggle">
+            <input type="checkbox" id="show-masthead-toggle" />
+            <span class="checkbox-text">Discreet Creator Mark</span>
+          </label>
+        </div>
       </section>
 
 
@@ -394,5 +424,5 @@ Design is how it works.</textarea>
     <option value="svg">SVG</option>
   </select>
   <div id="sr-preview-description" class="sr-only" aria-live="polite"></div>
-  <SeoContent />
+  <SeoContent initialTool={initialTool} />
 </div>

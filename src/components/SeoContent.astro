@@ -1,15 +1,41 @@
 ---
 // src/components/SeoContent.astro
+import type { ToolConfig } from '../data/tools';
+import ToolDirectory from './ToolDirectory.astro';
+
+interface Props {
+  initialTool?: ToolConfig;
+}
+
+const { initialTool } = Astro.props;
 ---
 <article class="seo-container" id="seo-info-drawer">
   <div class="seo-drawer-backdrop" id="seo-drawer-close-btn-backdrop"></div>
   <div class="seo-drawer-panel">
     <div class="seo-drawer-header">
-      <h2 class="seo-drawer-title">About Typeframe & Design Science</h2>
+      <h2 class="seo-drawer-title">
+        {initialTool ? `${initialTool.h1} Guide` : 'About Typeframe & Design Science'}
+      </h2>
       <button type="button" class="seo-drawer-close" id="seo-drawer-close-btn" aria-label="Close guide">×</button>
     </div>
     
     <div class="seo-drawer-scrollable">
+      {initialTool && (
+        <section class="seo-section tool-spotlight-section">
+          <div class="tool-spotlight-badge">{initialTool.badge}</div>
+          <h3>{initialTool.h1}</h3>
+          <p>{initialTool.summary}</p>
+          
+          <div class="seo-features-grid">
+            {initialTool.highlightFeatures.map((feat) => (
+              <div class="feature-item">
+                <strong>✦</strong> {feat}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section class="seo-section">
         <h3>Why Typography Matters: The Science of Visual Fluency</h3>
         <p>
@@ -31,30 +57,19 @@
       </section>
 
       <section class="seo-section">
-        <h3>Key Features of Typeframe</h3>
-        <div class="seo-features-grid">
-          <div class="feature-item">
-            <strong>Rich Text & Markdown:</strong> Style specific words in bold, italic, or colored span highlights directly within the editor.
-          </div>
-          <div class="feature-item">
-            <strong>Generative Backdrops:</strong> Choose from solid fills, gradients, mesh glows, frosted glass, or subtle linen paper grain.
-          </div>
-          <div class="feature-item">
-            <strong>Drag & Nudge Blocks:</strong> Freely position your text, resize boundaries, or use arrow keys for pixel-perfect layout adjustments.
-          </div>
-          <div class="feature-item">
-            <strong>Scalable Exports:</strong> Download high-fidelity PNG, JPEG, WebP, or vector SVG assets instantly.
-          </div>
-        </div>
-      </section>
-
-      <section class="seo-section">
         <h3>Frequently Asked Questions</h3>
         <div class="seo-faq-accordion">
+          {initialTool?.faqs.map((faq) => (
+            <details class="faq-item" open>
+              <summary class="faq-question">{faq.question}</summary>
+              <div class="faq-answer">{faq.answer}</div>
+            </details>
+          ))}
+
           <details class="faq-item">
             <summary class="faq-question">What is Typeframe?</summary>
             <div class="faq-answer">
-              Typeframe is a free, modern typographic studio designed to convert quotes, tweets, and text into gorgeous social media graphics. It provides professional font templates, customizable backgrounds, and instant, high-quality rendering.
+              Typeframe is a free, modern typographic studio designed to convert quotes, tweets, code, and text into gorgeous social media graphics. It provides professional font templates, customizable backgrounds, and instant, high-quality rendering.
             </div>
           </details>
           
@@ -87,6 +102,34 @@
           </details>
         </div>
       </section>
+
+      <section class="seo-section">
+        <h3>Explore Dedicated Typographic Studios</h3>
+        <ToolDirectory currentSlug={initialTool?.slug} variant="grid" />
+      </section>
     </div>
   </div>
 </article>
+
+<style>
+  .tool-spotlight-section {
+    padding: 1.25rem;
+    background: rgba(110, 140, 255, 0.06);
+    border: 1px solid rgba(110, 140, 255, 0.2);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tool-spotlight-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6e8cff;
+    background: rgba(110, 140, 255, 0.15);
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    margin-bottom: 0.6rem;
+  }
+</style>

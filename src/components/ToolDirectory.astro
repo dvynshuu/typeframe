@@ -1,0 +1,307 @@
+---
+import { toolsData } from '../data/tools';
+
+interface Props {
+  currentSlug?: string;
+  variant?: 'grid' | 'chips' | 'footer';
+}
+
+const { currentSlug, variant = 'grid' } = Astro.props;
+---
+
+{variant === 'chips' ? (
+  <nav class="tool-chips-nav" aria-label="Quick tools directory">
+    <div class="tool-chips-scroll">
+      <a 
+        href="/" 
+        class={`tool-chip ${!currentSlug ? 'is-active' : ''}`}
+      >
+        <span class="tool-chip__dot"></span>
+        <span>Studio Home</span>
+      </a>
+      {toolsData.map((tool) => (
+        <a 
+          href={`/tools/${tool.slug}`} 
+          class={`tool-chip ${currentSlug === tool.slug ? 'is-active' : ''}`}
+        >
+          <span class="tool-chip__dot"></span>
+          <span>{tool.h1}</span>
+        </a>
+      ))}
+    </div>
+  </nav>
+) : (
+  <section class="tool-directory-section" aria-labelledby="tool-directory-heading">
+    <div class="tool-directory-head">
+      <div class="tool-directory-badge">
+        <span class="tool-directory-badge__pulse"></span>
+        <span>Curated Studios</span>
+      </div>
+      <h2 id="tool-directory-heading" class="tool-directory-title">
+        Specialized Typographic Studios
+      </h2>
+      <p class="tool-directory-subtitle">
+        Direct-intent creative tools built for speed, privacy, and zero watermark export.
+      </p>
+    </div>
+
+    <div class="tool-directory-grid">
+      {toolsData.map((tool) => {
+        const isCurrent = currentSlug === tool.slug;
+        return (
+          <a 
+            href={`/tools/${tool.slug}`} 
+            class={`tool-card ${isCurrent ? 'is-current' : ''}`}
+            aria-current={isCurrent ? 'page' : undefined}
+          >
+            <div class="tool-card__header">
+              <span class="tool-card__badge">{tool.badge}</span>
+              {isCurrent && <span class="tool-card__active-label">Active Studio</span>}
+            </div>
+            <h3 class="tool-card__title">{tool.h1}</h3>
+            <p class="tool-card__summary">{tool.summary}</p>
+            <div class="tool-card__footer">
+              <span class="tool-card__cta">
+                {isCurrent ? 'Currently Designing' : 'Launch Studio'}
+              </span>
+              <span class="tool-card__arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+)}
+
+<style>
+  .tool-chips-nav {
+    width: 100%;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .tool-chips-scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tool-chips-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(232, 236, 244, 0.04);
+    border: 1px solid rgba(232, 236, 244, 0.09);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted, #9ba3b4);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tool-chip__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(232, 236, 244, 0.3);
+    transition: background 0.2s ease;
+  }
+
+  .tool-chip:hover {
+    color: #e8ecf4;
+    background: rgba(232, 236, 244, 0.08);
+    border-color: rgba(110, 140, 255, 0.35);
+  }
+
+  .tool-chip.is-active {
+    color: #ffffff;
+    background: rgba(110, 140, 255, 0.15);
+    border-color: rgba(110, 140, 255, 0.5);
+  }
+
+  .tool-chip.is-active .tool-chip__dot {
+    background: #6e8cff;
+    box-shadow: 0 0 8px rgba(110, 140, 255, 0.8);
+  }
+
+  /* Full Grid Section */
+  .tool-directory-section {
+    max-width: 1280px;
+    margin: 4rem auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .tool-directory-head {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .tool-directory-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6e8cff;
+    background: rgba(110, 140, 255, 0.1);
+    border: 1px solid rgba(110, 140, 255, 0.25);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+
+  .tool-directory-badge__pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6e8cff;
+    box-shadow: 0 0 8px #6e8cff;
+  }
+
+  .tool-directory-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f1f3f9;
+    margin: 0 0 0.6rem;
+  }
+
+  .tool-directory-subtitle {
+    font-size: 0.95rem;
+    color: #8f9aa9;
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .tool-directory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.35rem;
+    background: rgba(15, 18, 26, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(110, 140, 255, 0.4), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(110, 140, 255, 0.3);
+    background: rgba(22, 26, 38, 0.85);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .tool-card:hover::before {
+    opacity: 1;
+  }
+
+  .tool-card.is-current {
+    border-color: rgba(110, 140, 255, 0.5);
+    background: rgba(22, 26, 38, 0.9);
+  }
+
+  .tool-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+  }
+
+  .tool-card__badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6e8cff;
+    background: rgba(110, 140, 255, 0.12);
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  .tool-card__active-label {
+    font-size: 0.68rem;
+    color: #4ade80;
+    font-weight: 500;
+  }
+
+  .tool-card__title {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+
+  .tool-card__summary {
+    font-size: 0.83rem;
+    color: #8c97a8;
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+    flex-grow: 1;
+  }
+
+  .tool-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(232, 236, 244, 0.06);
+  }
+
+  .tool-card__cta {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #c5d1e8;
+    transition: color 0.2s ease;
+  }
+
+  .tool-card__arrow {
+    font-size: 1rem;
+    color: #6e8cff;
+    transition: transform 0.25s ease;
+  }
+
+  .tool-card:hover .tool-card__cta {
+    color: #ffffff;
+  }
+
+  .tool-card:hover .tool-card__arrow {
+    transform: translateX(4px);
+  }
+</style>
