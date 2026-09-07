@@ -2,14 +2,122 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Editor from '../components/Editor.astro';
 import ToolDirectory from '../components/ToolDirectory.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout>
   <Editor />
+
+  <!-- High-Value Semantic Editorial Content for Crawlers & Readers -->
+  <section class="home-content-section" aria-label="About the Typeframe Studio">
+    <div class="content-container">
+      <div class="content-intro">
+        <span class="content-badge">Creative Typography Engine</span>
+        <h2 class="content-title">Turn Words into High-Impact Editorial Graphics</h2>
+        <p class="content-lead">
+          Typeframe gives creators, developers, authors, and founders a rapid canvas to craft publication-ready visual cards. No complex software, no forced sign-ups, and zero watermarks.
+        </p>
+      </div>
+
+      <!-- 3-Step Workflow -->
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <div class="step-badge">01</div>
+          <h3>Compose Your Text</h3>
+          <p>
+            Type directly into the live artboard or paste excerpts from Twitter, books, or code repositories. Full support for markdown syntax, bold emphasis, and code fences.
+          </p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-badge">02</div>
+          <h3>Select Editorial Styling</h3>
+          <p>
+            Choose from curated typographic themes like Midnight, Kinfolk, Apple Notes, and Obsidian. Adjust line height, letter spacing, font pairing, and gradient mesh backdrops.
+          </p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-badge">03</div>
+          <h3>Instant 4K Export</h3>
+          <p>
+            Download lossless PNG, JPEG, or compact WebP images scaled up to 4K resolution, or copy straight to your clipboard for instant sharing on X, LinkedIn, or Instagram.
+          </p>
+        </div>
+      </div>
+
+      <!-- Key Capabilities Section -->
+      <div class="features-block">
+        <h3 class="block-heading">Engineered for Quality & Speed</h3>
+        <div class="features-columns">
+          <div class="feature-detail">
+            <h4>✦ 100% Client-Side Privacy</h4>
+            <p>
+              Your graphics, proprietary code snippets, and custom background photos never leave your device. All rendering is computed locally in your browser via HTML5 Canvas.
+            </p>
+          </div>
+          <div class="feature-detail">
+            <h4>✦ Scalable Vector SVG Support</h4>
+            <p>
+              Need to import into Figma, Illustrator, or print high-DPI posters? Export scalable SVG vectors with preserved typography and crisp paths.
+            </p>
+          </div>
+          <div class="feature-detail">
+            <h4>✦ Preset Ratios for Every Platform</h4>
+            <p>
+              One-click dimensions for Instagram square (1:1), Stories (9:16), Twitter landscape (16:9), and LinkedIn feeds (1.91:1) so your cards always look centered and sharp.
+            </p>
+          </div>
+          <div class="feature-detail">
+            <h4>✦ Hand-Crafted Font Pairings</h4>
+            <p>
+              Includes world-class open typefaces: Instrument Serif, Playfair Display, IBM Plex Sans, Inter, and JetBrains Mono for developers.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Crawlable FAQ -->
+      <div class="home-faq-block">
+        <h3 class="block-heading">Frequently Asked Questions</h3>
+        <div class="faq-accordion">
+          <details class="faq-row" open>
+            <summary class="faq-question">Is Typeframe completely free to use?</summary>
+            <div class="faq-body">
+              Yes, Typeframe is 100% free with no hidden fees, paid tiers, or watermarks. All high-resolution exports and presets are unlocked for both personal and commercial use.
+            </div>
+          </details>
+
+          <details class="faq-row" open>
+            <summary class="faq-question">Can I use graphics created with Typeframe for commercial projects?</summary>
+            <div class="faq-body">
+              Yes! You own 100% of all images and cards you design in Typeframe. You can use them in client projects, company blogs, newsletters, books, and social media campaigns without attribution.
+            </div>
+          </details>
+
+          <details class="faq-row">
+            <summary class="faq-question">Does Typeframe save or store my text on a server?</summary>
+            <div class="faq-body">
+              No. Typeframe executes entirely on the client side. Your draft text and settings stay in your browser's local storage and are never uploaded to any remote server or database.
+            </div>
+          </details>
+
+          <details class="faq-row">
+            <summary class="faq-question">How does Typeframe compare to tools like Carbon or Ray.so?</summary>
+            <div class="faq-body">
+              While Carbon and Ray.so focus strictly on code screenshots, Typeframe bridges the gap between code snippets, literary quotes, editorial book excerpts, and social text cards. It gives you flexible text modes, editorial serifs, and multi-ratio exports in one place.
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
   
   <aside class="home-tool-directory-wrapper" aria-label="Explore Studios">
     <ToolDirectory variant="grid" />
   </aside>
+
+  <Footer />
 
   <script>
     import { initEditor } from '../components/EditorApp';
@@ -28,6 +136,173 @@ import ToolDirectory from '../components/ToolDirectory.astro';
 </BaseLayout>
 
 <style>
+  .home-content-section {
+    background: #080a0f;
+    border-top: 1px solid rgba(232, 236, 244, 0.08);
+    padding: 5rem 1.5rem 4rem;
+    position: relative;
+    z-index: 10;
+    color: #e8ecf4;
+  }
+
+  .content-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .content-intro {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 4rem;
+  }
+
+  .content-badge {
+    display: inline-block;
+    background: rgba(110, 140, 255, 0.1);
+    border: 1px solid rgba(110, 140, 255, 0.25);
+    color: #8fa6ff;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .content-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    margin: 0 0 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .content-lead {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #9da6bc;
+    margin: 0;
+  }
+
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+    margin-bottom: 4.5rem;
+  }
+
+  @media (max-width: 800px) {
+    .workflow-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .workflow-card {
+    background: rgba(14, 17, 26, 0.7);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 14px;
+    padding: 2rem 1.75rem;
+    position: relative;
+  }
+
+  .step-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #6e8cff;
+    margin-bottom: 0.75rem;
+  }
+
+  .workflow-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 0.75rem;
+  }
+
+  .workflow-card p {
+    color: #8c93a8;
+    line-height: 1.65;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .features-block {
+    background: rgba(14, 17, 26, 0.5);
+    border: 1px solid rgba(232, 236, 244, 0.06);
+    border-radius: 16px;
+    padding: 3rem;
+    margin-bottom: 4.5rem;
+  }
+
+  .block-heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .features-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 700px) {
+    .features-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .feature-detail h4 {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #e8ecf4;
+    margin: 0 0 0.5rem;
+  }
+
+  .feature-detail p {
+    color: #8c93a8;
+    line-height: 1.65;
+    margin: 0;
+    font-size: 0.93rem;
+  }
+
+  .home-faq-block {
+    margin-bottom: 2rem;
+  }
+
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-row {
+    background: rgba(14, 17, 26, 0.6);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .faq-question {
+    font-weight: 600;
+    color: #e8ecf4;
+    cursor: pointer;
+    font-size: 1.05rem;
+  }
+
+  .faq-body {
+    margin-top: 0.75rem;
+    color: #9da6bc;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
   .home-tool-directory-wrapper {
     background: #080a0f;
     border-top: 1px solid rgba(232, 236, 244, 0.08);
@@ -37,8 +312,14 @@ import ToolDirectory from '../components/ToolDirectory.astro';
   }
 
   @media (max-width: 600px) {
-    .home-tool-directory-wrapper {
-      padding: 2rem 1rem 3.5rem;
+    .home-content-section {
+      padding: 3.5rem 1rem 2.5rem;
+    }
+    .content-title {
+      font-size: 2.1rem;
+    }
+    .features-block {
+      padding: 2rem 1.25rem;
     }
   }
 </style>

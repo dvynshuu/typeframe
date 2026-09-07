@@ -30,6 +30,31 @@
   gap: 0.1rem;
 }
 
+.header-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: 1rem;
+}
+
+.header-nav-anchor {
+  color: var(--text-muted, #8c93a8);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.header-nav-anchor:hover {
+  color: var(--accent-blue, #6e8cff);
+}
+
+@media (max-width: 1024px) {
+  .header-nav-menu {
+    display: none;
+  }
+}
+
 .app-logo {
   display: flex;
   align-items: center;

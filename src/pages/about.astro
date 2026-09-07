@@ -1,0 +1,319 @@
+---
+// src/pages/about.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "About Typeframe — Editorial Typography Studio & Visual Engine";
+const pageDescription = "Learn about Typeframe, our creator vision, the cognitive science of visual fluency, and our commitment to zero-latency, private web design utilities.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} url="https://typeframe.pages.dev/about">
+  <div class="about-page">
+    <header class="about-hero">
+      <div class="about-container">
+        <a href="/" class="back-link">← Return to Studio</a>
+        <div class="hero-badge">About Typeframe</div>
+        <h1 class="hero-title">Words deserve editorial dignity.</h1>
+        <p class="hero-lead">
+          Typeframe is an open typographic studio designed to transform quotes, code snippets, notes, and ideas into high-resolution, editorial-grade visual assets with instant client-side rendering.
+        </p>
+      </div>
+    </header>
+
+    <main class="about-body">
+      <div class="about-container">
+        <!-- Core Manifesto Grid -->
+        <div class="manifesto-grid">
+          <div class="manifesto-card">
+            <div class="card-icon">⚡</div>
+            <h3>Zero Latency</h3>
+            <p>
+              No waiting on cloud queues or server rendering. All rendering operates locally at 60 frames per second using high-performance HTML5 Canvas APIs.
+            </p>
+          </div>
+
+          <div class="manifesto-card">
+            <div class="card-icon">🔒</div>
+            <h3>Absolute Privacy</h3>
+            <p>
+              Your thoughts, code snippets, and custom photos remain strictly in your browser. Nothing is ever logged, uploaded, or parsed on remote servers.
+            </p>
+          </div>
+
+          <div class="manifesto-card">
+            <div class="card-icon">💎</div>
+            <h3>Zero Watermarks</h3>
+            <p>
+              Created for writers, creators, and developers. Every graphic you export belongs 100% to you for personal and commercial applications.
+            </p>
+          </div>
+        </div>
+
+        <!-- Narrative Section -->
+        <article class="narrative-card">
+          <section class="narrative-section">
+            <h2>1. Why We Built Typeframe</h2>
+            <p>
+              In a digital landscape flooded with generic screenshot tools and bloated graphics software, conveying written wisdom has become needlessly complex. Existing tools either slap ugly watermarks on your work, require forced account registrations, or transmit your private text and proprietary code across third-party cloud servers.
+            </p>
+            <p>
+              Typeframe was built from first principles as an antidote: a lightning-fast, privacy-first typography workshop where anyone can compose publication-grade visual cards in under thirty seconds.
+            </p>
+          </section>
+
+          <section class="narrative-section">
+            <h2>2. The Cognitive Science of Visual Fluency</h2>
+            <p>
+              Typography is not mere ornamentation; it is the psychology of reading. Studies in cognitive neuroscience demonstrate that <strong>visual fluency</strong>—how effortlessly the visual cortex processes text layouts—directly alters how readers perceive credibility and truth:
+            </p>
+            <div class="science-quote">
+              “When typographic hierarchy, line spacing (leading), and contrast balance harmoniously, cognitive load drops, and reading comprehension increases by up to 75%.”
+            </div>
+            <p>
+              Typeframe embeds these principles into every template, pairing proportioned serif and monospaced typefaces (such as Instrument Serif, Playfair Display, IBM Plex Sans, and JetBrains Mono) with carefully calculated mathematical paddings and generative organic backdrops.
+            </p>
+          </section>
+
+          <section class="narrative-section">
+            <h2>3. Technical Architecture</h2>
+            <p>
+              Typeframe is built on top of the modern open web stack:
+            </p>
+            <ul class="tech-list">
+              <li><strong>Astro 6 Framework:</strong> Produces lightweight, zero-JS baseline HTML pages for optimal indexing, accessibility, and sub-second load times.</li>
+              <li><strong>HTML5 2D Canvas Engine:</strong> Renders custom type metrics, multi-line wrapping algorithms, syntax highlighting, and dual-layer shadows in real time.</li>
+              <li><strong>Vector SVG Pipeline:</strong> In addition to raster PNG and WebP formats, exports scalable vector SVG documents preserving live vector text paths.</li>
+              <li><strong>Offline-First Capabilities:</strong> Capable of drafting and generating assets even when disconnected from the Internet.</li>
+            </ul>
+          </section>
+
+          <section class="narrative-section">
+            <h2>4. Creator & Team Transparency (E-E-A-T)</h2>
+            <p>
+              Typeframe is created and maintained by independent web engineer <strong>Divyanshu</strong> (<a href="https://x.com/dvynshuu" target="_blank" rel="noopener noreferrer">@dvynshuu</a>), alongside a suite of developer-focused web utilities including <a href="https://convercell.netlify.app" target="_blank" rel="noopener noreferrer">Convercell</a> and <a href="https://maniacc.vercel.app" target="_blank" rel="noopener noreferrer">Maniac OS</a>.
+            </p>
+            <p>
+              We believe in an open, respectful web. We fund infrastructure through non-intrusive Google AdSense advertising rather than dark patterns, gated feature locks, or selling user data.
+            </p>
+          </section>
+
+          <div class="narrative-actions">
+            <a href="/" class="btn-primary-action">Start Creating Now →</a>
+            <a href="/contact" class="btn-secondary-action">Get in Touch</a>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .about-page {
+    background: #080a0f;
+    min-height: 100vh;
+    color: #e8ecf4;
+  }
+
+  .about-container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .about-hero {
+    padding: 3.5rem 0 3rem;
+    border-bottom: 1px solid rgba(232, 236, 244, 0.08);
+    background: radial-gradient(circle at 50% 0%, rgba(110, 140, 255, 0.12) 0%, transparent 70%);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: #6e8cff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(110, 140, 255, 0.1);
+    border: 1px solid rgba(110, 140, 255, 0.25);
+    color: #8fa6ff;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 1.25rem;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-lead {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: #9da6bc;
+    max-width: 720px;
+    margin: 0;
+  }
+
+  .about-body {
+    padding: 3.5rem 0 5rem;
+  }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .manifesto-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .manifesto-card {
+    background: rgba(14, 17, 26, 0.7);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 14px;
+    padding: 1.75rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .manifesto-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: #f0f4fc;
+  }
+
+  .manifesto-card p {
+    color: #8c93a8;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .narrative-card {
+    background: rgba(14, 17, 26, 0.6);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 16px;
+    padding: 3rem;
+  }
+
+  .narrative-section {
+    margin-bottom: 2.75rem;
+  }
+
+  .narrative-section h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .narrative-section p {
+    color: #a8b0c4;
+    line-height: 1.8;
+    margin: 0 0 1rem;
+    font-size: 1.02rem;
+  }
+
+  .science-quote {
+    background: rgba(110, 140, 255, 0.06);
+    border-left: 3px solid #6e8cff;
+    padding: 1.25rem 1.5rem;
+    margin: 1.25rem 0;
+    border-radius: 0 10px 10px 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: #dbe3f5;
+    line-height: 1.65;
+  }
+
+  .tech-list {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    color: #a8b0c4;
+    line-height: 1.8;
+  }
+
+  .tech-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .tech-list strong {
+    color: #e8ecf4;
+  }
+
+  .narrative-section a {
+    color: #6e8cff;
+    text-decoration: underline;
+  }
+
+  .narrative-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(232, 236, 244, 0.08);
+  }
+
+  .btn-primary-action {
+    background: linear-gradient(135deg, #6e8cff, #89a4ff);
+    color: #06070a;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-primary-action:hover {
+    opacity: 0.92;
+  }
+
+  .btn-secondary-action {
+    background: rgba(232, 236, 244, 0.06);
+    color: #e8ecf4;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid rgba(232, 236, 244, 0.1);
+  }
+
+  .btn-secondary-action:hover {
+    background: rgba(232, 236, 244, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .narrative-card {
+      padding: 1.75rem 1.25rem;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+    }
+  }
+</style>

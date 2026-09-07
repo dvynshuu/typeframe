@@ -3,6 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Editor from '../../components/Editor.astro';
 import ToolDirectory from '../../components/ToolDirectory.astro';
+import Footer from '../../components/Footer.astro';
 import { toolsData, type ToolConfig } from '../../data/tools';
 
 export function getStaticPaths() {
@@ -96,6 +97,8 @@ const faqJsonLd = {
       <ToolDirectory currentSlug={tool.slug} variant="grid" />
     </div>
   </section>
+
+  <Footer />
 
   <script>
     import { initEditor } from '../../components/EditorApp';

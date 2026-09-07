@@ -1,0 +1,221 @@
+---
+// src/pages/privacy-policy.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Privacy Policy — Typeframe Typography Studio";
+const pageDescription = "Learn how Typeframe protects your privacy. 100% client-side rendering, no remote image storage, and our advertising & cookie disclosures.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} url="https://typeframe.pages.dev/privacy-policy">
+  <div class="legal-page">
+    <header class="legal-header">
+      <div class="legal-container">
+        <a href="/" class="back-link">← Return to Studio</a>
+        <h1 class="legal-title">Privacy Policy</h1>
+        <p class="legal-meta">Last updated: September 2026</p>
+      </div>
+    </header>
+
+    <main class="legal-content">
+      <div class="legal-container">
+        <div class="legal-card">
+          <section class="policy-section">
+            <h2>1. Introduction & Overview</h2>
+            <p>
+              Welcome to <strong>Typeframe</strong> (accessible at <a href="https://typeframe.pages.dev">https://typeframe.pages.dev</a>). We believe in fundamental privacy, digital self-sovereignty, and transparent web experiences. This Privacy Policy explains how we handle information, our 100% client-side architecture, and our third-party advertising disclosures.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>2. 100% Client-Side Processing Architecture</h2>
+            <p>
+              Unlike conventional graphic design web apps, <strong>Typeframe processes your images and text entirely inside your local browser using HTML5 Canvas and WebGL</strong>:
+            </p>
+            <ul>
+              <li><strong>Zero Cloud Uploads:</strong> When you type text, paste quotes, or upload personal photos as custom canvas backgrounds, that data is processed strictly in your local device's memory. It is never uploaded to, transmitted to, or stored on any remote cloud server.</li>
+              <li><strong>Local Storage:</strong> Your editor drafts, custom settings, and aspect ratio preferences are stored locally in your browser's <code>localStorage</code>. You can clear this data at any time through your browser settings.</li>
+              <li><strong>No File Scraping:</strong> We do not log, retain, or train artificial intelligence models on your creative compositions.</li>
+            </ul>
+          </section>
+
+          <section class="policy-section">
+            <h2>3. Google AdSense & Third-Party Advertising Cookies</h2>
+            <p>
+              To maintain Typeframe as a 100% free web utility with no paid subscriptions or forced paywalls, we display advertisements served by third-party advertising networks, primarily <strong>Google AdSense</strong>.
+            </p>
+            <p>
+              Please review how Google uses cookies and data when serving ads:
+            </p>
+            <ul>
+              <li>
+                <strong>Third-Party Vendor Cookies:</strong> Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites across the Internet.
+              </li>
+              <li>
+                <strong>DoubleClick DART Cookie:</strong> Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visits to our site and/or other sites on the Internet.
+              </li>
+              <li>
+                <strong>Opting Out:</strong> You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a> or <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer">Your Online Choices (Europe)</a>.
+              </li>
+            </ul>
+          </section>
+
+          <section class="policy-section">
+            <h2>4. Web Analytics & Server Logs</h2>
+            <p>
+              When accessing our website, standard web server access logs may record technical details such as your IP address, browser type, referral URL, and timestamps. This standard diagnostic information is utilized exclusively for server stability, DDoS protection, and performance optimization.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>5. GDPR and CCPA Privacy Rights</h2>
+            <p>
+              If you reside in the European Economic Area (EEA), United Kingdom, or California (CCPA), you are entitled to statutory privacy rights regarding your personal data. Because Typeframe does not maintain user accounts, require email registrations, or store documents on remote servers, we hold no personal profile data about our visitors. For any privacy requests or inquiries, you may contact us directly.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>6. External Links & Sister Tools</h2>
+            <p>
+              Typeframe may contain links to external websites or partner services. We do not exercise control over the content or privacy practices of external websites and encourage users to review their respective privacy statements.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>7. Contact Information</h2>
+            <p>
+              If you have any questions or feedback regarding our privacy practices or advertising policies, please contact our administrative team:
+            </p>
+            <div class="contact-box">
+              <p><strong>Email:</strong> <a href="mailto:support@typeframe.pages.dev">support@typeframe.pages.dev</a></p>
+              <p><strong>Website:</strong> <a href="https://typeframe.pages.dev">https://typeframe.pages.dev</a></p>
+              <p><strong>Turnaround:</strong> Within 24–48 business hours</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .legal-page {
+    background: #080a0f;
+    min-height: 100vh;
+    color: #e8ecf4;
+  }
+
+  .legal-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .legal-header {
+    padding: 3.5rem 0 2rem;
+    border-bottom: 1px solid rgba(232, 236, 244, 0.08);
+    background: linear-gradient(180deg, #0d1017 0%, #080a0f 100%);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: #6e8cff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .legal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #ffffff;
+  }
+
+  .legal-meta {
+    color: #7d8499;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .legal-content {
+    padding: 3rem 0 5rem;
+  }
+
+  .legal-card {
+    background: rgba(14, 17, 26, 0.7);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 16px;
+    padding: 2.75rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .policy-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .policy-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .policy-section h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .policy-section p {
+    color: #a8b0c4;
+    line-height: 1.75;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+  }
+
+  .policy-section ul {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+    color: #a8b0c4;
+    line-height: 1.75;
+  }
+
+  .policy-section li {
+    margin-bottom: 0.5rem;
+  }
+
+  .policy-section a {
+    color: #6e8cff;
+    text-decoration: underline;
+  }
+
+  .contact-box {
+    background: rgba(110, 140, 255, 0.05);
+    border: 1px solid rgba(110, 140, 255, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .contact-box p {
+    margin: 0.35rem 0;
+    color: #cad3e8;
+  }
+
+  @media (max-width: 600px) {
+    .legal-card {
+      padding: 1.75rem 1.25rem;
+    }
+    .legal-title {
+      font-size: 2.1rem;
+    }
+  }
+</style>

@@ -1,0 +1,211 @@
+---
+// src/pages/terms.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Terms of Service — Typeframe Studio";
+const pageDescription = "Terms and conditions for utilizing Typeframe's free online typographic studio, canvas rendering engines, and image export capabilities.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} url="https://typeframe.pages.dev/terms">
+  <div class="legal-page">
+    <header class="legal-header">
+      <div class="legal-container">
+        <a href="/" class="back-link">← Return to Studio</a>
+        <h1 class="legal-title">Terms of Service</h1>
+        <p class="legal-meta">Last updated: September 2026</p>
+      </div>
+    </header>
+
+    <main class="legal-content">
+      <div class="legal-container">
+        <div class="legal-card">
+          <section class="policy-section">
+            <h2>1. Acceptance of Agreement</h2>
+            <p>
+              By accessing, browsing, or utilizing <strong>Typeframe</strong> (accessible at <a href="https://typeframe.pages.dev">https://typeframe.pages.dev</a>), you agree to be bound by these Terms of Service. If you do not consent to any part of these terms, please discontinue using the studio.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>2. Scope of Service & Commercial Rights</h2>
+            <p>
+              Typeframe is a browser-based creative typography design tool. We grant you a revocable, non-exclusive, royalty-free license to generate graphics, text cards, quote images, and code snippets:
+            </p>
+            <ul>
+              <li><strong>100% Content Ownership:</strong> You retain complete, unrestricted ownership of all text, quotations, and images you create or export from Typeframe.</li>
+              <li><strong>Commercial Use Allowed:</strong> You are free to use exported graphics for personal, editorial, commercial, or marketing purposes (including social media posts, blog headers, newsletters, and merchandise) without attribution or royalty payments to Typeframe.</li>
+              <li><strong>Zero Watermarks:</strong> We do not impose watermarks or mandatory brand badges on exported assets.</li>
+            </ul>
+          </section>
+
+          <section class="policy-section">
+            <h2>3. Permissible & Lawful Use</h2>
+            <p>
+              When utilizing Typeframe, you agree not to use the software to:
+            </p>
+            <ul>
+              <li>Produce, distribute, or promote unlawful, abusive, harassing, defamatory, or hateful content.</li>
+              <li>Infringe upon the copyrights, trademarks, or intellectual property rights of third parties.</li>
+              <li>Attempt to reverse-engineer, disrupt, or overload the underlying static delivery infrastructure.</li>
+            </ul>
+          </section>
+
+          <section class="policy-section">
+            <h2>4. Intellectual Property of Typeframe</h2>
+            <p>
+              The Typeframe brand name, logo, custom user interface components, software codebase, and styling algorithms are the proprietary property of the Typeframe creator. Fonts rendered within the application are open-source typefaces distributed under their respective licenses (e.g., SIL Open Font License).
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>5. Disclaimer of Warranties</h2>
+            <p>
+              Typeframe is provided strictly on an <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong> basis without warranties of any kind, whether express or implied. While we strive for 60fps canvas performance and reliable font rendering across devices, we do not warrant that service will be uninterrupted or error-free.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>6. Limitation of Liability</h2>
+            <p>
+              In no event shall Typeframe, its creator, or affiliates be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use this service, data loss, or reliance on exported visuals.
+            </p>
+          </section>
+
+          <section class="policy-section">
+            <h2>7. Contact Inquiries</h2>
+            <p>
+              For legal inquiries, copyright notices, or questions regarding these Terms:
+            </p>
+            <div class="contact-box">
+              <p><strong>Email:</strong> <a href="mailto:support@typeframe.pages.dev">support@typeframe.pages.dev</a></p>
+              <p><strong>Direct Link:</strong> <a href="/contact">Contact Support Page</a></p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .legal-page {
+    background: #080a0f;
+    min-height: 100vh;
+    color: #e8ecf4;
+  }
+
+  .legal-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .legal-header {
+    padding: 3.5rem 0 2rem;
+    border-bottom: 1px solid rgba(232, 236, 244, 0.08);
+    background: linear-gradient(180deg, #0d1017 0%, #080a0f 100%);
+  }
+
+  .back-link {
+    display: inline-block;
+    color: #6e8cff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .legal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #ffffff;
+  }
+
+  .legal-meta {
+    color: #7d8499;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .legal-content {
+    padding: 3rem 0 5rem;
+  }
+
+  .legal-card {
+    background: rgba(14, 17, 26, 0.7);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 16px;
+    padding: 2.75rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .policy-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .policy-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .policy-section h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .policy-section p {
+    color: #a8b0c4;
+    line-height: 1.75;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+  }
+
+  .policy-section ul {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+    color: #a8b0c4;
+    line-height: 1.75;
+  }
+
+  .policy-section li {
+    margin-bottom: 0.5rem;
+  }
+
+  .policy-section a {
+    color: #6e8cff;
+    text-decoration: underline;
+  }
+
+  .contact-box {
+    background: rgba(110, 140, 255, 0.05);
+    border: 1px solid rgba(110, 140, 255, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .contact-box p {
+    margin: 0.35rem 0;
+    color: #cad3e8;
+  }
+
+  @media (max-width: 600px) {
+    .legal-card {
+      padding: 1.75rem 1.25rem;
+    }
+    .legal-title {
+      font-size: 2.1rem;
+    }
+  }
+</style>

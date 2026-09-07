@@ -1,0 +1,277 @@
+---
+// src/components/Footer.astro
+import { toolsData } from '../data/tools';
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="typeframe-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <!-- Brand & Mission Column -->
+      <div class="footer-col footer-col--brand">
+        <a href="/" class="footer-logo" title="Typeframe Home">
+          <div class="footer-logo-squircle">
+            <span class="footer-logo-letter">T</span>
+          </div>
+          <span class="footer-logo-text">Typeframe</span>
+        </a>
+        <p class="footer-tagline">
+          Premium typography studio for creators, writers, and developers. Turn words into editorial graphics with instant client-side canvas rendering.
+        </p>
+        <div class="footer-badges">
+          <span class="footer-badge">🔒 100% Client-Side</span>
+          <span class="footer-badge">✨ Zero Watermarks</span>
+          <span class="footer-badge">⚡ 60 FPS Canvas</span>
+        </div>
+      </div>
+
+      <!-- Studio Tools Directory -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Studio Tools</h4>
+        <ul class="footer-links">
+          {toolsData.slice(0, 6).map((tool) => (
+            <li>
+              <a href={`/tools/${tool.slug}`} class="footer-link">
+                {tool.h1}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- More Tools -->
+      <div class="footer-col">
+        <h4 class="footer-heading">More Formats</h4>
+        <ul class="footer-links">
+          {toolsData.slice(6).map((tool) => (
+            <li>
+              <a href={`/tools/${tool.slug}`} class="footer-link">
+                {tool.h1}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/#typeframe-editor" class="footer-link">Custom Canvas Studio</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Company & Legal -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Trust & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/about" class="footer-link">About Us</a></li>
+          <li><a href="/contact" class="footer-link">Contact Support</a></li>
+          <li><a href="/privacy-policy" class="footer-link">Privacy Policy</a></li>
+          <li><a href="/terms" class="footer-link">Terms of Service</a></li>
+        </ul>
+        <div class="footer-contact-snippet">
+          <span class="contact-label">Developer Inquiries:</span>
+          <a href="mailto:support@typeframe.pages.dev" class="contact-email">support@typeframe.pages.dev</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        &copy; {currentYear} Typeframe Studio. All visual exports are 100% owned by their creators. Built with precision for the modern web.
+      </p>
+      <div class="footer-legal-bar">
+        <a href="/about">About</a>
+        <span class="sep">•</span>
+        <a href="/contact">Contact</a>
+        <span class="sep">•</span>
+        <a href="/privacy-policy">Privacy</a>
+        <span class="sep">•</span>
+        <a href="/terms">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .typeframe-footer {
+    background: #06070a;
+    border-top: 1px solid rgba(232, 236, 244, 0.08);
+    color: #8c93a8;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 20;
+    padding: 4rem 1.5rem 2.5rem;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1.1fr 1.1fr 1.2fr;
+    gap: 3rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (max-width: 960px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+
+  .footer-logo-squircle {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #11141e, #1a202e);
+    border: 1px solid rgba(110, 140, 255, 0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .footer-logo-letter {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #6e8cff, #c37cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .footer-logo-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #e8ecf4;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-tagline {
+    line-height: 1.65;
+    color: #7d8499;
+    margin-bottom: 1.25rem;
+    max-width: 340px;
+  }
+
+  .footer-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .footer-badge {
+    background: rgba(232, 236, 244, 0.04);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #a8b0c4;
+  }
+
+  .footer-heading {
+    color: #e8ecf4;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin: 0 0 1.25rem 0;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .footer-link {
+    color: #8c93a8;
+    text-decoration: none;
+    transition: color 0.15s ease, transform 0.15s ease;
+    display: inline-block;
+  }
+
+  .footer-link:hover {
+    color: #6e8cff;
+    transform: translateX(2px);
+  }
+
+  .footer-contact-snippet {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(232, 236, 244, 0.06);
+  }
+
+  .contact-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #62687d;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-email {
+    color: #6e8cff;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .contact-email:hover {
+    text-decoration: underline;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(232, 236, 244, 0.06);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .footer-copyright {
+    color: #62687d;
+    margin: 0;
+  }
+
+  .footer-legal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-legal-bar a {
+    color: #8c93a8;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .footer-legal-bar a:hover {
+    color: #e8ecf4;
+  }
+
+  .footer-legal-bar .sep {
+    color: rgba(232, 236, 244, 0.2);
+  }
+</style>

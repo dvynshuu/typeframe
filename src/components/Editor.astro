@@ -82,6 +82,14 @@ const { initialTool } = Astro.props;
         <p class="app-tagline">Typography studio for shareable images</p>
       )}
     </div>
+
+    <nav class="header-nav-menu" aria-label="Main Navigation">
+      <a href="/#explore-studios" class="header-nav-anchor">Tools</a>
+      <a href="/about" class="header-nav-anchor">About</a>
+      <a href="/contact" class="header-nav-anchor">Contact</a>
+      <a href="/privacy-policy" class="header-nav-anchor">Privacy</a>
+    </nav>
+
     <div class="header-actions">
       <button type="button" class="btn-guide has-tooltip" id="guide-btn" data-tooltip="Guide & FAQs" aria-label="Open SEO Guide & FAQs">
         <span class="btn-guide__icon" aria-hidden="true">💡</span>
