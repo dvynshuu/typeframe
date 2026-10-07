@@ -62,7 +62,7 @@ const { initialTool } = Astro.props;
           {initialTool?.faqs.map((faq) => (
             <details class="faq-item" open>
               <summary class="faq-question">{faq.question}</summary>
-              <div class="faq-answer">{faq.answer}</div>
+              <div class="faq-answer" set:html={faq.answer} />
             </details>
           ))}
 
@@ -131,5 +131,17 @@ const { initialTool } = Astro.props;
     padding: 0.2rem 0.55rem;
     border-radius: 6px;
     margin-bottom: 0.6rem;
+  }
+
+  .faq-answer a {
+    color: #8fa6ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .faq-answer a:hover {
+    color: #c4d4ff;
   }
 </style>

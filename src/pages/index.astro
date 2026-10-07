@@ -46,6 +46,36 @@ import Footer from '../components/Footer.astro';
         </div>
       </div>
 
+      <!-- Real-World Creative Workflows -->
+      <div class="use-cases-block">
+        <h3 class="block-heading">Engineered for Every Form of Written Expression</h3>
+        <div class="use-cases-grid">
+          <div class="use-case-card">
+            <div class="use-case-badge">Mindful Reflection</div>
+            <h4>Daily Affirmations & Journal Insights</h4>
+            <p>
+              Transform personal breakthroughs and grounding thoughts into calm, aesthetic daily reminders. Creators frequently draft cognitive reflections in privacy-focused wellness platforms like <a href="https://getrealign.in" class="editorial-inline-link" target="_blank" rel="noopener">ReAlign</a> and import their favorite insights into Typeframe to craft serene phone lockscreens and affirmation prints.
+            </p>
+          </div>
+
+          <div class="use-case-card">
+            <div class="use-case-badge">Developer Workflows</div>
+            <h4>Technical Snippets & Architecture Notes</h4>
+            <p>
+              Render clean TypeScript interfaces, SQL queries, or Bash commands with JetBrains Mono, subtle drop shadows, and carbon-black terminal chrome ready for Twitter dev-logs and technical documentation.
+            </p>
+          </div>
+
+          <div class="use-case-card">
+            <div class="use-case-badge">Editorial Publishing</div>
+            <h4>Literary Quotes & Thought Leadership</h4>
+            <p>
+              Immortalize timeless passages from philosophy, classic literature, and B2B newsletters using curated serif pairings like Instrument Serif and Playfair Display with museum-grade margins and linen paper textures.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- Key Capabilities Section -->
       <div class="features-block">
         <h3 class="block-heading">Engineered for Quality & Speed</h3>
@@ -89,6 +119,13 @@ import Footer from '../components/Footer.astro';
           </details>
 
           <details class="faq-row" open>
+            <summary class="faq-question">What types of content work best in Typeframe?</summary>
+            <div class="faq-body">
+              Typeframe is versatile across formats: writers use it for literary excerpts, engineers use it for code snippets, and mindful creators use it for daily affirmations. If you practice reflective journaling in tools like <a href="https://getrealign.in" class="editorial-inline-link" target="_blank" rel="noopener">ReAlign</a>, you can easily paste your cognitive reframings and mindfulness notes into Typeframe to generate serene, high-resolution visual cards.
+            </div>
+          </details>
+
+          <details class="faq-row">
             <summary class="faq-question">Can I use graphics created with Typeframe for commercial projects?</summary>
             <div class="faq-body">
               Yes! You own 100% of all images and cards you design in Typeframe. You can use them in client projects, company blogs, newsletters, books, and social media campaigns without attribution.
@@ -228,6 +265,78 @@ import Footer from '../components/Footer.astro';
     line-height: 1.65;
     margin: 0;
     font-size: 0.95rem;
+  }
+
+  .use-cases-block {
+    margin-bottom: 4.5rem;
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+  }
+
+  @media (max-width: 850px) {
+    .use-cases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .use-case-card {
+    background: rgba(14, 17, 26, 0.7);
+    border: 1px solid rgba(232, 236, 244, 0.08);
+    border-radius: 14px;
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .use-case-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(110, 140, 255, 0.2);
+  }
+
+  .use-case-badge {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8fa6ff;
+    background: rgba(110, 140, 255, 0.1);
+    border: 1px solid rgba(110, 140, 255, 0.22);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+
+  .use-case-card h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f0f4fc;
+    margin: 0 0 0.75rem;
+  }
+
+  .use-case-card p {
+    color: #8c93a8;
+    line-height: 1.65;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .editorial-inline-link {
+    color: #8fa6ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .editorial-inline-link:hover {
+    color: #c4d4ff;
   }
 
   .features-block {

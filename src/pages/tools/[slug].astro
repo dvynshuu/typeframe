@@ -45,7 +45,7 @@ const faqJsonLd = {
     "name": f.question,
     "acceptedAnswer": {
       "@type": "Answer",
-      "text": f.answer
+      "text": f.answer.replace(/<[^>]*>?/gm, '')
     }
   }))
 };
@@ -88,7 +88,7 @@ const faqJsonLd = {
           {tool.faqs.map((faq) => (
             <details class="tool-faq-detail" open>
               <summary class="tool-faq-summary">{faq.question}</summary>
-              <div class="tool-faq-body">{faq.answer}</div>
+              <div class="tool-faq-body" set:html={faq.answer} />
             </details>
           ))}
         </div>
@@ -274,5 +274,17 @@ const faqJsonLd = {
     font-size: 0.92rem;
     line-height: 1.6;
     color: #8f9ba9;
+  }
+
+  .tool-faq-body a {
+    color: #8fa6ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .tool-faq-body a:hover {
+    color: #c4d4ff;
   }
 </style>

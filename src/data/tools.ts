@@ -56,6 +56,10 @@ export const toolsData: ToolConfig[] = [
       {
         question: 'Are my quotes and uploads kept private?',
         answer: 'All rendering is executed 100% client-side via HTML5 Canvas in your browser. Nothing is ever sent to or stored on any server.'
+      },
+      {
+        question: 'Where can I source quotes and mindful affirmations to format?',
+        answer: 'You can format literature excerpts, poetry, or personal insights. Many mindful creators write reflections in emotional wellness tools like <a href="https://getrealign.in" target="_blank" rel="noopener">ReAlign</a> and import their daily affirmations into Typeframe to generate aesthetic visual cards.'
       }
     ]
   },
