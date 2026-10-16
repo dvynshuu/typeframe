@@ -45,9 +45,11 @@ export function showToast(message: string, type: ToastType = 'info', options: To
 
   toast.innerHTML = `
     ${iconHtml}
-    <span class="toast__text">${message}</span>
+    <span class="toast__text"></span>
     <button class="toast__close" aria-label="Dismiss notification" type="button">×</button>
   `;
+  const textSpan = toast.querySelector<HTMLSpanElement>('.toast__text');
+  if (textSpan) textSpan.textContent = message;
 
   // 4. Append to container
   container.appendChild(toast);

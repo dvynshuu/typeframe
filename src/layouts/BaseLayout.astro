@@ -13,14 +13,14 @@ interface Props {
 const { 
   title = 'Typeframe — Turn Text into Beautiful Shareable Images | Free Online Quote & Typographic Card Maker', 
   description = 'Turn words into beautiful, shareable images with editorial typography, themes, and instant preview. Create typographic social posts, quote cards, and code snippets.',
-  url = 'https://typeframe.pages.dev',
+  url = 'https://typeframe.pages.dev/',
   keywords = 'text to image converter, online quote card maker, typographic social post generator, quote card generator, image from text, typography card builder, custom background social graphics, elegant typography images',
   jsonLd: customJsonLd,
   faqJsonLd: customFaqJsonLd
 } = Astro.props;
 
 const origin = 'https://typeframe.pages.dev';
-const ogImage = `${origin}/favicon.svg`;
+const ogImage = `${origin}/og-image.png`;
 
 const defaultJsonLd = {
   "@context": "https://schema.org",
@@ -104,12 +104,6 @@ const activeFaqJsonLd = customFaqJsonLd || defaultFaqJsonLd;
     
     <!-- Primary Meta Tags -->
     <meta name="google-site-verification" content="jj3HxkbuWMfROu4NvRxqcniMRcBXcLdkFXBnQgpv3cU" />
-    <script 
-      is:inline
-      async 
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1270686180568221"
-      crossorigin="anonymous"
-    ></script>
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
@@ -118,12 +112,23 @@ const activeFaqJsonLd = customFaqJsonLd || defaultFaqJsonLd;
     <meta name="theme-color" content="#0b0d13" />
     <link rel="canonical" href={url} />
 
+    <!-- External Monitization Script -->
+    <script 
+      is:inline
+      async 
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1270686180568221"
+      crossorigin="anonymous"
+    ></script>
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Typeframe — Turn Words into High-Impact Editorial Graphics" />
     <meta property="og:site_name" content="Typeframe" />
 
     <!-- Twitter -->
@@ -132,6 +137,7 @@ const activeFaqJsonLd = customFaqJsonLd || defaultFaqJsonLd;
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={ogImage} />
+    <meta property="twitter:image:alt" content="Typeframe — Turn Words into High-Impact Editorial Graphics" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     

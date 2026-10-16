@@ -21,7 +21,7 @@ const { currentSlug, variant = 'grid' } = Astro.props;
       </a>
       {toolsData.map((tool) => (
         <a 
-          href={`/tools/${tool.slug}`} 
+          href={`/tools/${tool.slug}/`} 
           class={`tool-chip ${currentSlug === tool.slug ? 'is-active' : ''}`}
         >
           <span class="tool-chip__dot"></span>
@@ -50,7 +50,7 @@ const { currentSlug, variant = 'grid' } = Astro.props;
         const isCurrent = currentSlug === tool.slug;
         return (
           <a 
-            href={`/tools/${tool.slug}`} 
+            href={`/tools/${tool.slug}/`} 
             class={`tool-card ${isCurrent ? 'is-current' : ''}`}
             aria-current={isCurrent ? 'page' : undefined}
           >
@@ -100,7 +100,7 @@ const { currentSlug, variant = 'grid' } = Astro.props;
     padding: 0.4rem 0.85rem;
     background: rgba(232, 236, 244, 0.04);
     border: 1px solid rgba(232, 236, 244, 0.09);
-    border-radius: 999px;
+    border-radius: 6px;
     font-size: 0.78rem;
     font-weight: 500;
     color: var(--text-muted, #9ba3b4);
@@ -158,7 +158,7 @@ const { currentSlug, variant = 'grid' } = Astro.props;
     background: rgba(110, 140, 255, 0.1);
     border: 1px solid rgba(110, 140, 255, 0.25);
     padding: 0.3rem 0.75rem;
-    border-radius: 999px;
+    border-radius: 6px;
     margin-bottom: 1rem;
   }
 

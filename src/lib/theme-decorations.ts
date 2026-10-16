@@ -69,53 +69,50 @@ function drawVignette(ctx: CanvasRenderingContext2D, w: number, h: number): void
   ctx.fillRect(0, 0, w, h);
 }
 
-const grainPatternCache = new Map<number, CanvasPattern>();
+const grainTileCache = new Map<number, HTMLCanvasElement | OffscreenCanvas>();
 
 function getGrainPattern(ctx: CanvasRenderingContext2D, intensity: number): CanvasPattern | null {
-  if (grainPatternCache.has(intensity)) {
-    return grainPatternCache.get(intensity)!;
-  }
-
-  const size = 256;
-  const canvas = typeof OffscreenCanvas !== 'undefined'
-    ? new OffscreenCanvas(size, size)
-    : document.createElement('canvas');
-  if (canvas instanceof HTMLCanvasElement) {
-    canvas.width = size;
-    canvas.height = size;
-  }
-
-  const gCtx = canvas.getContext('2d') as CanvasRenderingContext2D | null;
-  if (!gCtx) return null;
-
-  const id = gCtx.createImageData(size, size);
-  const d = id.data;
-  const step = 4;
-
-  // LCG Seeded PRNG for stable grain across frames
-  let s = 54321;
-  const rand = () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-
-  for (let y = 0; y < size; y += step) {
-    for (let x = 0; x < size; x += step) {
-      const idx = (y * size + x) * 4;
-      const v = rand() * 40;
-      d[idx] = 255;
-      d[idx + 1] = 255;
-      d[idx + 2] = 255;
-      d[idx + 3] = Math.floor(v);
+  let canvas = grainTileCache.get(intensity);
+  if (!canvas) {
+    const size = 256;
+    canvas = typeof OffscreenCanvas !== 'undefined'
+      ? new OffscreenCanvas(size, size)
+      : document.createElement('canvas');
+    if (canvas instanceof HTMLCanvasElement) {
+      canvas.width = size;
+      canvas.height = size;
     }
+
+    const gCtx = canvas.getContext('2d') as CanvasRenderingContext2D | null;
+    if (!gCtx) return null;
+
+    const id = gCtx.createImageData(size, size);
+    const d = id.data;
+    const step = 4;
+
+    // LCG Seeded PRNG for stable grain across frames
+    let s = 54321;
+    const rand = () => {
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    };
+
+    for (let y = 0; y < size; y += step) {
+      for (let x = 0; x < size; x += step) {
+        const idx = (y * size + x) * 4;
+        const v = rand() * 40;
+        d[idx] = 255;
+        d[idx + 1] = 255;
+        d[idx + 2] = 255;
+        d[idx + 3] = Math.floor(v);
+      }
+    }
+
+    gCtx.putImageData(id, 0, 0);
+    grainTileCache.set(intensity, canvas);
   }
 
-  gCtx.putImageData(id, 0, 0);
-  const pattern = ctx.createPattern(canvas as any, 'repeat');
-  if (pattern) {
-    grainPatternCache.set(intensity, pattern);
-  }
-  return pattern;
+  return ctx.createPattern(canvas as any, 'repeat');
 }
 
 function drawGrain(ctx: CanvasRenderingContext2D, w: number, h: number, intensity: number): void {

@@ -111,6 +111,7 @@ export function parseText(text: string, mode: TextMode): ParsedLine[] {
       cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '$1');
       cleanText = cleanText.replace(/\*(.*?)\*/g, '$1');
       cleanText = cleanText.replace(/`(.*?)`/g, '$1');
+      cleanText = stripForPreview(cleanText);
 
       return {
         text: cleanText,

@@ -66,6 +66,17 @@ describe('auto-layout', () => {
       expect(blocks).toHaveLength(1);
       expect(blocks[0].x).toBeCloseTo(80 + (840 * 0.05)); // padX + contentW * 0.05
     });
+
+    it('creates appropriate height for multi-line paragraph without newlines', () => {
+      const longSingleLine = 'Simplicity is about subtracting the obvious and adding the meaningful. When you take away everything that does not matter, what remains is pure essence, timeless craft, and unmistakable authority. Great typography speaks with quiet confidence.';
+      const state = { ...mockBaseState, text: longSingleLine };
+      const blocks = computeAutoLayout(state);
+
+      expect(blocks).toHaveLength(1);
+      // Since it wraps into 5-6 lines, height must be significantly larger than single-line font size
+      expect(blocks[0].height).toBeGreaterThan(mockBaseState.typography.fontSize * 3);
+      expect(blocks[0].y).toBeGreaterThan(0);
+    });
   });
 
 

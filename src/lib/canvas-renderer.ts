@@ -1,7 +1,7 @@
 import type { EditorState, RenderOptions, Theme } from '../types';
 import { drawBackground, drawBackgroundImage, drawNoise, colorWithAlpha } from './backgrounds';
 import { drawThemeDecorations, drawMasthead } from './theme-decorations';
-import { getTheme } from './themes';
+import { getTheme, isThemeLight } from './themes';
 import { parseText } from '../utils/text-parser';
 
 export async function renderToCanvas(
@@ -128,7 +128,7 @@ function drawTextBlock(
       }
     }
 
-    const wrapped = wrapText(ctx, line.text, block.width);
+    const wrapped = wrapText(ctx, line.text, block.width, letterSpacing);
     let origIdx = 0;
 
     for (const segmentText of wrapped) {
@@ -196,7 +196,7 @@ function drawTextBlock(
       }
 
       y += (line.heading ? fs * 1.2 : lineHeight);
-      if (y > block.y + block.height) break;
+      if (y > block.y + block.height + lineHeight * 0.5) break;
     }
 
     if (line.list) {
@@ -255,17 +255,28 @@ function drawAccentBar(
   }
 }
 
+function measureSpacedWidth(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  spacing: number
+): number {
+  if (spacing === 0) return ctx.measureText(text).width;
+  const chars = text.split('');
+  return chars.reduce((s, c) => s + ctx.measureText(c).width + spacing, -spacing);
+}
+
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
-  maxWidth: number
+  maxWidth: number,
+  spacing = 0
 ): string[] {
   const words = text.split(' ');
   const lines: string[] = [];
   let current = '';
   for (const word of words) {
     const test = current ? `${current} ${word}` : word;
-    if (ctx.measureText(test).width > maxWidth && current) {
+    if (measureSpacedWidth(ctx, test, spacing) > maxWidth && current) {
       lines.push(current);
       current = word;
     } else {
@@ -310,10 +321,6 @@ function roundRect(
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-}
-
-function isThemeLight(theme: Theme): boolean {
-  return theme.id === 'economist' || theme.id === 'kinfolk' || theme.id === 'apple-notes';
 }
 
 function drawCardFrame(

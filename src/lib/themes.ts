@@ -200,3 +200,14 @@ export function getTheme(id: string): Theme {
 export function getThemeSwatch(id: string): string {
   return getTheme(id).swatch;
 }
+
+export function isThemeLight(theme: Theme): boolean {
+  return [
+    'economist',
+    'kinfolk',
+    'apple-notes',
+    'japanese-editorial',
+    'braun-studio',
+    'bauhaus'
+  ].includes(theme.id);
+}

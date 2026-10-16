@@ -63,4 +63,77 @@ describe('svg-renderer', () => {
     const svg = renderToSvg(mockState);
     expect(svg).toMatchSnapshot();
   });
+
+  it('should render macOS window frame chrome with traffic light buttons in SVG', () => {
+    const state: EditorState = {
+      ...mockState,
+      frameStyle: 'macos',
+      cardShadow: 'float',
+      cardPadding: 60,
+      cardRadius: 16,
+    };
+    const svg = renderToSvg(state);
+    expect(svg).toContain('class="studio-card-frame"');
+    expect(svg).toContain('typeframe.studio');
+    expect(svg).toContain('fill="#ff5f56"'); // Red close dot
+    expect(svg).toContain('fill="#ffbd2e"'); // Yellow minimize dot
+    expect(svg).toContain('fill="#27c93f"'); // Green zoom dot
+    expect(svg).toContain('frame-shadow-float');
+  });
+
+  it('should render browser frame chrome with address bar in SVG', () => {
+    const state: EditorState = {
+      ...mockState,
+      frameStyle: 'browser',
+      cardShadow: 'subtle',
+    };
+    const svg = renderToSvg(state);
+    expect(svg).toContain('https://typeframe.io');
+    expect(svg).toContain('frame-shadow-subtle');
+  });
+
+  it('should render tweet chrome and verified badge in SVG', () => {
+    const state: EditorState = {
+      ...mockState,
+      frameStyle: 'tweet',
+      author: {
+        name: 'Sarah Connor',
+        handle: '@sconnor',
+        verified: true,
+        showSignature: false,
+      },
+    };
+    const svg = renderToSvg(state);
+    expect(svg).toContain('Sarah Connor');
+    expect(svg).toContain('@sconnor');
+    expect(svg).toContain('fill="#1d9bf0"'); // Verified blue checkmark
+  });
+
+  it('should render editorial chrome with corner crosshairs and archive edition text in SVG', () => {
+    const state: EditorState = {
+      ...mockState,
+      frameStyle: 'editorial',
+    };
+    const svg = renderToSvg(state);
+    expect(svg).toContain('TYPEFRAME ARCHIVE • EDITORIAL EDITION');
+    expect(svg).toContain('REF. // 004-TF');
+  });
+
+  it('should render floating author signature pill in SVG when enabled', () => {
+    const state: EditorState = {
+      ...mockState,
+      frameStyle: 'none',
+      author: {
+        name: 'Alex Rivera',
+        handle: '@arivera',
+        verified: true,
+        showSignature: true,
+      },
+    };
+    const svg = renderToSvg(state);
+    expect(svg).toContain('class="author-signature"');
+    expect(svg).toContain('Alex Rivera');
+    expect(svg).toContain('@arivera');
+    expect(svg).toContain('fill="#1d9bf0"');
+  });
 });

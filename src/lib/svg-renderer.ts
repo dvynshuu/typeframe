@@ -1,5 +1,5 @@
 import type { EditorState, Theme } from '../types';
-import { getTheme } from './themes';
+import { getTheme, isThemeLight } from './themes';
 import { parseText } from '../utils/text-parser';
 import { escapeXml } from '../utils/dom';
 import { imageCache } from './backgrounds';
@@ -66,10 +66,21 @@ export function renderToSvg(state: EditorState): string {
   
   const bgMarkup = svgBackground(width, height, bg, theme);
   let decorationsMarkup = svgDecorations(width, height, theme);
-  if (state.showMasthead) {
+
+  const cardFrameResult = svgCardFrame(width, height, state, theme);
+  const cardBounds = cardFrameResult ? {
+    cardX: cardFrameResult.cardX,
+    cardY: cardFrameResult.cardY,
+    cardW: cardFrameResult.cardW,
+    cardH: cardFrameResult.cardH
+  } : null;
+
+  if (state.showMasthead && !cardBounds) {
     decorationsMarkup += `  <rect width="${width}" height="${width * 0.028}" fill="${theme.accent}"/>\n`;
     decorationsMarkup += `  <text x="${width * 0.08}" y="${height * 0.052}" fill="${theme.accent}" fill-opacity="0.6" font-family="'IBM Plex Sans', sans-serif" font-weight="600" font-size="${Math.round(height * 0.018)}" dominant-baseline="central">TYPEFRAME</text>\n`;
   }
+
+  const frameMarkup = cardFrameResult?.markup ?? '';
 
   const blocks = state.blocks
     .map((b) =>
@@ -77,21 +88,32 @@ export function renderToSvg(state: EditorState): string {
     )
     .join('\n');
 
-  const accentBarMarkup = svgAccentBar(width, height, state, theme);
+  const authorSignatureMarkup = (state.author?.showSignature && state.frameStyle !== 'tweet')
+    ? svgAuthorSignature(width, height, state, theme, cardBounds)
+    : '';
+
+  const accentBarMarkup = !cardBounds ? svgAccentBar(width, height, state, theme) : '';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
-    ${svgDefs(width, height, bg, theme)}
+    ${svgDefs(width, height, bg, theme, state, cardBounds)}
   </defs>
   ${bgMarkup}
-  ${decorationsMarkup}
-  ${blocks}
+  ${decorationsMarkup}${frameMarkup ? '\n' + frameMarkup : ''}
+  ${blocks}${authorSignatureMarkup ? '\n' + authorSignatureMarkup : ''}
   ${accentBarMarkup}
 </svg>`;
 }
 
-function svgDefs(w: number, h: number, bg: EditorState['background'], theme: Theme): string {
+function svgDefs(
+  w: number,
+  h: number,
+  bg: EditorState['background'],
+  theme: Theme,
+  state?: EditorState,
+  cardBounds?: { cardX: number; cardY: number; cardW: number; cardH: number } | null
+): string {
   let defs = '';
   
   // Linear gradients for backgrounds
@@ -212,6 +234,55 @@ function svgDefs(w: number, h: number, bg: EditorState['background'], theme: The
     defs += `<pattern id="braun-grid-pat" width="${dotGap}" height="${dotGap}" patternUnits="userSpaceOnUse">
       <circle cx="2" cy="2" r="1" fill="rgba(26, 26, 26, 0.06)"/>
     </pattern>\n`;
+  }
+
+  const isLight = isThemeLight(theme);
+
+  // Card drop shadow filters
+  if (state?.frameStyle && state.frameStyle !== 'none') {
+    const shadow = state.cardShadow ?? 'float';
+    if (shadow === 'subtle') {
+      defs += `  <filter id="frame-shadow-subtle" x="-20%" y="-20%" width="140%" height="150%">
+    <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="${isLight ? 0.12 : 0.35}"/>
+  </filter>\n`;
+    } else if (shadow === 'float') {
+      defs += `  <filter id="frame-shadow-float" x="-25%" y="-25%" width="150%" height="160%">
+    <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#000000" flood-opacity="${isLight ? 0.15 : 0.44}"/>
+    <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="${isLight ? 0.2 : 0.32}"/>
+  </filter>\n`;
+    } else if (shadow === 'glow') {
+      defs += `  <filter id="frame-shadow-glow" x="-25%" y="-25%" width="150%" height="160%">
+    <feDropShadow dx="0" dy="6" stdDeviation="25" flood-color="${theme.accent}" flood-opacity="0.45"/>
+    <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.4"/>
+  </filter>\n`;
+    }
+
+    if (state.frameStyle === 'glass') {
+      defs += `  <linearGradient id="frame-glass-fill" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="${isLight ? '#ffffff' : '#161b26'}" stop-opacity="${isLight ? 0.88 : 0.72}"/>
+    <stop offset="100%" stop-color="${isLight ? '#ffffff' : '#0c0f16'}" stop-opacity="${isLight ? 0.68 : 0.82}"/>
+  </linearGradient>
+  <linearGradient id="frame-glass-stroke" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
+    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06"/>
+  </linearGradient>\n`;
+    }
+
+    if (cardBounds) {
+      const radius = Math.min(cardBounds.cardW / 2, cardBounds.cardH / 2, state.cardRadius ?? 16);
+      defs += `  <clipPath id="card-clip">
+    <rect x="${cardBounds.cardX}" y="${cardBounds.cardY}" width="${cardBounds.cardW}" height="${cardBounds.cardH}" rx="${radius}" ry="${radius}"/>
+  </clipPath>\n`;
+    }
+  }
+
+  // Avatar gradient for tweet chrome or author signature
+  if (state?.frameStyle === 'tweet' || state?.author?.showSignature) {
+    defs += `  <linearGradient id="avatar-grad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="${theme.accent}"/>
+    <stop offset="100%" stop-color="#c084fc"/>
+  </linearGradient>\n`;
   }
 
   return defs;
@@ -507,4 +578,222 @@ function svgAccentBar(
     return `<rect x="${(w - barW) / 2}" y="${h * 0.88}" width="${barW}" height="3" fill="${theme.accent}"/>`;
   }
   return '';
+}
+
+function svgCardFrame(
+  w: number,
+  h: number,
+  state: EditorState,
+  theme: Theme
+): { markup: string; cardX: number; cardY: number; cardW: number; cardH: number } | null {
+  const frame = state.frameStyle || 'none';
+  if (frame === 'none') return null;
+
+  const pad = state.cardPadding ?? 56;
+  const cardX = pad;
+  const cardY = pad;
+  const cardW = Math.max(100, w - pad * 2);
+  const cardH = Math.max(100, h - pad * 2);
+  const radius = Math.min(cardW / 2, cardH / 2, state.cardRadius ?? 16);
+  const shadow = state.cardShadow ?? 'float';
+  const isLight = isThemeLight(theme);
+
+  const shadowFilter = shadow !== 'none' ? `filter="url(#frame-shadow-${shadow})"` : '';
+
+  let cardFill = isLight ? '#ffffff' : '#0e1118';
+  if (frame === 'glass') {
+    cardFill = 'url(#frame-glass-fill)';
+  } else if (frame === 'editorial') {
+    cardFill = isLight ? '#faf9f6' : '#0d0f15';
+  }
+
+  const strokeAttr = frame === 'glass'
+    ? 'stroke="url(#frame-glass-stroke)" stroke-width="1.5"'
+    : `stroke="${isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.1)'}" stroke-width="1"`;
+
+  let chromeMarkup = '';
+
+  if (frame === 'macos') {
+    chromeMarkup = svgMacOsChrome(cardX, cardY, cardW, isLight);
+  } else if (frame === 'browser') {
+    chromeMarkup = svgBrowserChrome(cardX, cardY, cardW, isLight, theme);
+  } else if (frame === 'tweet') {
+    chromeMarkup = svgTweetChrome(cardX, cardY, cardW, isLight, theme, state);
+  } else if (frame === 'editorial') {
+    chromeMarkup = svgEditorialChrome(cardX, cardY, cardW, cardH, isLight, theme);
+  }
+
+  const markup = `  <!-- Studio Card Frame -->
+  <g class="studio-card-frame">
+    <!-- Card Body & Drop Shadow -->
+    <rect x="${cardX}" y="${cardY}" width="${cardW}" height="${cardH}" rx="${radius}" ry="${radius}" fill="${cardFill}" ${shadowFilter} ${strokeAttr}/>
+    <!-- Card Chrome -->
+    <g clip-path="url(#card-clip)">
+      ${chromeMarkup}
+    </g>
+  </g>\n`;
+
+  return { markup, cardX, cardY, cardW, cardH };
+}
+
+function svgMacOsChrome(cardX: number, cardY: number, cardW: number, isLight: boolean): string {
+  const barH = 46;
+  const dotY = cardY + 23;
+  const headerBg = isLight ? 'rgba(0, 0, 0, 0.02)' : 'rgba(255, 255, 255, 0.02)';
+  const divider = isLight ? 'rgba(0, 0, 0, 0.07)' : 'rgba(255, 255, 255, 0.08)';
+  const titleColor = isLight ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.35)';
+
+  return `    <rect x="${cardX}" y="${cardY}" width="${cardW}" height="${barH}" fill="${headerBg}"/>
+    <line x1="${cardX}" y1="${cardY + barH}" x2="${cardX + cardW}" y2="${cardY + barH}" stroke="${divider}" stroke-width="1"/>
+    <circle cx="${cardX + 24}" cy="${dotY}" r="6" fill="#ff5f56" stroke="#e0443e" stroke-width="0.5"/>
+    <circle cx="${cardX + 44}" cy="${dotY}" r="6" fill="#ffbd2e" stroke="#dea123" stroke-width="0.5"/>
+    <circle cx="${cardX + 64}" cy="${dotY}" r="6" fill="#27c93f" stroke="#1aab29" stroke-width="0.5"/>
+    <text x="${cardX + cardW / 2}" y="${dotY}" fill="${titleColor}" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="12" text-anchor="middle" dominant-baseline="central">typeframe.studio</text>`;
+}
+
+function svgBrowserChrome(cardX: number, cardY: number, cardW: number, isLight: boolean, theme: Theme): string {
+  const barH = 50;
+  const headerBg = isLight ? 'rgba(0, 0, 0, 0.025)' : 'rgba(255, 255, 255, 0.025)';
+  const divider = isLight ? 'rgba(0, 0, 0, 0.07)' : 'rgba(255, 255, 255, 0.08)';
+  const navDotFill = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.22)';
+  const dotY = cardY + 25;
+
+  const pillW = Math.min(cardW * 0.55, 360);
+  const pillH = 28;
+  const pillX = cardX + (cardW - pillW) / 2;
+  const pillY = cardY + 11;
+  const pillFill = isLight ? 'rgba(0, 0, 0, 0.045)' : 'rgba(255, 255, 255, 0.06)';
+  const pillStroke = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
+  const urlColor = isLight ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.65)';
+
+  const lockX = pillX + 16;
+  const lockY = pillY + 14;
+
+  return `    <rect x="${cardX}" y="${cardY}" width="${cardW}" height="${barH}" fill="${headerBg}"/>
+    <line x1="${cardX}" y1="${cardY + barH}" x2="${cardX + cardW}" y2="${cardY + barH}" stroke="${divider}" stroke-width="1"/>
+    <circle cx="${cardX + 22}" cy="${dotY}" r="4" fill="${navDotFill}"/>
+    <circle cx="${cardX + 36}" cy="${dotY}" r="4" fill="${navDotFill}"/>
+    <circle cx="${cardX + 50}" cy="${dotY}" r="4" fill="${navDotFill}"/>
+    <rect x="${pillX}" y="${pillY}" width="${pillW}" height="${pillH}" rx="${pillH / 2}" ry="${pillH / 2}" fill="${pillFill}" stroke="${pillStroke}" stroke-width="1"/>
+    <!-- Lock icon -->
+    <path d="M ${lockX - 3.5} ${lockY - 1} A 3.5 3.5 0 0 1 ${lockX + 3.5} ${lockY - 1}" fill="none" stroke="${theme.accent}" stroke-width="1.4"/>
+    <rect x="${lockX - 4.5}" y="${lockY - 1}" width="9" height="7" rx="1.5" fill="${theme.accent}"/>
+    <text x="${lockX + 12}" y="${pillY + pillH / 2}" fill="${urlColor}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" dominant-baseline="central">https://typeframe.io</text>`;
+}
+
+function svgTweetChrome(cardX: number, cardY: number, cardW: number, isLight: boolean, _theme: Theme, state: EditorState): string {
+  const barH = 76;
+  const author = state.author ?? { name: 'Alex Rivera', handle: '@arivera', verified: true };
+  const name = author.name || 'Alex Rivera';
+  const handle = author.handle ? (author.handle.startsWith('@') ? author.handle : `@${author.handle}`) : '@arivera';
+  const hasVerified = author.verified !== false;
+
+  const divider = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
+  const avRadius = 22;
+  const avX = cardX + 32 + avRadius;
+  const avY = cardY + 38;
+  const initial = escapeXml(name.charAt(0).toUpperCase());
+
+  const nameColor = isLight ? '#0f1419' : '#f7f9f9';
+  const handleColor = isLight ? '#536471' : '#8899a6';
+  const quoteColor = isLight ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.18)';
+  const textLeft = avX + avRadius + 14;
+
+  const verifiedBadge = hasVerified ? `
+    <circle cx="${textLeft + name.length * 9.5 + 14}" cy="${cardY + 32}" r="7.5" fill="#1d9bf0"/>
+    <path d="M ${textLeft + name.length * 9.5 + 11} ${cardY + 32} L ${textLeft + name.length * 9.5 + 13.5} ${cardY + 34.5} L ${textLeft + name.length * 9.5 + 17} ${cardY + 30}" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` : '';
+
+  return `    <line x1="${cardX + 24}" y1="${cardY + barH}" x2="${cardX + cardW - 24}" y2="${cardY + barH}" stroke="${divider}" stroke-width="1"/>
+    <!-- Avatar -->
+    <circle cx="${avX}" cy="${avY}" r="${avRadius}" fill="url(#avatar-grad)"/>
+    <text x="${avX}" y="${avY}" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="16" text-anchor="middle" dominant-baseline="central">${initial}</text>
+    <!-- Name & Handle -->
+    <text x="${textLeft}" y="${cardY + 23}" fill="${nameColor}" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="16" dominant-baseline="hanging">${escapeXml(name)}</text>
+    ${verifiedBadge}
+    <text x="${textLeft}" y="${cardY + 44}" fill="${handleColor}" font-family="system-ui, -apple-system, sans-serif" font-size="14" dominant-baseline="hanging">${escapeXml(handle)}</text>
+    <!-- Quote icon -->
+    <text x="${cardX + cardW - 32}" y="${cardY + 44}" fill="${quoteColor}" font-family="serif" font-weight="700" font-size="32" text-anchor="end">“</text>`;
+}
+
+function svgEditorialChrome(cardX: number, cardY: number, cardW: number, cardH: number, isLight: boolean, theme: Theme): string {
+  const inset = 10;
+  const borderColor = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.12)';
+  const labelColor = isLight ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.35)';
+  const crossLen = 6;
+  const corners = [
+    { x: cardX + inset, y: cardY + inset },
+    { x: cardX + cardW - inset, y: cardY + inset },
+    { x: cardX + inset, y: cardY + cardH - inset },
+    { x: cardX + cardW - inset, y: cardY + cardH - inset },
+  ];
+
+  let crosshairs = '';
+  for (const c of corners) {
+    crosshairs += `    <line x1="${c.x - crossLen}" y1="${c.y}" x2="${c.x + crossLen}" y2="${c.y}" stroke="${theme.accent}" stroke-width="1.2"/>\n`;
+    crosshairs += `    <line x1="${c.x}" y1="${c.y - crossLen}" x2="${c.x}" y2="${c.y + crossLen}" stroke="${theme.accent}" stroke-width="1.2"/>\n`;
+  }
+
+  return `    <rect x="${cardX + inset}" y="${cardY + inset}" width="${cardW - inset * 2}" height="${cardH - inset * 2}" fill="none" stroke="${borderColor}" stroke-width="1"/>
+${crosshairs}    <text x="${cardX + cardW / 2}" y="${cardY + 22}" fill="${theme.accent}" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="11" letter-spacing="3px" text-anchor="middle" dominant-baseline="hanging">TYPEFRAME ARCHIVE • EDITORIAL EDITION</text>
+    <text x="${cardX + cardW / 2}" y="${cardY + cardH - 26}" fill="${labelColor}" font-family="ui-monospace, monospace" font-weight="500" font-size="10" text-anchor="middle">REF. // 004-TF</text>`;
+}
+
+function svgAuthorSignature(
+  w: number,
+  h: number,
+  state: EditorState,
+  theme: Theme,
+  cardBounds: { cardX: number; cardY: number; cardW: number; cardH: number } | null
+): string {
+  const author = state.author;
+  if (!author || !author.name) return '';
+
+  const name = author.name;
+  const handle = author.handle ? (author.handle.startsWith('@') ? author.handle : `@${author.handle}`) : '';
+  const hasVerified = author.verified !== false;
+  const isLight = isThemeLight(theme);
+
+  const approxNameW = name.length * 8.5;
+  const approxHandleW = handle ? handle.length * 7.5 : 0;
+  const badgeW = hasVerified ? 16 : 0;
+  const avatarSize = 22;
+  const padH = 12;
+  const pillW = padH * 2 + avatarSize + 8 + approxNameW + (hasVerified ? 6 + badgeW : 0) + (handle ? 8 + approxHandleW : 0);
+  const pillH = 34;
+
+  const pillX = cardBounds
+    ? cardBounds.cardX + (cardBounds.cardW - pillW) / 2
+    : (w - pillW) / 2;
+  const pillY = cardBounds
+    ? cardBounds.cardY + cardBounds.cardH - pillH - 20
+    : h * 0.92 - pillH / 2;
+
+  const pillFill = isLight ? 'rgba(255, 255, 255, 0.92)' : 'rgba(14, 17, 24, 0.88)';
+  const pillStroke = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
+  const nameColor = isLight ? '#0f1419' : '#f8fafc';
+  const handleColor = isLight ? '#536471' : '#94a3b8';
+
+  const avX = pillX + padH + avatarSize / 2;
+  const avY = pillY + pillH / 2;
+  const initial = escapeXml(name.charAt(0).toUpperCase());
+  const currentX = pillX + padH + avatarSize + 8;
+
+  const verifiedBadge = hasVerified ? `
+    <circle cx="${currentX + approxNameW + 8}" cy="${avY}" r="7" fill="#1d9bf0"/>
+    <path d="M ${currentX + approxNameW + 5.5} ${avY} L ${currentX + approxNameW + 7.5} ${avY + 2.5} L ${currentX + approxNameW + 10.5} ${avY - 2}" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` : '';
+
+  const handleMarkup = handle ? `
+    <text x="${currentX + approxNameW + (hasVerified ? 18 : 0) + 8}" y="${avY}" fill="${handleColor}" font-family="system-ui, -apple-system, sans-serif" font-size="12" dominant-baseline="central">${escapeXml(handle)}</text>` : '';
+
+  return `  <!-- Author Signature -->
+  <g class="author-signature">
+    <rect x="${pillX}" y="${pillY}" width="${pillW}" height="${pillH}" rx="${pillH / 2}" ry="${pillH / 2}" fill="${pillFill}" stroke="${pillStroke}" stroke-width="1"/>
+    <!-- Avatar -->
+    <circle cx="${avX}" cy="${avY}" r="${avatarSize / 2}" fill="url(#avatar-grad)"/>
+    <text x="${avX}" y="${avY}" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="central">${initial}</text>
+    <!-- Name -->
+    <text x="${currentX}" y="${avY}" fill="${nameColor}" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="13" dominant-baseline="central">${escapeXml(name)}</text>
+    ${verifiedBadge}
+    ${handleMarkup}
+  </g>\n`;
 }

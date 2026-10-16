@@ -119,14 +119,24 @@ export function initEditor(root: HTMLElement): () => void {
     (state, scale) => syncPreviewChrome(state, scale)
   );
 
-  // Synchronize state changes to URL and localStorage (debounced)
+  // Synchronize state changes to localStorage (fast 300ms) and URL query (isolated 1000ms debounce)
   const syncStorage = debounce((state: ReturnType<EditorStore['getState']>) => {
-    if (typeof window !== 'undefined') {
-      const query = serializeState(state);
-      window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
-      saveStateToLocalStorage(state);
-    }
+    saveStateToLocalStorage(state);
   }, 300);
+
+  const syncUrlHistory = debounce((state: ReturnType<EditorStore['getState']>) => {
+    if (typeof window !== 'undefined') {
+      try {
+        const query = serializeState(state);
+        const targetSearch = query ? `?${query}` : '';
+        if (window.location.search !== targetSearch) {
+          window.history.replaceState(null, '', targetSearch || window.location.pathname);
+        }
+      } catch {
+        // Guard against Safari / WebKit SecurityError rate limit (100 calls per 30s)
+      }
+    }
+  }, 1000);
 
   let lastImageUrl: string | undefined = hydratedState.background.imageUrl;
 
@@ -143,8 +153,9 @@ export function initEditor(root: HTMLElement): () => void {
     }
     lastImageUrl = currentImageUrl;
 
-    // Sync storage
+    // Sync storage & URL history safely
     syncStorage(state);
+    syncUrlHistory(state);
   });
 
   const resizeObserver = new ResizeObserver(() => {
@@ -159,9 +170,9 @@ export function initEditor(root: HTMLElement): () => void {
   };
   document.fonts.addEventListener('loadingdone', fontLoadedHandler);
 
-  bindControls(root);
-  bindDragResize(handlesLayer, previewWrapper);
-  bindFormattingToolbar(root);
+  const unbindControls = bindControls(root);
+  const unbindDragResize = bindDragResize(handlesLayer, previewWrapper);
+  const unbindFormattingToolbar = bindFormattingToolbar(root);
   bindBackdropPresets(root);
 
   return () => {
@@ -169,6 +180,9 @@ export function initEditor(root: HTMLElement): () => void {
     renderLoop.destroy();
     resizeObserver.disconnect();
     document.fonts.removeEventListener('loadingdone', fontLoadedHandler);
+    unbindControls?.();
+    unbindDragResize?.();
+    unbindFormattingToolbar?.();
 
     // Revoke active blob URL on unmount to prevent leaks
     const finalState = store.getState();
@@ -339,7 +353,7 @@ function syncFormatPills(root: HTMLElement, format: ExportFormat): void {
   setVal(root, '#panel-export-format', format);
 }
 
-function bindControls(root: HTMLElement): void {
+function bindControls(root: HTMLElement): (() => void) {
   root.querySelector('#text-input')?.addEventListener('input', (e) => {
     store.setText((e.target as HTMLTextAreaElement).value);
   });
@@ -372,12 +386,17 @@ function bindControls(root: HTMLElement): void {
   bindExport(root);
   bindCopyImage(root);
   bindShuffle(root);
-  bindGuideDrawer(root);
+  const unbindGuideDrawer = bindGuideDrawer(root);
   bindShare(root);
   bindFormatPills(root);
   bindPreset(root);
   bindMobileStudioNav(root);
-  bindGlobalShortcuts(root);
+  const unbindGlobalShortcuts = bindGlobalShortcuts(root);
+
+  return () => {
+    unbindGuideDrawer?.();
+    unbindGlobalShortcuts?.();
+  };
 }
 
 function bindFrames(root: HTMLElement): void {
@@ -749,7 +768,7 @@ function updateHandles(
 function bindDragResize(
   layer: HTMLDivElement | null,
   wrapper: HTMLDivElement | null
-): void {
+): (() => void) | void {
   if (!layer) return;
   let dragId: string | null = null;
   let resizeId: string | null = null;
@@ -826,7 +845,8 @@ function bindDragResize(
     }
   });
 
-  window.addEventListener('pointermove', (e) => {
+  const handlePointerMove = (e: PointerEvent) => {
+    if (!dragId && !resizeId) return;
     const r = ratio();
     const dx = (e.clientX - startX) / r;
     const dy = (e.clientY - startY) / r;
@@ -840,17 +860,25 @@ function bindDragResize(
         Math.max(60, startBlock.height + dy)
       );
     }
-  });
+  };
 
   const handlePointerEnd = () => {
     dragId = null;
     resizeId = null;
   };
+
+  window.addEventListener('pointermove', handlePointerMove);
   window.addEventListener('pointerup', handlePointerEnd);
   window.addEventListener('pointercancel', handlePointerEnd);
+
+  return () => {
+    window.removeEventListener('pointermove', handlePointerMove);
+    window.removeEventListener('pointerup', handlePointerEnd);
+    window.removeEventListener('pointercancel', handlePointerEnd);
+  };
 }
 
-function bindFormattingToolbar(root: HTMLElement): void {
+function bindFormattingToolbar(root: HTMLElement): (() => void) | void {
   const textarea = root.querySelector<HTMLTextAreaElement>('#text-input');
   const toolbar = root.querySelector<HTMLDivElement>('#formatting-toolbar');
   if (!textarea || !toolbar) return;
@@ -916,12 +944,13 @@ function bindFormattingToolbar(root: HTMLElement): void {
   textarea.addEventListener('mouseup', updateToolbarVisibility);
   textarea.addEventListener('keyup', updateToolbarVisibility);
 
-  document.addEventListener('mousedown', (e) => {
+  const handleDocumentMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (!textarea.contains(target) && !toolbar.contains(target)) {
       toolbar.classList.remove('is-active');
     }
-  });
+  };
+  document.addEventListener('mousedown', handleDocumentMouseDown);
 
   const formatSelection = (action: 'bold' | 'italic' | 'heading') => {
     const start = textarea.selectionStart;
@@ -1011,6 +1040,10 @@ function bindFormattingToolbar(root: HTMLElement): void {
       }
     }
   });
+
+  return () => {
+    document.removeEventListener('mousedown', handleDocumentMouseDown);
+  };
 }
 
 function bindBackdropPresets(root: HTMLElement): void {
@@ -1163,7 +1196,7 @@ function bindCopyImage(root: HTMLElement): void {
   });
 }
 
-function bindGuideDrawer(root: HTMLElement): void {
+function bindGuideDrawer(root: HTMLElement): (() => void) {
   const drawer = root.querySelector('#seo-info-drawer');
   const openBtn = root.querySelector('#guide-btn');
   const closeBtn = root.querySelector('#seo-drawer-close-btn');
@@ -1185,11 +1218,16 @@ function bindGuideDrawer(root: HTMLElement): void {
   closeBtn?.addEventListener('click', toggle);
   closeBackdrop?.addEventListener('click', toggle);
 
-  window.addEventListener('keydown', (e) => {
+  const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && drawer?.classList.contains('is-open')) {
       toggle();
     }
-  });
+  };
+  window.addEventListener('keydown', handleKeydown);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeydown);
+  };
 }
 
 function bindMobileStudioNav(root: HTMLElement): void {
@@ -1254,13 +1292,18 @@ function bindMobileStudioNav(root: HTMLElement): void {
   });
 }
 
-function bindGlobalShortcuts(root: HTMLElement): void {
-  window.addEventListener('keydown', (e) => {
+function bindGlobalShortcuts(root: HTMLElement): (() => void) {
+  const handleKeydown = (e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       root.querySelector<HTMLButtonElement>('#export-btn')?.click();
     }
-  });
+  };
+  window.addEventListener('keydown', handleKeydown);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeydown);
+  };
 }
 
 function updateScreenReaderDescription(state: ReturnType<EditorStore['getState']>): void {

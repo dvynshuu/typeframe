@@ -146,59 +146,56 @@ function drawGlassOverlay(
   ctx.stroke();
 }
 
-const noisePatternCache = new Map<number, CanvasPattern>();
+const noiseTileCache = new Map<number, HTMLCanvasElement | OffscreenCanvas>();
 
 export function getNoisePattern(
   ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   intensity: number
 ): CanvasPattern | null {
-  if (noisePatternCache.has(intensity)) {
-    return noisePatternCache.get(intensity)!;
-  }
-
-  const size = 256;
-  const canvas = typeof OffscreenCanvas !== 'undefined'
-    ? new OffscreenCanvas(size, size)
-    : document.createElement('canvas');
-  if (canvas instanceof HTMLCanvasElement) {
-    canvas.width = size;
-    canvas.height = size;
-  }
-
-  const nCtx = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
-  if (!nCtx) return null;
-
-  const id = nCtx.createImageData(size, size);
-  const d = id.data;
-
-  // LCG Seeded PRNG for stable noise across frames
-  let s = 12345;
-  const rand = () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (rand() - 0.5) * intensity;
-    if (n >= 0) {
-      d[i] = 255;
-      d[i + 1] = 255;
-      d[i + 2] = 255;
-      d[i + 3] = Math.floor(n * 255);
-    } else {
-      d[i] = 0;
-      d[i + 1] = 0;
-      d[i + 2] = 0;
-      d[i + 3] = Math.floor(-n * 255);
+  let canvas = noiseTileCache.get(intensity);
+  if (!canvas) {
+    const size = 256;
+    canvas = typeof OffscreenCanvas !== 'undefined'
+      ? new OffscreenCanvas(size, size)
+      : document.createElement('canvas');
+    if (canvas instanceof HTMLCanvasElement) {
+      canvas.width = size;
+      canvas.height = size;
     }
+
+    const nCtx = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+    if (!nCtx) return null;
+
+    const id = nCtx.createImageData(size, size);
+    const d = id.data;
+
+    // LCG Seeded PRNG for stable noise across frames
+    let s = 12345;
+    const rand = () => {
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    };
+
+    for (let i = 0; i < d.length; i += 4) {
+      const n = (rand() - 0.5) * intensity;
+      if (n >= 0) {
+        d[i] = 255;
+        d[i + 1] = 255;
+        d[i + 2] = 255;
+        d[i + 3] = Math.floor(n * 255);
+      } else {
+        d[i] = 0;
+        d[i + 1] = 0;
+        d[i + 2] = 0;
+        d[i + 3] = Math.floor(-n * 255);
+      }
+    }
+
+    nCtx.putImageData(id, 0, 0);
+    noiseTileCache.set(intensity, canvas);
   }
 
-  nCtx.putImageData(id, 0, 0);
-  const pattern = ctx.createPattern(canvas as any, 'repeat');
-  if (pattern) {
-    noisePatternCache.set(intensity, pattern);
-  }
-  return pattern;
+  return ctx.createPattern(canvas as any, 'repeat');
 }
 
 export function drawNoise(

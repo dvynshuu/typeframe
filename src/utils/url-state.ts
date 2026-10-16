@@ -272,10 +272,15 @@ export function loadStateFromLocalStorage(defaultState: EditorState): EditorStat
       cardRadius: parsed.cardRadius ?? defaultState.cardRadius,
       cardShadow: parsed.cardShadow ?? defaultState.cardShadow,
       exportScale: parsed.exportScale ?? defaultState.exportScale,
-      author: {
-        ...defaultState.author,
-        ...(parsed.author ?? {}),
-      },
+      author: (defaultState.author || parsed.author)
+        ? {
+            name: parsed.author?.name ?? defaultState.author?.name ?? 'Alex Rivera',
+            handle: parsed.author?.handle ?? defaultState.author?.handle ?? '@arivera',
+            verified: parsed.author?.verified ?? defaultState.author?.verified ?? true,
+            avatarUrl: parsed.author?.avatarUrl ?? defaultState.author?.avatarUrl,
+            showSignature: parsed.author?.showSignature ?? defaultState.author?.showSignature ?? false,
+          }
+        : undefined,
       blocks: parsed.blocks ?? defaultState.blocks,
     };
   } catch (err) {

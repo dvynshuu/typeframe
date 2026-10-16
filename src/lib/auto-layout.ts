@@ -66,8 +66,8 @@ export function computeAutoLayout(state: EditorState): TextBlock[] {
   }
 
   if (template.layoutHint === 'centered' || (isShort && !isLong)) {
-    const estH = estimateHeight(text, typography.fontSize);
-    const blockH = Math.min(contentH * (hasFrame ? 0.85 : 0.7), estH);
+    const estH = estimateHeight(text, typography.fontSize, contentW, typography.lineHeight);
+    const blockH = Math.min(contentH * (hasFrame ? 0.90 : 0.85), estH);
     const startY = hasFrame
       ? padY + Math.max(0, (contentH - blockH) / 2)
       : (height - blockH) / 2;
@@ -111,9 +111,38 @@ export function computeAutoLayout(state: EditorState): TextBlock[] {
   ];
 }
 
-function estimateHeight(text: string, fontSize: number): number {
-  const lines = text.split('\n').length;
-  return lines * fontSize * 1.4 + fontSize * 2;
+function estimateHeight(
+  text: string,
+  fontSize: number,
+  contentW = 800,
+  lineHeightRatio = 1.4
+): number {
+  const approxCharWidth = Math.max(fontSize * 0.52, 6);
+  const charsPerLine = Math.max(10, Math.floor(contentW / approxCharWidth));
+  const paragraphs = text.split('\n');
+  let totalLines = 0;
+
+  for (const para of paragraphs) {
+    if (para.trim().length === 0) {
+      totalLines += 1;
+      continue;
+    }
+    const words = para.trim().split(/\s+/);
+    let lineLen = 0;
+    let paraLines = 1;
+    for (const word of words) {
+      if (lineLen + word.length > charsPerLine && lineLen > 0) {
+        paraLines += 1;
+        lineLen = word.length + 1;
+      } else {
+        lineLen += word.length + 1;
+      }
+    }
+    totalLines += paraLines;
+  }
+
+  const effectiveLineHeight = fontSize * lineHeightRatio;
+  return totalLines * effectiveLineHeight + fontSize * 0.5;
 }
 
 

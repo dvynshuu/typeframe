@@ -31,7 +31,7 @@ const currentYear = new Date().getFullYear();
         <ul class="footer-links">
           {toolsData.slice(0, 6).map((tool) => (
             <li>
-              <a href={`/tools/${tool.slug}`} class="footer-link">
+              <a href={`/tools/${tool.slug}/`} class="footer-link">
                 {tool.h1}
               </a>
             </li>
@@ -45,7 +45,7 @@ const currentYear = new Date().getFullYear();
         <ul class="footer-links">
           {toolsData.slice(6).map((tool) => (
             <li>
-              <a href={`/tools/${tool.slug}`} class="footer-link">
+              <a href={`/tools/${tool.slug}/`} class="footer-link">
                 {tool.h1}
               </a>
             </li>
@@ -60,10 +60,10 @@ const currentYear = new Date().getFullYear();
       <div class="footer-col">
         <h4 class="footer-heading">Trust & Legal</h4>
         <ul class="footer-links">
-          <li><a href="/about" class="footer-link">About Us</a></li>
-          <li><a href="/contact" class="footer-link">Contact Support</a></li>
-          <li><a href="/privacy-policy" class="footer-link">Privacy Policy</a></li>
-          <li><a href="/terms" class="footer-link">Terms of Service</a></li>
+          <li><a href="/about/" class="footer-link">About Us</a></li>
+          <li><a href="/contact/" class="footer-link">Contact Support</a></li>
+          <li><a href="/privacy-policy/" class="footer-link">Privacy Policy</a></li>
+          <li><a href="/terms/" class="footer-link">Terms of Service</a></li>
         </ul>
         <div class="footer-contact-snippet">
           <span class="contact-label">Developer Inquiries:</span>
@@ -78,13 +78,13 @@ const currentYear = new Date().getFullYear();
         &copy; {currentYear} Typeframe Studio. All visual exports are 100% owned by their creators. Built with precision for the modern web.
       </p>
       <div class="footer-legal-bar">
-        <a href="/about">About</a>
+        <a href="/about/">About</a>
         <span class="sep">•</span>
-        <a href="/contact">Contact</a>
+        <a href="/contact/">Contact</a>
         <span class="sep">•</span>
-        <a href="/privacy-policy">Privacy</a>
+        <a href="/privacy-policy/">Privacy</a>
         <span class="sep">•</span>
-        <a href="/terms">Terms</a>
+        <a href="/terms/">Terms</a>
       </div>
     </div>
   </div>
@@ -166,7 +166,7 @@ const currentYear = new Date().getFullYear();
 
   .footer-tagline {
     line-height: 1.65;
-    color: #7d8499;
+    color: #94a3b8;
     margin-bottom: 1.25rem;
     max-width: 340px;
   }
@@ -205,7 +205,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .footer-link {
-    color: #8c93a8;
+    color: #9ca3af;
     text-decoration: none;
     transition: color 0.15s ease, transform 0.15s ease;
     display: inline-block;
@@ -225,7 +225,7 @@ const currentYear = new Date().getFullYear();
   .contact-label {
     display: block;
     font-size: 0.75rem;
-    color: #62687d;
+    color: #94a3b8;
     margin-bottom: 0.25rem;
   }
 
@@ -251,7 +251,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .footer-copyright {
-    color: #62687d;
+    color: #94a3b8;
     margin: 0;
   }
 
@@ -262,7 +262,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .footer-legal-bar a {
-    color: #8c93a8;
+    color: #9ca3af;
     text-decoration: none;
     transition: color 0.15s ease;
   }

@@ -11,7 +11,6 @@ export const fontFamilies = [
 ];
 
 export const fontWeights = [
-  { value: 300, label: 'Light' },
   { value: 400, label: 'Regular' },
   { value: 500, label: 'Medium' },
   { value: 600, label: 'Semibold' },

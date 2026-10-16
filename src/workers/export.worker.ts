@@ -19,17 +19,48 @@ const fontsToLoad = [
   { family: 'Source Serif 4', url: '/fonts/SourceSerif4-SemiBold.woff2', weight: '600' }
 ];
 
-let fontsLoaded = false;
+const loadedFonts = new Set<string>();
 
-async function ensureFontsLoaded(origin: string) {
-  if (fontsLoaded) return;
+function isFontRequired(f: (typeof fontsToLoad)[number], state: EditorState): boolean {
+  // 1. Primary Typography font
+  if (state.typography.fontFamily && state.typography.fontFamily.includes(f.family)) {
+    return true;
+  }
+  // 2. Code blocks or code snippet template
+  const hasCode = state.templateId === 'code-snippet' || state.blocks.some((b) => b.isCode);
+  if (hasCode && f.family === 'JetBrains Mono') {
+    return true;
+  }
+  // 3. Masthead branding
+  if (state.showMasthead && f.family === 'IBM Plex Sans') {
+    return true;
+  }
+  // 4. Browser chrome URL bar
+  if (state.frameStyle === 'browser' && f.family === 'JetBrains Mono') {
+    return true;
+  }
+  // 5. Always ensure Inter is available as system sans-serif fallback
+  if (f.family === 'Inter') {
+    return true;
+  }
+  return false;
+}
+
+async function ensureFontsLoaded(origin: string, state: EditorState) {
   // @ts-ignore
   if (typeof self.fonts === 'undefined' || typeof FontFace === 'undefined') {
-    fontsLoaded = true;
     return;
   }
 
-  const promises = fontsToLoad.map(async (f) => {
+  const needed = fontsToLoad.filter((f) => {
+    const key = `${f.family}:${f.weight}:${f.style || 'normal'}`;
+    return !loadedFonts.has(key) && isFontRequired(f, state);
+  });
+
+  if (needed.length === 0) return;
+
+  const promises = needed.map(async (f) => {
+    const key = `${f.family}:${f.weight}:${f.style || 'normal'}`;
     try {
       const fontUrl = new URL(f.url, origin).href;
       // @ts-ignore
@@ -40,21 +71,21 @@ async function ensureFontsLoaded(origin: string) {
       await font.load();
       // @ts-ignore
       self.fonts.add(font);
+      loadedFonts.add(key);
     } catch (err) {
       console.warn(`Failed to load font ${f.family} (${f.weight}) in worker:`, err);
     }
   });
 
   await Promise.all(promises);
-  fontsLoaded = true;
 }
 
 self.addEventListener('message', async (e: MessageEvent<{ state: EditorState; format: ExportFormat; quality?: number; origin?: string; scaleMultiplier?: number }>) => {
   const { state, format, quality = 0.92, origin = self.location.origin, scaleMultiplier } = e.data;
   const multiplier = scaleMultiplier || state.exportScale || 2;
   try {
-    // Dynamically register fonts in worker scope before drawing
-    await ensureFontsLoaded(origin);
+    // Dynamically register only required fonts in worker scope before drawing
+    await ensureFontsLoaded(origin, state);
 
     const exportW = Math.round(state.width * multiplier);
     const exportH = Math.round(state.height * multiplier);
