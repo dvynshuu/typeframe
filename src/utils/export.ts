@@ -1,6 +1,5 @@
 import type { EditorState, ExportFormat } from '../types';
 import { renderToCanvas, canvasToBlob } from '../lib/canvas-renderer';
-import { renderToSvg } from '../lib/svg-renderer';
 import { downloadBlob, downloadText } from './dom';
 
 export function exportFilename(format: ExportFormat, w: number, h: number, scale = 1): string {
@@ -63,6 +62,7 @@ export async function exportImage(
 ): Promise<void> {
   const scale = state.exportScale ?? 2;
   if (format === 'svg') {
+    const { renderToSvg } = await import('../lib/svg-renderer');
     const svg = renderToSvg(state);
     downloadText(svg, exportFilename(format, state.width, state.height, scale), 'image/svg+xml');
     return;

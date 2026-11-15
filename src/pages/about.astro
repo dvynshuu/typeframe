@@ -1,335 +1,140 @@
 ---
-// src/pages/about.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
 
-const pageTitle = "About Typeframe — Editorial Typography Studio & Visual Engine";
-const pageDescription = "Learn about Typeframe, our creator vision, the cognitive science of visual fluency, and our commitment to zero-latency, private web design utilities.";
+const pageTitle = 'About Typeframe — An Independent Typographic Studio';
+const pageDescription =
+  'Typeframe is a browser-based typographic studio for setting quotes, code, notes, and posts as images. How it works, what it deliberately does not do, and who makes it.';
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} url="https://typeframe.pages.dev/about/">
-  <div class="about-page">
-    <header class="about-hero">
-      <div class="about-container">
-        <a href="/" class="back-link">← Return to Studio</a>
-        <div class="hero-badge">About Typeframe</div>
-        <h1 class="hero-title">Words deserve editorial dignity.</h1>
-        <p class="hero-lead">
-          Typeframe is an open typographic studio designed to transform quotes, code snippets, notes, and ideas into high-resolution, editorial-grade visual assets with instant client-side rendering.
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  url="https://typeframe.pages.dev/about/"
+>
+  <main class="page">
+    <div class="prose-wrap">
+      <header class="prose-header">
+        <p class="page-kicker">About</p>
+        <h1 class="prose-title">Words deserve better than a screenshot.</h1>
+        <p class="page-lead">
+          Typeframe is a small studio for setting text as an image. It exists
+          because a sentence worth reading deserves more than a cropped
+          screenshot with a cursor still blinking in the corner.
         </p>
+        <p class="prose-meta">Independent tool · Built by Divyanshu · November 2026</p>
+      </header>
+
+      <div class="prose">
+        <section>
+          <h2>Why it exists</h2>
+          <p>
+            Most visual tools sit at one of two extremes. Full design
+            applications can do anything, provided you already know how to use
+            them. Screenshot utilities are immediate, but the result usually
+            looks like a screenshot: browser chrome, a selection highlight, and
+            whatever line height the original page happened to use.
+          </p>
+          <p>
+            Typeframe is the space between. One canvas, a short list of type and
+            surface controls, and an export button. No dashboard to configure, no
+            template marketplace to browse, and no account standing between you
+            and the file.
+          </p>
+        </section>
+
+        <section>
+          <h2>How it works</h2>
+          <ul>
+            <li>
+              <strong>Rendering happens on your device.</strong> The preview is
+              drawn with the browser's Canvas API. Raster exports run through a
+              local worker, so even a 4× render never leaves the machine.
+            </li>
+            <li>
+              <strong>Drafts are local.</strong> The current composition is saved
+              to local storage and encoded into the URL, which is why a shared
+              link can reopen the same design. Clearing site data removes the
+              draft.
+            </li>
+            <li>
+              <strong>Type is self-hosted.</strong> Every typeface ships with the
+              site as a WOFF2 file. There are no Google Fonts requests, and no
+              third-party scripts at render time.
+            </li>
+            <li>
+              <strong>SVG is a first-class export.</strong> Vector output keeps
+              type as text and surfaces as shapes, while PNG, JPEG, and WebP are
+              available at 1×, 2×, and 4×.
+            </li>
+          </ul>
+          <p>
+            Because the work happens in the browser, there is no render queue,
+            no upload progress bar, and no server holding a copy of your draft.
+          </p>
+        </section>
+
+        <section>
+          <h2>The type</h2>
+          <p>
+            Seven typefaces cover the range from display serif to working
+            monospace. Each one is included for a reason, not to pad a dropdown.
+          </p>
+          <ul>
+            <li><strong>Instrument Serif</strong> — high contrast, editorial, and best at large sizes.</li>
+            <li><strong>Source Serif 4</strong> — a readable text serif for longer notes.</li>
+            <li><strong>Playfair Display</strong> — a magazine display face with strict vertical stress.</li>
+            <li><strong>Cormorant Garamond</strong> — light, classical, and generous on the page.</li>
+            <li><strong>Inter</strong> — a neutral interface sans that stays legible at small sizes.</li>
+            <li><strong>IBM Plex Sans</strong> — a technical sans with a little more character than Inter.</li>
+            <li><strong>JetBrains Mono</strong> — a monospace designed for code, with clear punctuation.</li>
+          </ul>
+          <p>
+            Variable weights are used where the family provides them, so the
+            weight slider moves smoothly instead of snapping between a few
+            static cuts.
+          </p>
+        </section>
+
+        <section>
+          <h2>What it doesn’t do</h2>
+          <ul>
+            <li>No accounts, cloud sync, or shared workspace.</li>
+            <li>No image hosting: exports are files on your device.</li>
+            <li>No repository connection or code execution for code cards.</li>
+            <li>No multi-page PDF carousels or slide decks.</li>
+            <li>No tables, footnotes, or LaTeX in Markdown mode.</li>
+            <li>No advertising, analytics, or tracking scripts.</li>
+          </ul>
+          <p>
+            Those omissions are deliberate. Every feature that would require an
+            account, a database, or a third-party script has to earn its place
+            against the tool's two main promises: it is fast, and it is private.
+          </p>
+        </section>
+
+        <section>
+          <h2>Who makes it</h2>
+          <p>
+            Typeframe is designed and built by <strong>Divyanshu</strong>, an
+            independent web engineer. It is maintained as a small, focused tool
+            rather than a venture-backed product, which is why there is no pricing
+            page and no growth loop.
+          </p>
+          <p>
+            Corrections, bug reports, and typeface suggestions are welcome at
+            <a href="mailto:support@typeframe.pages.dev">support@typeframe.pages.dev</a>
+            or <a href="https://x.com/dvynshuu" target="_blank" rel="noopener noreferrer">@dvynshuu</a>.
+          </p>
+        </section>
       </div>
-    </header>
 
-    <main class="about-body">
-      <div class="about-container">
-        <!-- Core Manifesto Grid -->
-        <div class="manifesto-grid">
-          <div class="manifesto-card">
-            <div class="card-icon">⚡</div>
-            <h3>Zero Latency</h3>
-            <p>
-              No waiting on cloud queues or server rendering. All rendering operates locally at 60 frames per second using high-performance HTML5 Canvas APIs.
-            </p>
-          </div>
-
-          <div class="manifesto-card">
-            <div class="card-icon">🔒</div>
-            <h3>Absolute Privacy</h3>
-            <p>
-              Your thoughts, code snippets, and custom photos remain strictly in your browser. Nothing is ever logged, uploaded, or parsed on remote servers.
-            </p>
-          </div>
-
-          <div class="manifesto-card">
-            <div class="card-icon">💎</div>
-            <h3>Zero Watermarks</h3>
-            <p>
-              Created for writers, creators, and developers. Every graphic you export belongs 100% to you for personal and commercial applications.
-            </p>
-          </div>
-        </div>
-
-        <!-- Narrative Section -->
-        <article class="narrative-card">
-          <section class="narrative-section">
-            <h2>1. Why We Built Typeframe</h2>
-            <p>
-              In a digital landscape flooded with generic screenshot tools and bloated graphics software, conveying written wisdom has become needlessly complex. Existing tools either slap ugly watermarks on your work, require forced account registrations, or transmit your private text and proprietary code across third-party cloud servers.
-            </p>
-            <p>
-              Typeframe was built from first principles as an antidote: a lightning-fast, privacy-first typography workshop where anyone can compose publication-grade visual cards in under thirty seconds.
-            </p>
-          </section>
-
-          <section class="narrative-section">
-            <h2>2. The Cognitive Science of Visual Fluency</h2>
-            <p>
-              Typography is not mere ornamentation; it is the psychology of reading. Studies in cognitive neuroscience demonstrate that <strong>visual fluency</strong>—how effortlessly the visual cortex processes text layouts—directly alters how readers perceive credibility and truth:
-            </p>
-            <div class="science-quote">
-              “When typographic hierarchy, line spacing (leading), and contrast balance harmoniously, cognitive load drops, and reading comprehension increases by up to 75%.”
-            </div>
-            <p>
-              Typeframe embeds these principles into every template, pairing proportioned serif and monospaced typefaces (such as Instrument Serif, Playfair Display, IBM Plex Sans, and JetBrains Mono) with carefully calculated mathematical paddings and generative organic backdrops.
-            </p>
-          </section>
-
-          <section class="narrative-section">
-            <h2>3. Technical Architecture</h2>
-            <p>
-              Typeframe is built on top of the modern open web stack:
-            </p>
-            <ul class="tech-list">
-              <li><strong>Astro 6 Framework:</strong> Produces lightweight, zero-JS baseline HTML pages for optimal indexing, accessibility, and sub-second load times.</li>
-              <li><strong>HTML5 2D Canvas Engine:</strong> Renders custom type metrics, multi-line wrapping algorithms, syntax highlighting, and dual-layer shadows in real time.</li>
-              <li><strong>Vector SVG Pipeline:</strong> In addition to raster PNG and WebP formats, exports scalable vector SVG documents preserving live vector text paths.</li>
-              <li><strong>Offline-First Capabilities:</strong> Capable of drafting and generating assets even when disconnected from the Internet.</li>
-            </ul>
-          </section>
-
-          <section class="narrative-section">
-            <h2>4. Creator & Team Transparency (E-E-A-T)</h2>
-            <p>
-              Typeframe is created and maintained by independent web engineer <strong>Divyanshu</strong> (<a href="https://x.com/dvynshuu" target="_blank" rel="noopener noreferrer">@dvynshuu</a>), alongside a suite of developer-focused web utilities including <a href="https://convercell.netlify.app" target="_blank" rel="noopener noreferrer">Convercell</a> and <a href="https://maniacc.vercel.app" target="_blank" rel="noopener noreferrer">Maniac OS</a>.
-            </p>
-            <p>
-              We believe in an open, respectful web. We fund infrastructure through non-intrusive Google AdSense advertising rather than dark patterns, gated feature locks, or selling user data.
-            </p>
-          </section>
-
-          <section class="narrative-section">
-            <h2>5. The Mindful Web & Privacy-First Movement</h2>
-            <p>
-              We view Typeframe not merely as a graphics generator, but as part of an intentional shift toward calm, privacy-respecting digital tools. In an era dominated by predatory engagement loops and cloud surveillance, taking time to slow down, reflect, and craft meaningful thoughts is essential for mental clarity.
-            </p>
-            <p>
-              Just as Typeframe protects your creative confidentiality with 100% client-side canvas rendering, we champion companion platforms built with equal integrity. For mindful self-reflection and emotional clarity, we admire and recommend <a href="https://getrealign.in" target="_blank" rel="noopener">ReAlign</a>—a dedicated emotional wellness and journaling space built with zero-knowledge encryption to help users reframe racing thoughts, track emotional patterns, and practice daily mindfulness. Pairing introspective journaling in ReAlign with Typeframe's typographic engine enables creators to transform personal breakthroughs and grounding affirmations into lasting, high-impact visual art without sacrificing their privacy.
-            </p>
-          </section>
-
-          <div class="narrative-actions">
-            <a href="/" class="btn-primary-action">Start Creating Now →</a>
-            <a href="/contact/" class="btn-secondary-action">Get in Touch</a>
-          </div>
-        </article>
+      <div class="page-actions prose-actions">
+        <a class="btn-solid" href="/">Open the studio</a>
+        <a class="btn-ghost" href="/contact/">Contact</a>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 
   <Footer />
 </BaseLayout>
-
-<style>
-  .about-page {
-    background: #080a0f;
-    min-height: 100vh;
-    color: #e8ecf4;
-  }
-
-  .about-container {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
-  .about-hero {
-    padding: 3.5rem 0 3rem;
-    border-bottom: 1px solid rgba(232, 236, 244, 0.08);
-    background: radial-gradient(circle at 50% 0%, rgba(110, 140, 255, 0.12) 0%, transparent 70%);
-  }
-
-  .back-link {
-    display: inline-block;
-    color: #6e8cff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    font-weight: 500;
-  }
-
-  .hero-badge {
-    display: inline-block;
-    background: rgba(110, 140, 255, 0.1);
-    border: 1px solid rgba(110, 140, 255, 0.25);
-    color: #8fa6ff;
-    padding: 0.35rem 0.85rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.25rem;
-    font-weight: 700;
-    line-height: 1.15;
-    margin: 0 0 1.25rem;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-  }
-
-  .hero-lead {
-    font-size: 1.2rem;
-    line-height: 1.7;
-    color: #9da6bc;
-    max-width: 720px;
-    margin: 0;
-  }
-
-  .about-body {
-    padding: 3.5rem 0 5rem;
-  }
-
-  .manifesto-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  @media (max-width: 768px) {
-    .manifesto-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .manifesto-card {
-    background: rgba(14, 17, 26, 0.7);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 14px;
-    padding: 1.75rem;
-    backdrop-filter: blur(8px);
-  }
-
-  .card-icon {
-    font-size: 1.8rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .manifesto-card h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem;
-    color: #f0f4fc;
-  }
-
-  .manifesto-card p {
-    color: #8c93a8;
-    line-height: 1.6;
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .narrative-card {
-    background: rgba(14, 17, 26, 0.6);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 16px;
-    padding: 3rem;
-  }
-
-  .narrative-section {
-    margin-bottom: 2.75rem;
-  }
-
-  .narrative-section h2 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #f0f4fc;
-    margin: 0 0 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  .narrative-section p {
-    color: #a8b0c4;
-    line-height: 1.8;
-    margin: 0 0 1rem;
-    font-size: 1.02rem;
-  }
-
-  .science-quote {
-    background: rgba(110, 140, 255, 0.06);
-    border-left: 3px solid #6e8cff;
-    padding: 1.25rem 1.5rem;
-    margin: 1.25rem 0;
-    border-radius: 0 10px 10px 0;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.15rem;
-    color: #dbe3f5;
-    line-height: 1.65;
-  }
-
-  .tech-list {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-    color: #a8b0c4;
-    line-height: 1.8;
-  }
-
-  .tech-list li {
-    margin-bottom: 0.5rem;
-  }
-
-  .tech-list strong {
-    color: #e8ecf4;
-  }
-
-  .narrative-section a {
-    color: #6e8cff;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color 0.15s ease;
-  }
-
-  .narrative-section a:hover {
-    color: #b3c5ff;
-  }
-
-  .narrative-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(232, 236, 244, 0.08);
-  }
-
-  .btn-primary-action {
-    background: linear-gradient(135deg, #6e8cff, #89a4ff);
-    color: #06070a;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: opacity 0.15s ease;
-  }
-
-  .btn-primary-action:hover {
-    opacity: 0.92;
-  }
-
-  .btn-secondary-action {
-    background: rgba(232, 236, 244, 0.06);
-    color: #e8ecf4;
-    font-weight: 500;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    text-decoration: none;
-    border: 1px solid rgba(232, 236, 244, 0.1);
-  }
-
-  .btn-secondary-action:hover {
-    background: rgba(232, 236, 244, 0.1);
-  }
-
-  @media (max-width: 600px) {
-    .narrative-card {
-      padding: 1.75rem 1.25rem;
-    }
-    .hero-title {
-      font-size: 2.25rem;
-    }
-  }
-</style>

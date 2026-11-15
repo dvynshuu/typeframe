@@ -8,7 +8,7 @@ import {
   computePreviewScale,
   formatDimensions,
 } from '../lib/preview-scale';
-import { exportImage, copyImageToClipboard } from '../utils/export';
+import { ensureFontsForState, fontRequirementKey } from '../lib/fonts';
 import { showToast } from '../utils/toast';
 import {
   serializeState,
@@ -139,12 +139,20 @@ export function initEditor(root: HTMLElement): () => void {
   }, 1000);
 
   let lastImageUrl: string | undefined = hydratedState.background.imageUrl;
+  let lastFontKey = '';
+
+  const syncFonts = (state: ReturnType<EditorStore['getState']>) => {
+    const key = fontRequirementKey(state);
+    if (key === lastFontKey) return;
+    lastFontKey = key;
+    void ensureFontsForState(state).then(() => renderLoop.schedule(store.getState()));
+  };
 
   const unsub = store.subscribe((state) => {
     renderLoop.schedule(state);
     syncForm(root, state);
     updateScreenReaderDescription(state);
-    updateChecklist(root, state);
+    syncFonts(state);
 
     // Revoke old blob URL if background image has changed
     const currentImageUrl = state.background.imageUrl;
@@ -197,13 +205,19 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   if (text && text !== document.activeElement) text.value = state.text;
 
   root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.mode === state.textMode);
+    const active = btn.dataset.mode === state.textMode;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-selected', String(active));
   });
   root.querySelectorAll<HTMLButtonElement>('[data-template]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.template === state.templateId);
+    const active = btn.dataset.template === state.templateId;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', String(active));
   });
   root.querySelectorAll<HTMLButtonElement>('[data-theme]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.theme === state.themeId);
+    const active = btn.dataset.theme === state.themeId;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', String(active));
   });
 
   setVal(root, '#font-family', state.typography.fontFamily);
@@ -222,8 +236,7 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   setVal(root, '#bg-type', state.background.type);
   setVal(root, '#solid-color', state.background.solidColor ?? '#0f0f12');
   setVal(root, '#export-format', currentExportFormat);
-  setVal(root, '#mobile-export-format', currentExportFormat);
-  setVal(root, '#panel-export-format', currentExportFormat);
+  setVal(root, '#export-scale', String(state.exportScale ?? 2));
   setVal(root, '#preset-size', state.presetSize);
   setVal(root, '#custom-width', String(state.customWidth));
   setVal(root, '#custom-height', String(state.customHeight));
@@ -234,12 +247,12 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   // Studio Frames & Mockup Options
   const currentFrame = state.frameStyle ?? 'none';
   root.querySelectorAll<HTMLButtonElement>('[data-frame]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.frame === currentFrame);
+    const active = btn.dataset.frame === currentFrame;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', String(active));
   });
   const frameOptionsGroup = root.querySelector<HTMLDivElement>('#frame-options-group');
-  if (frameOptionsGroup) {
-    frameOptionsGroup.style.display = currentFrame !== 'none' ? 'block' : 'none';
-  }
+  if (frameOptionsGroup) frameOptionsGroup.hidden = currentFrame === 'none';
 
   setVal(root, '#card-padding', String(state.cardPadding ?? 56));
   const cardPadVal = root.querySelector('#card-padding-val');
@@ -251,19 +264,13 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
 
   setVal(root, '#card-shadow', state.cardShadow ?? 'float');
 
-  // Export resolution scale pills (1x, 2x HD, 4x 4K)
-  const currentScale = state.exportScale ?? 2;
-  root.querySelectorAll<HTMLButtonElement>('[data-export-scale]').forEach((btn) => {
-    btn.classList.toggle('is-active', Number(btn.dataset.exportScale) === currentScale);
-  });
-
   // Author Attribution
   const authorSigToggle = root.querySelector<HTMLInputElement>('#author-signature-toggle');
   if (authorSigToggle) authorSigToggle.checked = Boolean(state.author?.showSignature);
 
   const authorGroup = root.querySelector<HTMLDivElement>('#author-inputs-group');
   if (authorGroup) {
-    authorGroup.style.display = (state.author?.showSignature || currentFrame === 'tweet') ? 'block' : 'none';
+    authorGroup.hidden = !(state.author?.showSignature || currentFrame === 'tweet');
   }
 
   const authorNameInput = root.querySelector<HTMLInputElement>('#author-name');
@@ -282,9 +289,7 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   }
 
   const imgGroup = root.querySelector<HTMLDivElement>('#image-controls-group');
-  if (imgGroup) {
-    imgGroup.style.display = state.background.type === 'image' ? 'block' : 'none';
-  }
+  if (imgGroup) imgGroup.hidden = state.background.type !== 'image';
 
   if (state.background.type === 'image') {
     setVal(root, '#bg-image-size', state.background.imageSizeMode ?? 'cover');
@@ -305,13 +310,13 @@ function syncForm(root: HTMLElement, state: ReturnType<EditorStore['getState']>)
   root.querySelectorAll<HTMLButtonElement>('.preset-swatch').forEach((btn) => {
     const p = btn.dataset.preset;
     let isActive = false;
-    if (p === 'aurora-mesh' && currentBg.type === 'mesh' && currentBg.meshColors?.[2] === '#6e8cff') isActive = true;
-    if (p === 'sunset-glow' && currentBg.type === 'gradient' && currentBg.gradientStops?.[0]?.color === '#ff7e5f') isActive = true;
-    if (p === 'brutalist-grid' && currentBg.type === 'solid' && currentBg.solidColor === '#121214') isActive = true;
+    if (p === 'ink-mesh' && currentBg.type === 'mesh' && currentBg.meshColors?.[3] === '#a84a32') isActive = true;
+    if (p === 'amber-dusk' && currentBg.type === 'gradient' && currentBg.gradientStops?.[0]?.color === '#d96a3b') isActive = true;
+    if (p === 'press-black' && currentBg.type === 'solid' && currentBg.solidColor === '#121214') isActive = true;
     if (p === 'frosted-glass' && currentBg.type === 'glass') isActive = true;
-    if (p === 'obsidian-grain' && currentBg.type === 'noise' && currentBg.solidColor === '#090b10') isActive = true;
-    if (p === 'minimal-linen' && currentBg.type === 'noise' && currentBg.solidColor === '#faf7f2') isActive = true;
-    if (p === 'cyber-signal' && currentBg.type === 'mesh' && currentBg.meshColors?.[2] === '#00f5d4') isActive = true;
+    if (p === 'ink-grain' && currentBg.type === 'noise' && currentBg.solidColor === '#0a0a0c') isActive = true;
+    if (p === 'paper' && currentBg.type === 'noise' && currentBg.solidColor === '#f5f1e8') isActive = true;
+    if (p === 'cinnabar-mesh' && currentBg.type === 'mesh' && currentBg.meshColors?.[2] === '#ff5a36') isActive = true;
 
     btn.classList.toggle('is-active', isActive);
   });
@@ -339,18 +344,15 @@ function syncSliderLabels(
 
 function syncAlignButtons(root: HTMLElement, align: string): void {
   root.querySelectorAll<HTMLButtonElement>('[data-align]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.align === align);
+    const active = btn.dataset.align === align;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', String(active));
   });
 }
 
 function syncFormatPills(root: HTMLElement, format: ExportFormat): void {
   currentExportFormat = format;
-  root.querySelectorAll<HTMLButtonElement>('[data-format]').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.format === format);
-  });
   setVal(root, '#export-format', format);
-  setVal(root, '#mobile-export-format', format);
-  setVal(root, '#panel-export-format', format);
 }
 
 function bindControls(root: HTMLElement): (() => void) {
@@ -381,12 +383,10 @@ function bindControls(root: HTMLElement): (() => void) {
   bindBackground(root);
   bindMastheadToggle(root);
   bindFrames(root);
-  bindResolutionScale(root);
   bindAuthor(root);
   bindExport(root);
   bindCopyImage(root);
   bindShuffle(root);
-  const unbindGuideDrawer = bindGuideDrawer(root);
   bindShare(root);
   bindFormatPills(root);
   bindPreset(root);
@@ -394,7 +394,6 @@ function bindControls(root: HTMLElement): (() => void) {
   const unbindGlobalShortcuts = bindGlobalShortcuts(root);
 
   return () => {
-    unbindGuideDrawer?.();
     unbindGlobalShortcuts?.();
   };
 }
@@ -426,16 +425,6 @@ function bindFrames(root: HTMLElement): void {
   const shadowSelect = root.querySelector<HTMLSelectElement>('#card-shadow');
   shadowSelect?.addEventListener('change', () => {
     store.setCardShadow(shadowSelect.value as any);
-  });
-}
-
-function bindResolutionScale(root: HTMLElement): void {
-  root.querySelectorAll<HTMLButtonElement>('[data-export-scale]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const scale = Number(btn.dataset.exportScale) as 1 | 2 | 4;
-      store.setExportScale(scale);
-      showToast(`Export resolution set to ${scale === 4 ? '4x Ultra-HD 4K' : scale === 2 ? '2x Retina HD' : '1x Standard'}`, 'info');
-    });
   });
 }
 
@@ -492,7 +481,7 @@ function bindShare(root: HTMLElement): void {
       }
 
       await navigator.clipboard.writeText(shareUrl);
-      showToast('Shareable studio link copied to clipboard! 🔗', 'success');
+      showToast('Shareable studio link copied to clipboard.', 'success');
     } catch (err: any) {
       console.error('Share failed:', err);
       showToast(`Failed to copy link: ${err?.message || 'unknown error'}`, 'error');
@@ -513,21 +502,14 @@ function bindAlign(root: HTMLElement): void {
 }
 
 function bindFormatPills(root: HTMLElement): void {
-  root.querySelectorAll('[data-format]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const format = (btn as HTMLButtonElement).dataset.format as ExportFormat;
-      syncFormatPills(root, format);
-    });
-  });
-
-  root.querySelector('#mobile-export-format')?.addEventListener('change', (e) => {
+  root.querySelector('#export-format')?.addEventListener('change', (e) => {
     const format = (e.target as HTMLSelectElement).value as ExportFormat;
     syncFormatPills(root, format);
   });
 
-  root.querySelector('#panel-export-format')?.addEventListener('change', (e) => {
-    const format = (e.target as HTMLSelectElement).value as ExportFormat;
-    syncFormatPills(root, format);
+  root.querySelector('#export-scale')?.addEventListener('change', (e) => {
+    const scale = Number((e.target as HTMLSelectElement).value) as 1 | 2 | 4;
+    store.setExportScale(scale);
   });
 }
 
@@ -626,11 +608,8 @@ function bindPreset(root: HTMLElement): void {
     lockBtn.addEventListener('click', () => {
       isRatioLocked = !isRatioLocked;
       lockBtn.setAttribute('aria-pressed', String(isRatioLocked));
-      const icon = lockBtn.querySelector('.lock-icon');
-      if (icon) icon.textContent = isRatioLocked ? '🔒' : '🔓';
-      
-      const text = lockBtn.childNodes[lockBtn.childNodes.length - 1];
-      if (text) text.textContent = isRatioLocked ? ' Locked' : ' Unlocked';
+      const text = lockBtn.querySelector('.lock-text');
+      if (text) text.textContent = isRatioLocked ? 'Locked' : 'Unlocked';
 
       if (isRatioLocked) {
         const state = store.getState();
@@ -698,24 +677,23 @@ function bindPreset(root: HTMLElement): void {
 
 function bindExport(root: HTMLElement): void {
   root.querySelector('#export-btn')?.addEventListener('click', async () => {
-    const btn = root.querySelector('#export-btn');
-    const format = (root.querySelector('#export-format') as HTMLSelectElement)
-      .value as ExportFormat;
+    const btn = root.querySelector<HTMLButtonElement>('#export-btn');
     const state = store.getState();
     btn?.classList.add('is-loading');
+    btn?.setAttribute('aria-busy', 'true');
     const label = root.querySelector('.btn-export__text');
     const prev = label?.textContent;
     if (label) label.textContent = 'Rendering…';
     try {
-      await exportImage(state, format);
-      sessionExportedOrCopied = true;
-      updateChecklist(root, store.getState());
-      showToast(`Image exported successfully as ${format.toUpperCase()}!`, 'success');
+      const { exportImage } = await import('../utils/export');
+      await exportImage(state, currentExportFormat);
+      showToast(`Exported as ${currentExportFormat.toUpperCase()}.`, 'success');
     } catch (err: any) {
       console.error('Export failed:', err);
-      showToast(`Failed to export: ${err?.message || 'unknown error'}`, 'error');
+      showToast(`Export failed: ${err?.message || 'unknown error'}`, 'error');
     } finally {
       btn?.classList.remove('is-loading');
+      btn?.removeAttribute('aria-busy');
       if (label && prev) label.textContent = prev;
     }
   });
@@ -1053,24 +1031,24 @@ function bindBackdropPresets(root: HTMLElement): void {
       const currentBg = store.getState().background;
       let background: BackgroundConfig = { ...currentBg };
 
-      if (preset === 'aurora-mesh') {
+      if (preset === 'ink-mesh') {
         background = {
           ...currentBg,
           type: 'mesh',
-          meshColors: ['#0f172a', '#1e293b', '#6e8cff', '#c37cff'],
+          meshColors: ['#0a0a0c', '#171310', '#5a3428', '#a84a32'],
           noiseIntensity: 0.04,
         };
-      } else if (preset === 'sunset-glow') {
+      } else if (preset === 'amber-dusk') {
         background = {
           ...currentBg,
           type: 'gradient',
           gradientStops: [
-            { color: '#ff7e5f', position: 0 },
-            { color: '#feb47b', position: 1 },
+            { color: '#d96a3b', position: 0 },
+            { color: '#f0b27a', position: 1 },
           ],
           gradientAngle: 135,
         };
-      } else if (preset === 'brutalist-grid') {
+      } else if (preset === 'press-black') {
         background = {
           ...currentBg,
           type: 'solid',
@@ -1080,74 +1058,34 @@ function bindBackdropPresets(root: HTMLElement): void {
         background = {
           ...currentBg,
           type: 'glass',
-          meshColors: ['#1e293b', '#0f172a', '#334155', '#1e3a5f'],
+          meshColors: ['#2a2a2e', '#18181b', '#3c3c42', '#1c1c1f'],
           glassBlur: 20,
         };
-      } else if (preset === 'obsidian-grain') {
+      } else if (preset === 'ink-grain') {
         background = {
           ...currentBg,
           type: 'noise',
-          solidColor: '#090b10',
+          solidColor: '#0a0a0c',
           noiseIntensity: 0.06,
         };
-      } else if (preset === 'minimal-linen') {
+      } else if (preset === 'paper') {
         background = {
           ...currentBg,
           type: 'noise',
-          solidColor: '#faf7f2',
+          solidColor: '#f5f1e8',
           noiseIntensity: 0.04,
         };
-      } else if (preset === 'cyber-signal') {
+      } else if (preset === 'cinnabar-mesh') {
         background = {
           ...currentBg,
           type: 'mesh',
-          meshColors: ['#090b10', '#120024', '#00f5d4', '#7b2cbf'],
+          meshColors: ['#0a0a0c', '#24100a', '#ff5a36', '#8f2d18'],
           noiseIntensity: 0.05,
         };
       }
       store.setState({ background });
     });
   });
-}
-
-let sessionExportedOrCopied = false;
-
-function updateChecklist(root: HTMLElement, state: ReturnType<EditorStore['getState']>): void {
-  const defaultText = 'Design is not just what it looks like.\nDesign is how it works.';
-  const step1 = state.text.trim().length > 0 && state.text !== defaultText;
-
-  const t = state.typography;
-  const step2 = t.fontSize !== 42 || t.textAlign !== 'center' || t.lineHeight !== 1.4 || t.fontFamily !== '"Inter", system-ui, sans-serif' || t.fontWeight !== 500 || t.letterSpacing !== 0;
-
-  const step3 = state.themeId !== 'studio-dark' || state.background.type !== 'gradient';
-
-  const step4 = sessionExportedOrCopied;
-
-  const steps = [step1, step2, step3, step4];
-  const completedCount = steps.filter(Boolean).length;
-
-  const progressText = root.querySelector('#checklist-progress-text');
-  if (progressText) {
-    progressText.textContent = `${completedCount} of 4 completed`;
-  }
-
-  const progressBar = root.querySelector<HTMLElement>('#checklist-progress-fill');
-  if (progressBar) {
-    progressBar.style.width = `${(completedCount / 4) * 100}%`;
-  }
-
-  [1, 2, 3, 4].forEach((num) => {
-    const el = root.querySelector(`#checklist-step-${num}`);
-    if (el) {
-      const isDone = steps[num - 1];
-      el.classList.toggle('is-completed', isDone);
-    }
-  });
-
-  const checklistCard = root.querySelector('.checklist-card');
-  if (checklistCard) {
-    checklistCard.classList.toggle('is-all-completed', completedCount === 4);
-  }
 }
 
 function bindShuffle(root: HTMLElement): void {
@@ -1169,70 +1107,31 @@ function bindShuffle(root: HTMLElement): void {
       }
     });
 
-    showToast('Styles randomized! 🎲', 'success');
+    showToast('Type and surface randomized.', 'success');
   });
 }
 
 function bindCopyImage(root: HTMLElement): void {
   root.querySelector('#copy-img-btn')?.addEventListener('click', async () => {
-    const btn = root.querySelector('#copy-img-btn');
+    const btn = root.querySelector<HTMLButtonElement>('#copy-img-btn');
     const state = store.getState();
     btn?.classList.add('is-loading');
-    const label = btn?.querySelector('.btn-copy-img__text');
-    const prev = label?.textContent;
-    if (label) label.textContent = 'Copying…';
+    btn?.setAttribute('aria-busy', 'true');
     try {
+      const { copyImageToClipboard } = await import('../utils/export');
       await copyImageToClipboard(state);
-      sessionExportedOrCopied = true;
-      updateChecklist(root, store.getState());
-      showToast('Image copied to clipboard successfully! 📋', 'success');
+      showToast('Image copied to clipboard.', 'success');
     } catch (err: any) {
       console.error('Copy to clipboard failed:', err);
       showToast(`Clipboard copy failed: ${err?.message || 'unknown error'}`, 'error');
     } finally {
       btn?.classList.remove('is-loading');
-      if (label && prev) label.textContent = prev;
+      btn?.removeAttribute('aria-busy');
     }
   });
 }
 
-function bindGuideDrawer(root: HTMLElement): (() => void) {
-  const drawer = root.querySelector('#seo-info-drawer');
-  const openBtn = root.querySelector('#guide-btn');
-  const closeBtn = root.querySelector('#seo-drawer-close-btn');
-  const closeBackdrop = root.querySelector('#seo-drawer-close-btn-backdrop');
-
-  const toggle = () => {
-    if (drawer) {
-      if (window.innerWidth <= 900) {
-        drawer.scrollIntoView({ behavior: 'smooth' });
-        return;
-      }
-      const isOpen = drawer.classList.contains('is-open');
-      drawer.classList.toggle('is-open', !isOpen);
-      openBtn?.setAttribute('aria-expanded', String(!isOpen));
-    }
-  };
-
-  openBtn?.addEventListener('click', toggle);
-  closeBtn?.addEventListener('click', toggle);
-  closeBackdrop?.addEventListener('click', toggle);
-
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && drawer?.classList.contains('is-open')) {
-      toggle();
-    }
-  };
-  window.addEventListener('keydown', handleKeydown);
-
-  return () => {
-    window.removeEventListener('keydown', handleKeydown);
-  };
-}
-
 function bindMobileStudioNav(root: HTMLElement): void {
-  let previousNonArtboardView: 'compose' | 'style' = 'compose';
-
   const setView = (view: 'compose' | 'artboard' | 'style') => {
     root.dataset.mobileView = view;
 
@@ -1241,22 +1140,6 @@ function bindMobileStudioNav(root: HTMLElement): void {
       tab.classList.toggle('is-active', isActive);
       tab.setAttribute('aria-selected', String(isActive));
     });
-
-    const floatingBtn = root.querySelector<HTMLButtonElement>('#floating-preview-btn');
-    if (floatingBtn) {
-      const label = floatingBtn.querySelector('.btn-floating-preview__text');
-      const icon = floatingBtn.querySelector('.btn-floating-preview__icon');
-      if (view === 'artboard') {
-        if (label) label.textContent = previousNonArtboardView === 'compose' ? 'Edit Words' : 'Adjust Style';
-        if (icon) icon.textContent = previousNonArtboardView === 'compose' ? '✍️' : '🎨';
-        floatingBtn.title = 'Switch back to editor';
-      } else {
-        previousNonArtboardView = view;
-        if (label) label.textContent = 'Preview Artboard';
-        if (icon) icon.textContent = '👁️';
-        floatingBtn.title = 'View Artboard';
-      }
-    }
 
     if (view === 'artboard') {
       const stage = root.querySelector<HTMLDivElement>('#preview-stage');
@@ -1280,15 +1163,6 @@ function bindMobileStudioNav(root: HTMLElement): void {
       const target = btn.dataset.jump as 'compose' | 'style';
       if (target) setView(target);
     });
-  });
-
-  root.querySelector('#floating-preview-btn')?.addEventListener('click', () => {
-    const current = root.dataset.mobileView;
-    if (current === 'artboard') {
-      setView(previousNonArtboardView);
-    } else {
-      setView('artboard');
-    }
   });
 }
 

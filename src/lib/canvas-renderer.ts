@@ -230,7 +230,7 @@ function drawCodeBlock(
   ctx.textAlign = 'left';
 
   let y = block.y + pad;
-  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', state.typography.textColor || theme.text];
+  const colors = ['#e7b9a7', '#d9a86c', '#a9c0a4', '#e6d29a', '#b9c3cc', state.typography.textColor || theme.text];
 
   lines.forEach((line, i) => {
     const color = colors[i % colors.length];
@@ -642,7 +642,7 @@ function drawTweetChrome(
 
   const avGrad = ctx.createLinearGradient(avX - avRadius, avY - avRadius, avX + avRadius, avY + avRadius);
   avGrad.addColorStop(0, theme.accent);
-  avGrad.addColorStop(1, '#c084fc');
+  avGrad.addColorStop(1, theme.muted);
   ctx.beginPath();
   ctx.arc(avX, avY, avRadius, 0, Math.PI * 2);
   ctx.fillStyle = avGrad;
@@ -810,7 +810,7 @@ function drawAuthorSignature(
   let curX = pillX + padH + avatarSize + 8;
   ctx.textAlign = 'left';
   ctx.font = '600 13px system-ui, -apple-system, sans-serif';
-  ctx.fillStyle = isLight ? '#0f172a' : '#f8fafc';
+  ctx.fillStyle = isLight ? '#171310' : '#f7f3ec';
   ctx.fillText(name, curX, pillY + pillH / 2);
   curX += nameW;
 
@@ -824,7 +824,7 @@ function drawAuthorSignature(
   if (handle) {
     curX += 6;
     ctx.font = '400 12px system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = isLight ? '#64748b' : '#94a3b8';
+    ctx.fillStyle = isLight ? '#6f6a63' : '#a19b92';
     ctx.fillText(handle, curX, pillY + pillH / 2);
   }
 

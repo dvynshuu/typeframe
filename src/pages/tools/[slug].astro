@@ -18,86 +18,138 @@ interface Props {
 }
 
 const { tool } = Astro.props;
+const index = toolsData.findIndex((entry) => entry.slug === tool.slug);
+const studioNumber = String(index + 1).padStart(2, '0');
 const pageUrl = `https://typeframe.pages.dev/tools/${tool.slug}/`;
 
 const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": `Typeframe — ${tool.h1}`,
-  "description": tool.metaDescription,
-  "url": pageUrl,
-  "applicationCategory": "DesignApplication",
-  "operatingSystem": "All",
-  "browserRequirements": "Requires a modern web browser with HTML5 Canvas and Javascript enabled.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: `Typeframe — ${tool.h1}`,
+  description: tool.metaDescription,
+  url: pageUrl,
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'Any',
+  browserRequirements:
+    'A modern browser with HTML5 Canvas, JavaScript, and local storage.',
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
   },
-  "featureList": tool.highlightFeatures
+  featureList: tool.highlightFeatures,
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Typeframe',
+      item: 'https://typeframe.pages.dev/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Studios',
+      item: 'https://typeframe.pages.dev/#studios',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: tool.h1,
+      item: pageUrl,
+    },
+  ],
 };
 
 const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": tool.faqs.map((f) => ({
-    "@type": "Question",
-    "name": f.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": f.answer.replace(/<[^>]*>?/gm, '')
-    }
-  }))
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: tool.faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
 };
 ---
 
-<BaseLayout 
-  title={tool.metaTitle} 
-  description={tool.metaDescription} 
+<BaseLayout
+  title={tool.metaTitle}
+  description={tool.metaDescription}
   url={pageUrl}
-  keywords={tool.keywords}
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, breadcrumbJsonLd]}
   faqJsonLd={faqJsonLd}
 >
   <Editor initialTool={tool} />
 
-  <!-- Semantic, crawlable SEO article providing rich context & FAQ for search indexing -->
-  <section class="tool-seo-landing" aria-label={`${tool.h1} Guide & FAQs`}>
-    <div class="tool-seo-container">
-      <header class="tool-seo-header">
-        <span class="tool-seo-badge">{tool.badge}</span>
-        <h1 class="tool-seo-title">{tool.h1}</h1>
-        <p class="tool-seo-lead">{tool.summary}</p>
+  <main class="page">
+    <div class="page-wrap">
+      <header class="tool-intro">
+        <div class="tool-intro__meta">
+          <p class="page-kicker">Studio {studioNumber} — {tool.category}</p>
+          <a class="tool-intro__back" href="/#studios">All studios</a>
+        </div>
+        <h2 class="page-title tool-intro__title">{tool.headline}</h2>
+        <p class="page-lead">{tool.summary}</p>
+        <div class="page-actions">
+          <a class="btn-solid" href="#typeframe-editor">Start composing</a>
+          <a class="btn-ghost" href="/#guide">Read the guide</a>
+        </div>
       </header>
 
-      <div class="tool-seo-highlights">
-        <h2 class="tool-seo-subheading">Studio Capabilities & Advantages</h2>
-        <div class="highlights-grid">
-          {tool.highlightFeatures.map((feature) => (
-            <div class="highlight-item">
-              <span class="highlight-icon" aria-hidden="true">✓</span>
-              <span class="highlight-text">{feature}</span>
-            </div>
-          ))}
+      <section class="page-section" aria-labelledby="capabilities-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Capabilities</p>
+            <h2 class="section-title" id="capabilities-title">What this studio does.</h2>
+          </div>
+          <p class="section-note">
+            The canvas above is the whole tool. These are the parts of it this
+            format leans on; nothing is held back for a paid plan.
+          </p>
         </div>
-      </div>
 
-      <div class="tool-seo-faqs">
-        <h2 class="tool-seo-subheading">Frequently Asked Questions</h2>
+        <ol class="feature-list">
+          {tool.highlightFeatures.map((feature, featureIndex) => (
+            <li class="feature-list__item">
+              <span class="feature-list__index">{String(featureIndex + 1).padStart(2, '0')}</span>
+              <span class="feature-list__text">{feature}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="page-section" id="faq" aria-labelledby="faq-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Questions</p>
+            <h2 class="section-title" id="faq-title">Practical answers.</h2>
+          </div>
+          <p class="section-note">
+            Each answer describes the current build, not a roadmap.
+          </p>
+        </div>
+
         <div class="faq-list">
-          {tool.faqs.map((faq) => (
-            <details class="tool-faq-detail" open>
-              <summary class="tool-faq-summary">{faq.question}</summary>
-              <div class="tool-faq-body" set:html={faq.answer} />
+          {tool.faqs.map((faq, faqIndex) => (
+            <details class="faq-item" open={faqIndex === 0}>
+              <summary>{faq.question}</summary>
+              <div class="faq-body"><p>{faq.answer}</p></div>
             </details>
           ))}
         </div>
-      </div>
-
-      <ToolDirectory currentSlug={tool.slug} variant="grid" />
+      </section>
     </div>
-  </section>
+  </main>
 
+  <ToolDirectory currentSlug={tool.slug} heading="Other studios" />
   <Footer />
 
   <script>
@@ -115,176 +167,3 @@ const faqJsonLd = {
     }
   </script>
 </BaseLayout>
-
-<style>
-  .tool-seo-landing {
-    background: #080a0f;
-    border-top: 1px solid rgba(232, 236, 244, 0.08);
-    padding: 4.5rem 1.5rem 6rem;
-    position: relative;
-    z-index: 10;
-  }
-
-  .tool-seo-container {
-    max-width: 1040px;
-    margin: 0 auto;
-  }
-
-  .tool-seo-header {
-    text-align: center;
-    margin-bottom: 3.5rem;
-  }
-
-  .tool-seo-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #6e8cff;
-    background: rgba(110, 140, 255, 0.1);
-    border: 1px solid rgba(110, 140, 255, 0.25);
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    margin-bottom: 1rem;
-  }
-
-  .tool-seo-title {
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: #f1f3f9;
-    margin: 0 0 1rem;
-    line-height: 1.2;
-  }
-
-  .tool-seo-lead {
-    font-size: 1.125rem;
-    color: #94a1b5;
-    max-width: 680px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-
-  .tool-seo-subheading {
-    font-size: 1.45rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-    margin: 0 0 1.5rem;
-  }
-
-  .tool-seo-highlights {
-    margin-bottom: 4rem;
-  }
-
-  .highlights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-    gap: 1rem;
-  }
-
-  @media (max-width: 600px) {
-    .tool-seo-landing {
-      padding: 3rem 1rem 4rem;
-    }
-  }
-
-  .highlight-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
-    padding: 1.2rem;
-    background: rgba(15, 18, 26, 0.6);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 12px;
-  }
-
-  .highlight-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(110, 140, 255, 0.2);
-    color: #6e8cff;
-    font-size: 0.8rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .highlight-text {
-    font-size: 0.92rem;
-    color: #c9d2e0;
-    line-height: 1.5;
-  }
-
-  .tool-seo-faqs {
-    margin-bottom: 4.5rem;
-  }
-
-  .faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  .tool-faq-detail {
-    background: rgba(15, 18, 26, 0.7);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 12px;
-    padding: 1.15rem 1.4rem;
-    transition: border-color 0.2s ease;
-  }
-
-  .tool-faq-detail:hover {
-    border-color: rgba(110, 140, 255, 0.3);
-  }
-
-  .tool-faq-summary {
-    font-size: 1.02rem;
-    font-weight: 600;
-    color: #f1f3f9;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .tool-faq-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .tool-faq-summary::after {
-    content: '+';
-    font-size: 1.25rem;
-    color: #6e8cff;
-    transition: transform 0.2s ease;
-  }
-
-  .tool-faq-detail[open] .tool-faq-summary::after {
-    content: '−';
-    transform: rotate(180deg);
-  }
-
-  .tool-faq-body {
-    margin-top: 0.85rem;
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: #8f9ba9;
-  }
-
-  .tool-faq-body a {
-    color: #8fa6ff;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-
-  .tool-faq-body a:hover {
-    color: #c4d4ff;
-  }
-</style>

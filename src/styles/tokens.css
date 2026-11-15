@@ -1,49 +1,56 @@
 :root {
-  /* Cool press — blue-charcoal neutrals (not warm brown / copper) */
-  --slate-950: #090b10;
-  --slate-900: #0f1219;
-  --slate-850: #151a24;
-  --slate-800: #1c2330;
-  --slate-700: #2a3344;
-  --slate-600: #3d4a5c;
-  --mist: #e8ecf4;
-  --mist-dim: #c5cdd9;
-  --mist-muted: #94a3b8;
+  /* Ink & paper — neutral press tones, no blue-violet cast */
+  --slate-950: #0a0a0c;
+  --slate-900: #101012;
+  --slate-850: #151517;
+  --slate-800: #1c1c1f;
+  --slate-700: #2a2a2e;
+  --slate-600: #3c3c42;
+  --slate-100: #f2efe9;
+  --mist: #f2efe9;
+  --mist-dim: #d8d3c9;
+  --mist-muted: #9b978f;
 
-  /* Signature accent — steel periwinkle */
-  --peri: #6e8cff;
-  --peri-bright: #9eb4ff;
-  --peri-dim: rgba(110, 140, 255, 0.14);
-  --peri-glow: rgba(110, 140, 255, 0.22);
+  /* Signature accent — proofing vermilion */
+  --peri: #ff5a36;
+  --peri-bright: #ff7d60;
+  --peri-dim: rgba(255, 90, 54, 0.12);
+  --peri-glow: rgba(255, 90, 54, 0.24);
 
   --bg-app: var(--slate-950);
   --bg-panel: var(--slate-900);
   --bg-surface: var(--slate-850);
-  --bg-inset: var(--slate-800);
-  --border-hairline: rgba(232, 236, 244, 0.07);
-  --border-soft: rgba(232, 236, 244, 0.12);
-  --border-active: rgba(110, 140, 255, 0.5);
+  --bg-inset: #0d0d0f;
+  --border-hairline: rgba(242, 239, 233, 0.08);
+  --border-soft: rgba(242, 239, 233, 0.14);
+  --border-active: rgba(255, 90, 54, 0.55);
   --text-primary: var(--mist);
-  --text-secondary: #a8b3c4;
+  --text-secondary: #c4bfb5;
   --text-muted: var(--mist-muted);
   --accent: var(--peri);
   --accent-bright: var(--peri-bright);
   --accent-muted: var(--peri-dim);
-  --focus-ring: rgba(158, 180, 255, 0.55);
+  --accent-blue: var(--peri);
+  --focus-ring: rgba(255, 125, 96, 0.65);
 
-  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Instrument Serif', 'Source Serif 4', Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --transition: 180ms var(--ease-out);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-artboard:
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 24px 80px rgba(0, 0, 0, 0.5),
-    0 4px 20px rgba(15, 25, 50, 0.35);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 0 0 1px rgba(242, 239, 233, 0.07),
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 4px 18px rgba(0, 0, 0, 0.35);
+  --shadow-inset: inset 0 1px 0 rgba(242, 239, 233, 0.04);
+
+  /* Shared editorial page rhythm */
+  --page-max: 1120px;
+  --page-pad: clamp(1.25rem, 4vw, 2.5rem);
 }

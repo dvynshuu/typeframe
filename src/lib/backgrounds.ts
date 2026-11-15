@@ -22,7 +22,7 @@ export function drawBackground(
     case 'glass':
       drawMeshGradient(ctx, width, height, {
         ...bg,
-        meshColors: bg.meshColors ?? ['#1e293b', '#0f172a', '#334155', '#1e3a5f'],
+        meshColors: bg.meshColors ?? ['#2a2a2e', '#18181b', '#3c3c42', '#1c1c1f'],
       });
       drawGlassOverlay(ctx, width, height, bg.glassBlur ?? 20);
       break;
@@ -102,7 +102,7 @@ function drawMeshGradient(
   h: number,
   bg: BackgroundConfig
 ): void {
-  const colors = bg.meshColors ?? ['#0f172a', '#1e293b', '#312e81', '#0e7490'];
+  const colors = bg.meshColors ?? ['#0a0a0c', '#171310', '#3a2a24', '#8a4a36'];
   const blobs = [
     { x: 0.2, y: 0.3, r: 0.55, c: colors[0] },
     { x: 0.8, y: 0.2, r: 0.5, c: colors[1] ?? colors[0] },

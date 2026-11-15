@@ -135,7 +135,7 @@ function svgDefs(
   
   // Radial gradients for mesh backgrounds
   if (bg.type === 'mesh' || bg.type === 'glass') {
-    const colors = bg.meshColors ?? ['#0f172a', '#1e293b', '#312e81', '#0e7490'];
+    const colors = bg.meshColors ?? ['#0a0a0c', '#171310', '#3a2a24', '#8a4a36'];
     const blobs = [
       { id: 0, x: 0.2, y: 0.3, r: 0.55 },
       { id: 1, x: 0.8, y: 0.2, r: 0.5 },
@@ -281,7 +281,7 @@ function svgDefs(
   if (state?.frameStyle === 'tweet' || state?.author?.showSignature) {
     defs += `  <linearGradient id="avatar-grad" x1="0" y1="0" x2="1" y2="1">
     <stop offset="0%" stop-color="${theme.accent}"/>
-    <stop offset="100%" stop-color="#c084fc"/>
+    <stop offset="100%" stop-color="${theme.muted}"/>
   </linearGradient>\n`;
   }
 
@@ -349,7 +349,7 @@ function svgBackground(
     return `<rect width="${w}" height="${h}" fill="${fallbackColor}"/>\n  ${imageMarkup}`;
   }
 
-  const colors = bg.meshColors ?? ['#0f172a', '#1e293b', '#312e81', '#0e7490'];
+  const colors = bg.meshColors ?? ['#0a0a0c', '#171310', '#3a2a24', '#8a4a36'];
   let markup = `<rect width="${w}" height="${h}" fill="${colors[0]}"/>\n`;
   for (let i = 0; i < 4; i++) {
     markup += `  <rect width="${w}" height="${h}" fill="url(#mesh-blob-${i})"/>\n`;
@@ -553,7 +553,7 @@ function svgCodeBlock(
 ): string {
   const lines = block.content.split('\n');
   const lh = state.typography.fontSize * state.typography.lineHeight;
-  const colors = ['#f472b6', '#a78bfa', '#34d399', '#fbbf24', '#60a5fa', state.typography.textColor || theme.text];
+  const colors = ['#e7b9a7', '#d9a86c', '#a9c0a4', '#e6d29a', '#b9c3cc', state.typography.textColor || theme.text];
   
   const tspans = lines
     .map((line, i) => {
@@ -770,8 +770,8 @@ function svgAuthorSignature(
 
   const pillFill = isLight ? 'rgba(255, 255, 255, 0.92)' : 'rgba(14, 17, 24, 0.88)';
   const pillStroke = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
-  const nameColor = isLight ? '#0f1419' : '#f8fafc';
-  const handleColor = isLight ? '#536471' : '#94a3b8';
+  const nameColor = isLight ? '#0f1419' : '#f7f3ec';
+  const handleColor = isLight ? '#536471' : '#a19b92';
 
   const avX = pillX + padH + avatarSize / 2;
   const avY = pillY + pillH / 2;

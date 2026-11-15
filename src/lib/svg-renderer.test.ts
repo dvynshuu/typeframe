@@ -17,7 +17,7 @@ const mockState: EditorState = {
   },
   background: {
     type: 'mesh',
-    meshColors: ['#0b0d13', '#161a24', '#6e8cff', '#c37cff'],
+    meshColors: ['#0a0a0c', '#171310', '#5a3428', '#a84a32'],
     noiseIntensity: 0.04,
   },
   blocks: [
@@ -46,7 +46,7 @@ describe('svg-renderer', () => {
     expect(svg).toContain('width="1000"');
     expect(svg).toContain('height="1000"');
     expect(svg).toContain('vignette-grad');
-    expect(svg).toContain('glow-orb-grad');
+    expect(svg).toContain('accent-rule-line');
     expect(svg).toContain('mesh-blob-0');
     expect(svg).toContain('gradientUnits="userSpaceOnUse"');
   });

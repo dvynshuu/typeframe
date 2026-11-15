@@ -1,253 +1,120 @@
 ---
-// src/pages/contact.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
 
-const pageTitle = "Contact Us — Typeframe Support & Creator Feedback";
-const pageDescription = "Get in touch with the Typeframe team. Reach out for technical questions, typography feature requests, bug reports, or partnership opportunities.";
+const pageTitle = 'Contact — Typeframe';
+const pageDescription =
+  'Contact Typeframe for support, bug reports, licensing questions, or typeface suggestions. Direct email, no contact form, usually answered within two working days.';
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} url="https://typeframe.pages.dev/contact/">
-  <div class="contact-page">
-    <header class="contact-hero">
-      <div class="contact-container">
-        <a href="/" class="back-link">← Return to Studio</a>
-        <div class="hero-badge">Get In Touch</div>
-        <h1 class="hero-title">Contact & Creator Support</h1>
-        <p class="hero-lead">
-          Have a question about Typeframe, custom font requests, or bug reports? We are an indie team and respond directly to every message.
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  url="https://typeframe.pages.dev/contact/"
+>
+  <main class="page">
+    <div class="prose-wrap">
+      <header class="prose-header">
+        <p class="page-kicker">Contact</p>
+        <h1 class="prose-title">Say what broke.</h1>
+        <p class="page-lead">
+          Typeframe is maintained by one person, so direct email is faster than a
+          contact form. A browser, an export format, and a reliable set of steps
+          are the most useful things you can include.
         </p>
-      </div>
-    </header>
+        <p class="prose-meta">Replies usually within two working days</p>
+      </header>
 
-    <main class="contact-body">
-      <div class="contact-container">
-        <!-- Direct Channel Cards -->
-        <div class="channel-grid">
-          <div class="channel-card">
-            <div class="channel-icon">✉️</div>
-            <h3>Direct Email</h3>
-            <p>For support, policy questions, and custom business inquiries:</p>
-            <a href="mailto:support@typeframe.pages.dev" class="channel-link">support@typeframe.pages.dev</a>
-            <span class="channel-note">Expected reply: 24–48 hours</span>
-          </div>
-
-          <div class="channel-card">
-            <div class="channel-icon">💬</div>
-            <h3>Community & X (Twitter)</h3>
-            <p>Reach out to the lead engineer directly for rapid suggestions and feature previews:</p>
-            <a href="https://x.com/dvynshuu" target="_blank" rel="noopener noreferrer" class="channel-link">@dvynshuu on X</a>
-            <span class="channel-note">Direct messages open</span>
-          </div>
-
-          <div class="channel-card">
-            <div class="channel-icon">🛠️</div>
-            <h3>Code & Bug Tracker</h3>
-            <p>Found a canvas rendering artifact or font alignment bug?</p>
-            <a href="https://github.com/dvynshuu" target="_blank" rel="noopener noreferrer" class="channel-link">Open GitHub Issue</a>
-            <span class="channel-note">Public developer backlog</span>
+      <div class="contact-list">
+        <div class="contact-item">
+          <p class="contact-item__label">Email</p>
+          <div>
+            <h2 class="contact-item__title">Support and general questions</h2>
+            <p class="contact-item__body">
+              Licensing, privacy, export problems, or anything that does not fit
+              the categories below.
+            </p>
+            <a class="contact-item__link" href="mailto:support@typeframe.pages.dev">support@typeframe.pages.dev</a>
           </div>
         </div>
 
-        <!-- Help / FAQ Section -->
-        <div class="faq-card">
-          <h2>Quick Answers Before You Reach Out</h2>
-
-          <div class="faq-item">
-            <h4>Can I use Typeframe images commercially?</h4>
-            <p>
-              Yes, 100%! All visual cards and graphics rendered in Typeframe are completely royalty-free and can be used on commercial blogs, client social accounts, slide decks, and publications.
+        <div class="contact-item">
+          <p class="contact-item__label">Bugs</p>
+          <div>
+            <h2 class="contact-item__title">Report a rendering problem</h2>
+            <p class="contact-item__body">
+              Include the browser, operating system, export format, and the steps
+              that reproduce the issue. A screenshot or the shared design URL
+              helps more than a description alone.
             </p>
+            <a class="contact-item__link" href="mailto:support@typeframe.pages.dev?subject=Typeframe%20bug%20report">Email a bug report</a>
           </div>
+        </div>
 
-          <div class="faq-item">
-            <h4>Why is Typeframe free without watermarks?</h4>
-            <p>
-              We believe core creative tools should be joyful and accessible. We support our server delivery costs through non-intrusive Google AdSense advertising.
+        <div class="contact-item">
+          <p class="contact-item__label">Elsewhere</p>
+          <div>
+            <h2 class="contact-item__title">Follow development</h2>
+            <p class="contact-item__body">
+              New formats, typeface additions, and fixes are posted as they ship.
             </p>
-          </div>
-
-          <div class="faq-item">
-            <h4>Does Typeframe store my uploaded photos?</h4>
-            <p>
-              Never. When you upload a custom background photo, it is loaded into your browser's local memory via standard JavaScript <code>FileReader</code> and rendered onto the canvas. It is never transmitted across the network.
-            </p>
+            <a class="contact-item__link" href="https://x.com/dvynshuu" target="_blank" rel="noopener noreferrer">@dvynshuu on X</a>
           </div>
         </div>
       </div>
-    </main>
-  </div>
+
+      <section class="contact-faq" aria-labelledby="contact-faq-title">
+        <h2 class="section-title" id="contact-faq-title">Before you write</h2>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Can I use exports commercially?</summary>
+            <div class="faq-body">
+              <p>
+                Yes. Typeframe claims no ownership over your exports and adds no
+                watermark. You are responsible for the rights to any text,
+                quotations, or photographs you use.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Do you keep my text or photos?</summary>
+            <div class="faq-body">
+              <p>
+                No. The editor runs in your browser and the site has no upload
+                endpoint. Text, settings, and background images stay on your
+                device. The <a href="/privacy-policy/">privacy policy</a> explains
+                the details.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Why is there no contact form?</summary>
+            <div class="faq-body">
+              <p>
+                A form needs a server to receive and store submissions. Typeframe
+                is a static site, so email keeps the footprint smaller and the
+                conversation direct.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I request a typeface or format?</summary>
+            <div class="faq-body">
+              <p>
+                Yes. Send the use case rather than only the name of the font.
+                Requests are considered against the existing set, and not every
+                one can be accommodated.
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <Footer />
 </BaseLayout>
-
-<style>
-  .contact-page {
-    background: #080a0f;
-    min-height: 100vh;
-    color: #e8ecf4;
-  }
-
-  .contact-container {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
-  .contact-hero {
-    padding: 3.5rem 0 3rem;
-    border-bottom: 1px solid rgba(232, 236, 244, 0.08);
-    background: radial-gradient(circle at 50% 0%, rgba(110, 140, 255, 0.1) 0%, transparent 70%);
-  }
-
-  .back-link {
-    display: inline-block;
-    color: #6e8cff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    font-weight: 500;
-  }
-
-  .hero-badge {
-    display: inline-block;
-    background: rgba(110, 140, 255, 0.1);
-    border: 1px solid rgba(110, 140, 255, 0.25);
-    color: #8fa6ff;
-    padding: 0.35rem 0.85rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.25rem;
-    font-weight: 700;
-    line-height: 1.15;
-    margin: 0 0 1.25rem;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-  }
-
-  .hero-lead {
-    font-size: 1.2rem;
-    line-height: 1.7;
-    color: #9da6bc;
-    max-width: 720px;
-    margin: 0;
-  }
-
-  .contact-body {
-    padding: 3.5rem 0 5rem;
-  }
-
-  .channel-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .channel-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .channel-card {
-    background: rgba(14, 17, 26, 0.7);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 14px;
-    padding: 2rem 1.75rem;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .channel-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .channel-card h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem;
-    color: #f0f4fc;
-  }
-
-  .channel-card p {
-    color: #8c93a8;
-    line-height: 1.6;
-    margin: 0 0 1.25rem;
-    font-size: 0.92rem;
-    flex-grow: 1;
-  }
-
-  .channel-link {
-    color: #6e8cff;
-    text-decoration: underline;
-    font-weight: 500;
-    font-size: 0.95rem;
-    word-break: break-all;
-    margin-bottom: 0.75rem;
-  }
-
-  .channel-note {
-    font-size: 0.78rem;
-    color: #94a3b8;
-  }
-
-  .faq-card {
-    background: rgba(14, 17, 26, 0.6);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 16px;
-    padding: 3rem;
-  }
-
-  .faq-card h2 {
-    font-size: 1.45rem;
-    font-weight: 600;
-    color: #f0f4fc;
-    margin: 0 0 2rem;
-    letter-spacing: -0.01em;
-  }
-
-  .faq-item {
-    margin-bottom: 1.75rem;
-    padding-bottom: 1.75rem;
-    border-bottom: 1px solid rgba(232, 236, 244, 0.06);
-  }
-
-  .faq-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  .faq-item h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #e8ecf4;
-    margin: 0 0 0.5rem;
-  }
-
-  .faq-item p {
-    color: #9da6bc;
-    line-height: 1.7;
-    margin: 0;
-    font-size: 0.95rem;
-  }
-
-  @media (max-width: 600px) {
-    .faq-card {
-      padding: 1.75rem 1.25rem;
-    }
-    .hero-title {
-      font-size: 2.25rem;
-    }
-  }
-</style>

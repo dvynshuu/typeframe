@@ -3,157 +3,201 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Editor from '../components/Editor.astro';
 import ToolDirectory from '../components/ToolDirectory.astro';
 import Footer from '../components/Footer.astro';
+import { homeFaqs, homeFaqJsonLd } from '../data/home-faqs';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Typeframe',
+  url: 'https://typeframe.pages.dev/',
+  description:
+    'A browser-based typographic studio for turning quotes, code, notes, and posts into editorial images.',
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'A modern browser with HTML5 Canvas, JavaScript, and local storage.',
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'Live canvas editor with drag-to-position text',
+    'Seven self-hosted typefaces',
+    'Solid, gradient, mesh, glass, grain, and photo surfaces',
+    'PNG, JPEG, WebP, and SVG export up to 4×',
+  ],
+};
 ---
 
-<BaseLayout>
+<BaseLayout description="Set quotes, code, notes, or posts in editorial type. Typeframe is a free, private typographic studio with instant PNG, WebP, JPEG, and SVG export." jsonLd={jsonLd} faqJsonLd={homeFaqJsonLd}>
   <Editor />
 
-  <!-- High-Value Semantic Editorial Content for Crawlers & Readers -->
-  <section class="home-content-section" aria-label="About the Typeframe Studio">
-    <div class="content-container">
-      <div class="content-intro">
-        <span class="content-badge">Creative Typography Engine</span>
-        <h1 class="content-title">Turn Words into High-Impact Editorial Graphics</h1>
-        <p class="content-lead">
-          Typeframe gives creators, developers, authors, and founders a rapid canvas to craft publication-ready visual cards. No complex software, no forced sign-ups, and zero watermarks.
-        </p>
-      </div>
-
-      <!-- 3-Step Workflow -->
-      <div class="workflow-grid">
-        <div class="workflow-card">
-          <div class="step-badge">01</div>
-          <h3>Compose Your Text</h3>
-          <p>
-            Type directly into the live artboard or paste excerpts from Twitter, books, or code repositories. Full support for markdown syntax, bold emphasis, and code fences.
+  <main class="page">
+    <div class="page-wrap">
+      <section class="page-section" id="guide" aria-labelledby="guide-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Guide</p>
+            <h2 class="section-title" id="guide-title">Set the words.<br />Choose the weather.</h2>
+          </div>
+          <p class="section-note">
+            Typeframe is a single-purpose composition tool. There is no dashboard,
+            no template marketplace, and no account. The canvas is the product.
           </p>
         </div>
 
-        <div class="workflow-card">
-          <div class="step-badge">02</div>
-          <h3>Select Editorial Styling</h3>
-          <p>
-            Choose from curated typographic themes like Midnight, Kinfolk, Apple Notes, and Obsidian. Adjust line height, letter spacing, font pairing, and gradient mesh backdrops.
+        <ol class="guide-steps">
+          <li class="guide-step">
+            <span class="guide-step__index">01 — Write</span>
+            <h3 class="guide-step__title">Put the text on the artboard</h3>
+            <p class="guide-step__body">
+              Type or paste a quote, a code fence, a short note, or a set of bullet
+              points. Plain, rich, and Markdown modes are available; the preview
+              updates as you edit.
+            </p>
+          </li>
+          <li class="guide-step">
+            <span class="guide-step__index">02 — Compose</span>
+            <h3 class="guide-step__title">Set the type and the surface</h3>
+            <p class="guide-step__body">
+              Choose a typeface and weight, adjust size, leading, and tracking,
+              then pick a ratio and a surface. Text blocks can be dragged or
+              nudged into place.
+            </p>
+          </li>
+          <li class="guide-step">
+            <span class="guide-step__index">03 — Export</span>
+            <h3 class="guide-step__title">Take the image with you</h3>
+            <p class="guide-step__body">
+              Export a PNG, JPEG, WebP, or SVG at up to 4× the canvas size, or copy
+              a PNG straight to the clipboard. Nothing is queued on a server.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="page-section" aria-labelledby="formats-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Formats</p>
+            <h2 class="section-title" id="formats-title">One canvas, several registers.</h2>
+          </div>
+          <p class="section-note">
+            The same editing surface adapts to the shape of the thought. Start
+            anywhere and change format later.
           </p>
         </div>
 
-        <div class="workflow-card">
-          <div class="step-badge">03</div>
-          <h3>Instant 4K Export</h3>
-          <p>
-            Download lossless PNG, JPEG, or compact WebP images scaled up to 4K resolution, or copy straight to your clipboard for instant sharing on X, LinkedIn, or Instagram.
+        <dl class="row-list">
+          <div class="row-list__item">
+            <dt class="row-list__term">Quotes</dt>
+            <dd class="row-list__desc">
+              A line worth keeping, set in a serif with room around it. Square
+              and portrait ratios are both available.
+            </dd>
+          </div>
+          <div class="row-list__item">
+            <dt class="row-list__term">Code</dt>
+            <dd class="row-list__desc">
+              Short snippets in JetBrains Mono, with line-by-line colour and an
+              optional window or browser frame.
+            </dd>
+          </div>
+          <div class="row-list__item">
+            <dt class="row-list__term">Notes</dt>
+            <dd class="row-list__desc">
+              Warm paper, simple type, and enough leading for lists, definitions,
+              and study summaries that need to stay readable.
+            </dd>
+          </div>
+          <div class="row-list__item">
+            <dt class="row-list__term">Posts</dt>
+            <dd class="row-list__desc">
+              Landscape and square cards for timelines and feeds, with optional
+              author attribution and a verification mark.
+            </dd>
+          </div>
+          <div class="row-list__item">
+            <dt class="row-list__term">Stories</dt>
+            <dd class="row-list__desc">
+              A full 1080 × 1920 canvas for vertical placements, with the
+              composition centred and controls kept clear of the edges.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="page-section" aria-labelledby="privacy-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Under the hood</p>
+            <h2 class="section-title" id="privacy-title">Local by construction.</h2>
+          </div>
+          <p class="section-note">
+            Typeframe is a static site. There is no application server holding
+            your drafts, and no upload endpoint for your images.
           </p>
         </div>
-      </div>
 
-      <!-- Real-World Creative Workflows -->
-      <div class="use-cases-block">
-        <h3 class="block-heading">Engineered for Every Form of Written Expression</h3>
-        <div class="use-cases-grid">
-          <div class="use-case-card">
-            <div class="use-case-badge">Mindful Reflection</div>
-            <h4>Daily Affirmations & Journal Insights</h4>
-            <p>
-              Transform personal breakthroughs and grounding thoughts into calm, aesthetic daily reminders. Creators frequently draft cognitive reflections in privacy-focused wellness platforms like <a href="https://getrealign.in" class="editorial-inline-link" target="_blank" rel="noopener">ReAlign</a> and import their favorite insights into Typeframe to craft serene phone lockscreens and affirmation prints.
+        <div class="note-grid">
+          <div class="note">
+            <h3 class="note__title">Canvas, not cloud</h3>
+            <p class="note__body">
+              Previews and exports are drawn with the browser's Canvas API. The
+              export worker runs on your machine, so even large 4× renders do not
+              leave the device.
             </p>
           </div>
-
-          <div class="use-case-card">
-            <div class="use-case-badge">Developer Workflows</div>
-            <h4>Technical Snippets & Architecture Notes</h4>
-            <p>
-              Render clean TypeScript interfaces, SQL queries, or Bash commands with JetBrains Mono, subtle drop shadows, and carbon-black terminal chrome ready for Twitter dev-logs and technical documentation.
+          <div class="note">
+            <h3 class="note__title">Drafts stay close</h3>
+            <p class="note__body">
+              The current composition is saved to local storage and reflected in
+              the URL. Clearing site data removes the draft.
             </p>
           </div>
-
-          <div class="use-case-card">
-            <div class="use-case-badge">Editorial Publishing</div>
-            <h4>Literary Quotes & Thought Leadership</h4>
-            <p>
-              Immortalize timeless passages from philosophy, classic literature, and B2B newsletters using curated serif pairings like Instrument Serif and Playfair Display with museum-grade margins and linen paper textures.
+          <div class="note">
+            <h3 class="note__title">Self-hosted type</h3>
+            <p class="note__body">
+              Every typeface ships with the site as a WOFF2 file. There are no
+              third-party font requests at render time.
             </p>
           </div>
-        </div>
-      </div>
-
-      <!-- Key Capabilities Section -->
-      <div class="features-block">
-        <h3 class="block-heading">Engineered for Quality & Speed</h3>
-        <div class="features-columns">
-          <div class="feature-detail">
-            <h4>✦ 100% Client-Side Privacy</h4>
-            <p>
-              Your graphics, proprietary code snippets, and custom background photos never leave your device. All rendering is computed locally in your browser via HTML5 Canvas.
-            </p>
-          </div>
-          <div class="feature-detail">
-            <h4>✦ Scalable Vector SVG Support</h4>
-            <p>
-              Need to import into Figma, Illustrator, or print high-DPI posters? Export scalable SVG vectors with preserved typography and crisp paths.
-            </p>
-          </div>
-          <div class="feature-detail">
-            <h4>✦ Preset Ratios for Every Platform</h4>
-            <p>
-              One-click dimensions for Instagram square (1:1), Stories (9:16), Twitter landscape (16:9), and LinkedIn feeds (1.91:1) so your cards always look centered and sharp.
-            </p>
-          </div>
-          <div class="feature-detail">
-            <h4>✦ Hand-Crafted Font Pairings</h4>
-            <p>
-              Includes world-class open typefaces: Instrument Serif, Playfair Display, IBM Plex Sans, Inter, and JetBrains Mono for developers.
+          <div class="note">
+            <h3 class="note__title">Vector when you need it</h3>
+            <p class="note__body">
+              SVG export produces a scalable document with real text and shapes,
+              while raster exports are available at 1×, 2×, and 4×.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Search Crawlable FAQ -->
-      <div class="home-faq-block">
-        <h3 class="block-heading">Frequently Asked Questions</h3>
-        <div class="faq-accordion">
-          <details class="faq-row" open>
-            <summary class="faq-question">Is Typeframe completely free to use?</summary>
-            <div class="faq-body">
-              Yes, Typeframe is 100% free with no hidden fees, paid tiers, or watermarks. All high-resolution exports and presets are unlocked for both personal and commercial use.
-            </div>
-          </details>
-
-          <details class="faq-row" open>
-            <summary class="faq-question">What types of content work best in Typeframe?</summary>
-            <div class="faq-body">
-              Typeframe is versatile across formats: writers use it for literary excerpts, engineers use it for code snippets, and mindful creators use it for daily affirmations. If you practice reflective journaling in tools like <a href="https://getrealign.in" class="editorial-inline-link" target="_blank" rel="noopener">ReAlign</a>, you can easily paste your cognitive reframings and mindfulness notes into Typeframe to generate serene, high-resolution visual cards.
-            </div>
-          </details>
-
-          <details class="faq-row">
-            <summary class="faq-question">Can I use graphics created with Typeframe for commercial projects?</summary>
-            <div class="faq-body">
-              Yes! You own 100% of all images and cards you design in Typeframe. You can use them in client projects, company blogs, newsletters, books, and social media campaigns without attribution.
-            </div>
-          </details>
-
-          <details class="faq-row">
-            <summary class="faq-question">Does Typeframe save or store my text on a server?</summary>
-            <div class="faq-body">
-              No. Typeframe executes entirely on the client side. Your draft text and settings stay in your browser's local storage and are never uploaded to any remote server or database.
-            </div>
-          </details>
-
-          <details class="faq-row">
-            <summary class="faq-question">How does Typeframe compare to tools like Carbon or Ray.so?</summary>
-            <div class="faq-body">
-              While Carbon and Ray.so focus strictly on code screenshots, Typeframe bridges the gap between code snippets, literary quotes, editorial book excerpts, and social text cards. It gives you flexible text modes, editorial serifs, and multi-ratio exports in one place.
-            </div>
-          </details>
+      <section class="page-section" id="faq" aria-labelledby="faq-title">
+        <div class="section-head">
+          <div>
+            <p class="page-kicker">Questions</p>
+            <h2 class="section-title" id="faq-title">Practical answers.</h2>
+          </div>
+          <p class="section-note">
+            Everything below is true of the current build. There are no paid
+            tiers waiting behind the fold.
+          </p>
         </div>
-      </div>
+
+        <div class="faq-list">
+          {homeFaqs.map((faq, index) => (
+            <details class="faq-item" open={index === 0}>
+              <summary>{faq.question}</summary>
+              <div class="faq-body"><p>{faq.answer}</p></div>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
-  </section>
-  
-  <aside class="home-tool-directory-wrapper" aria-label="Explore Studios">
-    <ToolDirectory variant="grid" />
-  </aside>
+  </main>
 
+  <ToolDirectory />
   <Footer />
 
   <script>
@@ -171,264 +215,3 @@ import Footer from '../components/Footer.astro';
     }
   </script>
 </BaseLayout>
-
-<style>
-  .home-content-section {
-    background: #080a0f;
-    border-top: 1px solid rgba(232, 236, 244, 0.08);
-    padding: 5rem 1.5rem 4rem;
-    position: relative;
-    z-index: 10;
-    color: #e8ecf4;
-  }
-
-  .content-container {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .content-intro {
-    text-align: center;
-    max-width: 760px;
-    margin: 0 auto 4rem;
-  }
-
-  .content-badge {
-    display: inline-block;
-    background: rgba(110, 140, 255, 0.1);
-    border: 1px solid rgba(110, 140, 255, 0.25);
-    color: #8fa6ff;
-    padding: 0.35rem 0.85rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-
-  .content-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.75rem;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.2;
-    margin: 0 0 1.25rem;
-    letter-spacing: -0.02em;
-  }
-
-  .content-lead {
-    font-size: 1.15rem;
-    line-height: 1.7;
-    color: #9da6bc;
-    margin: 0;
-  }
-
-  .workflow-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-    margin-bottom: 4.5rem;
-  }
-
-  @media (max-width: 800px) {
-    .workflow-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .workflow-card {
-    background: rgba(14, 17, 26, 0.7);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 14px;
-    padding: 2rem 1.75rem;
-    position: relative;
-  }
-
-  .step-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #6e8cff;
-    margin-bottom: 0.75rem;
-  }
-
-  .workflow-card h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #f0f4fc;
-    margin: 0 0 0.75rem;
-  }
-
-  .workflow-card p {
-    color: #8c93a8;
-    line-height: 1.65;
-    margin: 0;
-    font-size: 0.95rem;
-  }
-
-  .use-cases-block {
-    margin-bottom: 4.5rem;
-  }
-
-  .use-cases-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-  }
-
-  @media (max-width: 850px) {
-    .use-cases-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .use-case-card {
-    background: rgba(14, 17, 26, 0.7);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 14px;
-    padding: 2rem 1.75rem;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-
-  .use-case-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(110, 140, 255, 0.2);
-  }
-
-  .use-case-badge {
-    display: inline-block;
-    align-self: flex-start;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #8fa6ff;
-    background: rgba(110, 140, 255, 0.1);
-    border: 1px solid rgba(110, 140, 255, 0.22);
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-  }
-
-  .use-case-card h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #f0f4fc;
-    margin: 0 0 0.75rem;
-  }
-
-  .use-case-card p {
-    color: #8c93a8;
-    line-height: 1.65;
-    margin: 0;
-    font-size: 0.95rem;
-  }
-
-  .editorial-inline-link {
-    color: #8fa6ff;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-
-  .editorial-inline-link:hover {
-    color: #c4d4ff;
-  }
-
-  .features-block {
-    background: rgba(14, 17, 26, 0.5);
-    border: 1px solid rgba(232, 236, 244, 0.06);
-    border-radius: 16px;
-    padding: 3rem;
-    margin-bottom: 4.5rem;
-  }
-
-  .block-heading {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #f0f4fc;
-    margin: 0 0 2rem;
-    letter-spacing: -0.01em;
-  }
-
-  .features-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  @media (max-width: 700px) {
-    .features-columns {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .feature-detail h4 {
-    font-size: 1.08rem;
-    font-weight: 600;
-    color: #e8ecf4;
-    margin: 0 0 0.5rem;
-  }
-
-  .feature-detail p {
-    color: #8c93a8;
-    line-height: 1.65;
-    margin: 0;
-    font-size: 0.93rem;
-  }
-
-  .home-faq-block {
-    margin-bottom: 2rem;
-  }
-
-  .faq-accordion {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .faq-row {
-    background: rgba(14, 17, 26, 0.6);
-    border: 1px solid rgba(232, 236, 244, 0.08);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-  }
-
-  .faq-question {
-    font-weight: 600;
-    color: #e8ecf4;
-    cursor: pointer;
-    font-size: 1.05rem;
-  }
-
-  .faq-body {
-    margin-top: 0.75rem;
-    color: #9da6bc;
-    line-height: 1.7;
-    font-size: 0.95rem;
-  }
-
-  .home-tool-directory-wrapper {
-    background: #080a0f;
-    border-top: 1px solid rgba(232, 236, 244, 0.08);
-    padding: 3rem 1.5rem 5rem;
-    position: relative;
-    z-index: 10;
-  }
-
-  @media (max-width: 600px) {
-    .home-content-section {
-      padding: 3.5rem 1rem 2.5rem;
-    }
-    .content-title {
-      font-size: 2.1rem;
-    }
-    .features-block {
-      padding: 2rem 1.25rem;
-    }
-  }
-</style>

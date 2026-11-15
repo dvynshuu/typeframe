@@ -1,11 +1,9 @@
 ---
 import '../styles/editor.css';
-import { templates } from '../lib/templates';
+import { templates, presetSizes } from '../lib/templates';
 import { themes } from '../lib/themes';
 import { fontFamilies, fontWeights } from '../lib/typography';
-import { presetSizes } from '../lib/templates';
 import { aspectLabel } from '../utils/aspect';
-import SeoContent from './SeoContent.astro';
 import type { ToolConfig } from '../data/tools';
 
 interface Props {
@@ -15,8 +13,8 @@ interface Props {
 const { initialTool } = Astro.props;
 ---
 
-<div 
-  class="app-shell" 
+<div
+  class="app-shell"
   id="typeframe-editor"
   data-tool-slug={initialTool?.slug}
   data-initial-template={initialTool?.templateId}
@@ -27,246 +25,182 @@ const { initialTool } = Astro.props;
 >
   <header class="app-header">
     <div class="app-brand">
-      <a href="/" class="app-brand-link" title="Typeframe Home">
-        <div class="app-logo">
-        <svg class="app-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="logo-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#0b0d13" />
-              <stop offset="100%" stop-color="#161a24" />
-            </linearGradient>
-            <linearGradient id="logo-border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="rgba(110, 140, 255, 0.3)" />
-              <stop offset="50%" stop-color="rgba(232, 236, 244, 0.05)" />
-              <stop offset="100%" stop-color="rgba(195, 124, 255, 0.25)" />
-            </linearGradient>
-            <linearGradient id="logo-brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#6e8cff" />
-              <stop offset="100%" stop-color="#c37cff" />
-            </linearGradient>
-            <radialGradient id="logo-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="rgba(110, 140, 255, 0.35)" />
-              <stop offset="100%" stop-color="rgba(110, 140, 255, 0)" />
-            </radialGradient>
-          </defs>
-          <!-- Deep Obsidian Base Squircle -->
-          <rect class="logo-bg" x="1.5" y="1.5" width="29" height="29" rx="8" fill="url(#logo-bg-grad)" stroke="url(#logo-border-grad)" stroke-width="1"/>
-          
-          <!-- Subtle Grid/Alignment Dots in background -->
-          <circle cx="10" cy="10" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
-          <circle cx="22" cy="10" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
-          <circle cx="10" cy="22" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
-          <circle cx="22" cy="22" r="0.6" fill="rgba(232, 236, 244, 0.15)" />
-
-          <!-- Radial Glow Behind the T -->
-          <circle class="logo-glow-effect" cx="16" cy="16" r="10" fill="url(#logo-glow)" />
-
-          <!-- Dynamic Crop Marks (the Frame) -->
-          <path class="crop-mark tl" d="M 5 9 V 5 H 9" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
-          <path class="crop-mark tr" d="M 27 9 V 5 H 23" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
-          <path class="crop-mark bl" d="M 5 23 V 27 H 9" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
-          <path class="crop-mark br" d="M 27 23 V 27 H 23" stroke="rgba(232, 236, 244, 0.35)" stroke-width="1" stroke-linecap="round" />
-
-          <!-- Styled Serif Letter 'T' with custom geometry -->
-          <path class="logo-t" d="M 10 10.5 H 22 C 23.5 10.5 24 11 24 13 C 24 13.5 23.5 13.5 22.5 13.5 C 20.5 13.5 17.5 13.5 17.5 14 V 20.5 C 17.5 21.5 18 21.8 19.5 22 V 23.5 H 12.5 V 22 C 14 21.8 14.5 21.5 14.5 20.5 V 14 C 14 13.5 11.5 13.5 9.5 13.5 C 8.5 13.5 8 13.5 8 13 C 8 11 8.5 10.5 10 10.5 Z" fill="url(#logo-brand-grad)" />
-        </svg>
-          <span class="app-logo-text">Typeframe</span>
-        </div>
+      <a href="/" class="app-brand-link" aria-label="Typeframe home">
+        <span class="app-logo-mark" aria-hidden="true">T</span>
+        <span class="app-logo-text">Typeframe</span>
       </a>
       {initialTool ? (
-        <div class="header-tool-badge">
-          <span class="header-tool-badge__pill">{initialTool.badge}</span>
-          <span class="header-tool-badge__title">{initialTool.h1}</span>
-        </div>
+        <h1 class="header-tool-badge__title">{initialTool.h1}</h1>
       ) : (
-        <p class="app-tagline">Typography studio for shareable images</p>
+        <>
+          <h1 class="sr-only">Typeframe — typographic studio for shareable images</h1>
+          <p class="app-tagline">Typography studio for shareable images</p>
+        </>
       )}
     </div>
 
-    <nav class="header-nav-menu" aria-label="Main Navigation">
-      <a href="/#explore-studios" class="header-nav-anchor">Tools</a>
+    <nav class="header-nav-menu" aria-label="Primary">
+      <a href="/#studios" class="header-nav-anchor">Studios</a>
+      <a href="/#guide" class="header-nav-anchor">Guide</a>
       <a href="/about/" class="header-nav-anchor">About</a>
       <a href="/contact/" class="header-nav-anchor">Contact</a>
-      <a href="/privacy-policy/" class="header-nav-anchor">Privacy</a>
     </nav>
 
     <div class="header-actions">
-      <button type="button" class="btn-guide has-tooltip" id="guide-btn" data-tooltip="Guide & FAQs" aria-label="Open SEO Guide & FAQs">
-        <span class="btn-guide__icon" aria-hidden="true">💡</span>
-        <span class="btn-guide__text">Guide & FAQ</span>
+      <button
+        type="button"
+        class="icon-button has-tooltip"
+        id="copy-img-btn"
+        data-tooltip="Copy image"
+        aria-label="Copy rendered image to clipboard"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
       </button>
-      <button type="button" class="btn-shuffle has-tooltip" id="shuffle-btn" data-tooltip="Surprise Me (Randomize)" aria-label="Surprise Me (Randomize layout, font & theme)">
-        <span class="btn-shuffle__icon" aria-hidden="true">🎲</span>
-        <span class="btn-shuffle__text">Surprise Me</span>
+
+      <button type="button" class="btn-secondary" id="share-btn" aria-label="Copy a shareable link to this design">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path>
+        </svg>
+        <span class="btn-secondary__text">Share</span>
       </button>
-      <button type="button" class="btn-share has-tooltip" id="share-btn" data-tooltip="Copy shareable studio link" aria-label="Copy shareable link to clipboard">
-        <span class="btn-share__icon" aria-hidden="true">
-          <svg class="btn-share__svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px; display: block;">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186.012-.006a2.25 2.25 0 1 0-.012.006Zm0 2.186.012.006a2.25 2.25 0 1 1-.012-.006Zm0 0 4.283 2.14m-4.283-4.28a4.25 4.25 0 0 0 4.282-2.14m0 0a2.25 2.25 0 1 0 0-2.186m0 2.186.012-.006a2.25 2.25 0 1 1-.012.006Zm0-2.186-.012-.006a2.25 2.25 0 1 0 .012.006Z" />
-          </svg>
-        </span>
-        <span class="btn-share__text">Share</span>
-      </button>
-      <div class="export-scale-pills" role="group" aria-label="Export Resolution Scale">
-        <button type="button" data-export-scale="1" class="has-tooltip" data-tooltip="Standard resolution (1x)" aria-label="Export at 1x resolution">1x</button>
-        <button type="button" data-export-scale="2" class="is-active has-tooltip" data-tooltip="Retina HD crisp export (2x)" aria-label="Export at 2x Retina resolution">2x HD</button>
-        <button type="button" data-export-scale="4" class="has-tooltip" data-tooltip="Ultra-HD 4K print & studio quality (4x)" aria-label="Export at 4x Ultra-HD resolution">4x 4K</button>
-      </div>
-      <div class="export-format-pills" role="group" aria-label="Export format">
-        <button type="button" data-format="png" class="is-active">PNG</button>
-        <button type="button" data-format="jpeg">JPG</button>
-        <button type="button" data-format="webp">WebP</button>
-        <button type="button" data-format="svg" class="has-tooltip" data-tooltip="SVG exports are vector-only" aria-label="SVG vector export">SVG</button>
-      </div>
-      <div class="mobile-format-select-wrapper">
-        <select id="mobile-export-format" aria-label="Export format">
+
+      <div class="export-cluster" role="group" aria-label="Export settings">
+        <label class="sr-only" for="export-format">Export format</label>
+        <select id="export-format" class="export-select">
           <option value="png">PNG</option>
           <option value="jpeg">JPG</option>
           <option value="webp">WebP</option>
           <option value="svg">SVG</option>
         </select>
+        <label class="sr-only" for="export-scale">Export resolution</label>
+        <select id="export-scale" class="export-select">
+          <option value="1">1×</option>
+          <option value="2" selected>2×</option>
+          <option value="4">4×</option>
+        </select>
+        <button type="button" class="btn-export" id="export-btn" title="Export image (Ctrl+Enter)">
+          <span class="btn-export__text">Export</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4"></path>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+          </svg>
+        </button>
       </div>
-      <button type="button" class="btn-copy-img has-tooltip" id="copy-img-btn" data-tooltip="Copy high-res image to clipboard" aria-label="Copy high-res image to clipboard">
-        <span class="btn-copy-img__icon" aria-hidden="true">📋</span>
-        <span class="btn-copy-img__text">Copy Image</span>
-      </button>
-      <button type="button" class="btn-export" id="export-btn" title="Export image (Ctrl+Enter)">
-        <span class="btn-export__icon" aria-hidden="true">↓</span>
-        <span class="btn-export__text">Export</span>
-      </button>
     </div>
   </header>
 
-  <!-- Mobile Studio Segmented Controller (<= 900px) -->
+  <!-- Mobile studio controller -->
   <nav class="mobile-studio-nav" aria-label="Studio sections" role="tablist">
     <button type="button" class="mobile-nav-tab is-active" data-view="compose" role="tab" aria-selected="true" aria-controls="panel-compose">
-      <span class="mobile-nav-tab__icon" aria-hidden="true">✍️</span>
-      <span class="mobile-nav-tab__label">Compose</span>
+      Write
     </button>
     <button type="button" class="mobile-nav-tab" data-view="artboard" role="tab" aria-selected="false" aria-controls="preview-stage">
-      <span class="mobile-nav-tab__icon" aria-hidden="true">🖼️</span>
-      <span class="mobile-nav-tab__label">Artboard</span>
+      Artboard
     </button>
     <button type="button" class="mobile-nav-tab" data-view="style" role="tab" aria-selected="false" aria-controls="panel-style">
-      <span class="mobile-nav-tab__icon" aria-hidden="true">🎨</span>
-      <span class="mobile-nav-tab__label">Style</span>
+      Style
     </button>
   </nav>
 
   <aside class="panel panel--left" id="panel-compose">
     <div class="panel-rail">
-      <span class="panel-rail__label">01</span>
-      <h2 class="panel-rail__title">Compose</h2>
+      <div>
+        <span class="panel-rail__label">Step 01</span>
+        <h2 class="panel-rail__title">Compose</h2>
+      </div>
+      <button type="button" class="rail-action has-tooltip" id="shuffle-btn" data-tooltip="Randomize type and surface" aria-label="Randomize type, layout and surface">
+        Shuffle
+      </button>
     </div>
     <div class="panel-body">
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section" open>
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Words</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="mode-tabs" role="tablist" aria-label="Text mode">
-          <button type="button" data-mode="plain" class="is-active" role="tab">Plain</button>
-          <button type="button" data-mode="rich" role="tab">Rich</button>
-          <button type="button" data-mode="markdown" role="tab">Markdown</button>
-        </div>
-        <div class="compose-editor">
-          <div class="editor-formatting-toolbar" id="formatting-toolbar" role="toolbar" aria-label="Text formatting">
-            <button type="button" data-action="bold" title="Bold (Ctrl+B)">B</button>
-            <button type="button" data-action="italic" title="Italic (Ctrl+I)">I</button>
-            <button type="button" data-action="heading" title="Heading (Ctrl+H)">H</button>
-            <div class="toolbar-color-picker-wrapper">
-              <button type="button" class="toolbar-color-btn" title="Text Color" id="text-color-btn">
-                <span class="color-icon-letter">A</span>
-                <span class="color-icon-indicator" id="text-color-indicator"></span>
-              </button>
-              <input type="color" id="text-color" class="sr-only" value="#e8ecf4" />
-            </div>
+        </summary>
+        <div class="panel-section__body">
+          <div class="mode-tabs" role="tablist" aria-label="Text mode">
+            <button type="button" data-mode="plain" class="is-active" role="tab" aria-selected="true">Plain</button>
+            <button type="button" data-mode="rich" role="tab" aria-selected="false">Rich</button>
+            <button type="button" data-mode="markdown" role="tab" aria-selected="false">Markdown</button>
           </div>
-          <textarea
-            id="text-input"
-            placeholder="Type a quote, headline, or thread…"
-            aria-label="Image text content"
-          >Design is not just what it looks like.
+          <div class="compose-editor">
+            <div class="editor-formatting-toolbar" id="formatting-toolbar" role="toolbar" aria-label="Text formatting">
+              <button type="button" data-action="bold" title="Bold (Ctrl+B)">B</button>
+              <button type="button" data-action="italic" title="Italic (Ctrl+I)">I</button>
+              <button type="button" data-action="heading" title="Heading (Ctrl+H)">H</button>
+              <div class="toolbar-color-picker-wrapper">
+                <button type="button" class="toolbar-color-btn" title="Text color" id="text-color-btn" aria-label="Choose text color">
+                  <span class="color-icon-letter" aria-hidden="true">A</span>
+                  <span class="color-icon-indicator" id="text-color-indicator"></span>
+                </button>
+                <input type="color" id="text-color" class="sr-only" value="#f2efe9" tabindex="-1" aria-hidden="true" />
+              </div>
+            </div>
+            <textarea
+              id="text-input"
+              placeholder="Type a quote, headline, or thread…"
+              aria-label="Image text content"
+            >Design is not just what it looks like.
 Design is how it works.</textarea>
+          </div>
+          <p class="compose-hint">
+            Markdown: <kbd>**bold**</kbd> <kbd>*italic*</kbd> <kbd># heading</kbd>
+          </p>
         </div>
-        <p class="compose-hint">
-          Markdown: <kbd>**bold**</kbd> <kbd>*italic*</kbd> <kbd># heading</kbd>
-        </p>
-      </section>
+      </details>
 
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section" open>
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Format</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
+        </summary>
+        <div class="panel-section__body">
+          <div class="template-grid" role="list">
+            {templates.map((t) => (
+              <button
+                type="button"
+                role="listitem"
+                class:list={['template-chip', { 'is-active': t.id === 'quote-card' }]}
+                data-template={t.id}
+                aria-pressed={t.id === 'quote-card' ? 'true' : 'false'}
+              >
+                <span class="template-chip__name">{t.name}</span>
+                <span class="template-chip__ratio">{aspectLabel(t.width, t.height)}</span>
+              </button>
+            ))}
+          </div>
         </div>
-        <div class="template-grid" role="list">
-          {templates.map((t) => (
-            <button
-              type="button"
-              role="listitem"
-              class:list={['template-chip', { 'is-active': t.id === 'quote-card' }]}
-              data-template={t.id}
-            >
-              <span class="template-chip__name">{t.name}</span>
-              <span class="template-chip__ratio">{aspectLabel(t.width, t.height)}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      </details>
 
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section" open>
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Atmosphere</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="theme-grid">
-          {themes.map((t) => (
-            <button
-              type="button"
-              class:list={['theme-card', { 'is-active': t.id === 'studio-dark' }]}
-              data-theme={t.id}
-            >
-              <span class="theme-card__swatch" style={`background: ${t.swatch}`} aria-hidden="true" />
-              <span class="theme-card__info">
-                <span class="theme-card__name">{t.name}</span>
-                <span class="theme-card__tagline">{t.tagline}</span>
-              </span>
-            </button>
-          ))}
-      </section>
-
-      <section class="panel-section checklist-section">
-        <div class="panel-section__head">
-          <h3 class="panel-section__title">Creator Progress</h3>
-          <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="checklist-card">
-          <div class="checklist-header">
-            <span class="checklist-progress-text" id="checklist-progress-text">0 of 4 completed</span>
-            <div class="checklist-progress-bar">
-              <div class="checklist-progress-fill" id="checklist-progress-fill" style="width: 0%"></div>
-            </div>
+        </summary>
+        <div class="panel-section__body">
+          <div class="theme-grid">
+            {themes.map((t) => (
+              <button
+                type="button"
+                class:list={['theme-tile', { 'is-active': t.id === 'studio-dark' }]}
+                data-theme={t.id}
+                title={t.tagline}
+                aria-pressed={t.id === 'studio-dark' ? 'true' : 'false'}
+              >
+                <span class="theme-tile__swatch" style={`background: ${t.swatch}`} aria-hidden="true" />
+                <span class="theme-tile__name">{t.name}</span>
+              </button>
+            ))}
           </div>
-          <ul class="checklist-items" role="list">
-            <li class="checklist-item" id="checklist-step-1">
-              <span class="checklist-checkbox"></span>
-              <span class="checklist-text">Compose your message</span>
-            </li>
-            <li class="checklist-item" id="checklist-step-2">
-              <span class="checklist-checkbox"></span>
-              <span class="checklist-text">Style typography</span>
-            </li>
-            <li class="checklist-item" id="checklist-step-3">
-              <span class="checklist-checkbox"></span>
-              <span class="checklist-text">Select background atmosphere</span>
-            </li>
-            <li class="checklist-item" id="checklist-step-4">
-              <span class="checklist-checkbox"></span>
-              <span class="checklist-text">Copy or export image</span>
-            </li>
-          </ul>
         </div>
-      </section>
+      </details>
     </div>
   </aside>
 
@@ -274,11 +208,11 @@ Design is how it works.</textarea>
     <div class="preview-toolbar">
       <span class="preview-toolbar__label">Artboard</span>
       <span class="preview-toolbar__size" id="preview-size-label">1080 × 1080</span>
-      <span class="preview-toolbar__hint">Drag text to reposition</span>
+      <span class="preview-toolbar__hint">Drag to reposition</span>
     </div>
     <div class="mobile-artboard-shortcuts">
-      <button type="button" class="btn-jump-tab" data-jump="compose">✍️ Edit Words</button>
-      <button type="button" class="btn-jump-tab" data-jump="style">🎨 Adjust Style</button>
+      <button type="button" class="btn-jump-tab" data-jump="compose">Edit words</button>
+      <button type="button" class="btn-jump-tab" data-jump="style">Adjust style</button>
     </div>
     <div class="preview-stage__glow" aria-hidden="true"></div>
     <div class="preview-viewport">
@@ -287,7 +221,12 @@ Design is how it works.</textarea>
           <span></span><span></span><span></span><span></span>
         </div>
         <div class="preview-wrapper" id="preview-wrapper">
-          <canvas id="preview-canvas" class="preview-canvas" aria-label="Live image preview"></canvas>
+          <canvas
+            id="preview-canvas"
+            class="preview-canvas"
+            role="img"
+            aria-label="Live typographic image preview"
+          ></canvas>
           <div class="preview-guides" aria-hidden="true"></div>
           <div id="handles-layer"></div>
         </div>
@@ -297,278 +236,243 @@ Design is how it works.</textarea>
 
   <aside class="panel panel--right" id="panel-style">
     <div class="panel-rail">
-      <span class="panel-rail__label">02</span>
+      <span class="panel-rail__label">Step 02</span>
       <h2 class="panel-rail__title">Refine</h2>
     </div>
     <div class="panel-body">
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section" open>
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Typography</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="field">
-          <label for="font-family">Typeface</label>
-          <select id="font-family">
-            {fontFamilies.map((f) => (
-              <option value={f.value}>{f.label}</option>
-            ))}
-          </select>
-        </div>
-        <div class="field">
-          <label for="font-weight">Weight</label>
-          <select id="font-weight">
-            {fontWeights.map((w) => (
-              <option value={w.value}>{w.label}</option>
-            ))}
-          </select>
-        </div>
-        <div class="field">
-          <label for="font-size">
-            Size <span class="field__value" id="font-size-val">42</span>
-          </label>
-          <input type="range" id="font-size" min="12" max="96" value="42" aria-valuetext="42 pixels" />
-        </div>
-        <div class="field">
-          <label for="line-height">
-            Leading <span class="field__value" id="line-height-val">1.4</span>
-          </label>
-          <input type="range" id="line-height" min="1" max="2.5" step="0.05" value="1.4" />
-        </div>
-        <div class="field">
-          <label for="letter-spacing">
-            Tracking <span class="field__value" id="letter-spacing-val">0</span>
-          </label>
-          <input type="range" id="letter-spacing" min="-0.05" max="0.2" step="0.01" value="0" />
-        </div>
-        <div class="field">
-          <span class="field__label">Alignment</span>
-          <div class="align-bar" role="group" aria-label="Text alignment">
-            <button type="button" data-align="left" title="Align left">⫷</button>
-            <button type="button" data-align="center" class="is-active" title="Align center">☰</button>
-            <button type="button" data-align="right" title="Align right">⫸</button>
+        </summary>
+        <div class="panel-section__body">
+          <div class="field">
+            <label for="font-family">Typeface</label>
+            <select id="font-family">
+              {fontFamilies.map((f) => (
+                <option value={f.value}>{f.label}</option>
+              ))}
+            </select>
           </div>
-          <select id="text-align" class="sr-only" tabindex="-1" aria-hidden="true">
-            <option value="left">Left</option>
-            <option value="center" selected>Center</option>
-            <option value="right">Right</option>
-          </select>
+          <div class="field">
+            <label for="font-weight">Weight</label>
+            <select id="font-weight">
+              {fontWeights.map((w) => (
+                <option value={w.value}>{w.label}</option>
+              ))}
+            </select>
+          </div>
+          <div class="field">
+            <label for="font-size">
+              Size <span class="field__value" id="font-size-val">42</span>
+            </label>
+            <input type="range" id="font-size" min="12" max="96" value="42" aria-valuetext="42 pixels" />
+          </div>
+          <div class="field">
+            <label for="line-height">
+              Leading <span class="field__value" id="line-height-val">1.4</span>
+            </label>
+            <input type="range" id="line-height" min="1" max="2.5" step="0.05" value="1.4" />
+          </div>
+          <div class="field">
+            <label for="letter-spacing">
+              Tracking <span class="field__value" id="letter-spacing-val">0</span>
+            </label>
+            <input type="range" id="letter-spacing" min="-0.05" max="0.2" step="0.01" value="0" />
+          </div>
+          <div class="field">
+            <span class="field__label">Alignment</span>
+            <div class="align-bar" role="group" aria-label="Text alignment">
+              <button type="button" data-align="left" title="Align left" aria-label="Align left" aria-pressed="false">Left</button>
+              <button type="button" data-align="center" class="is-active" title="Align center" aria-label="Align center" aria-pressed="true">Center</button>
+              <button type="button" data-align="right" title="Align right" aria-label="Align right" aria-pressed="false">Right</button>
+            </div>
+            <select id="text-align" class="sr-only" tabindex="-1" aria-hidden="true">
+              <option value="left">Left</option>
+              <option value="center" selected>Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
         </div>
-      </section>
+      </details>
 
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section" open>
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Surface</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="field">
-          <label>Curated Swatches</label>
-          <div class="presets-gallery">
-            <button type="button" class="preset-swatch" data-preset="aurora-mesh" title="Aurora Mesh" style="background: radial-gradient(circle at 20% 20%, #6e8cff, #c37cff);"></button>
-            <button type="button" class="preset-swatch" data-preset="sunset-glow" title="Sunset Glow" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);"></button>
-            <button type="button" class="preset-swatch" data-preset="brutalist-grid" title="Brutalist Grid" style="background: #121214; border: 1px dashed rgba(232,236,244,0.3);"></button>
-            <button type="button" class="preset-swatch" data-preset="frosted-glass" title="Frosted Glass" style="background: linear-gradient(135deg, #1e293b, #1e3a5f); border: 1.5px solid rgba(255,255,255,0.45);"></button>
-            <button type="button" class="preset-swatch" data-preset="obsidian-grain" title="Obsidian Grain" style="background: #090b10; border: 1px solid rgba(232,236,244,0.1);"></button>
-            <button type="button" class="preset-swatch" data-preset="minimal-linen" title="Minimal Linen" style="background: #faf7f2; border: 1px solid #ccc;"></button>
-            <button type="button" class="preset-swatch" data-preset="cyber-signal" title="Cyber Signal" style="background: radial-gradient(circle at 80% 80%, #00f5d4, #7b2cbf);"></button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="bg-type">Background</label>
-          <select id="bg-type">
-            <option value="solid">Solid</option>
-            <option value="gradient">Gradient</option>
-            <option value="mesh">Mesh</option>
-            <option value="glass">Glass</option>
-            <option value="noise">Grain</option>
-            <option value="image">Photo upload</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="solid-color">Fill color</label>
-          <input type="color" id="solid-color" value="#0f0f12" />
-        </div>
-        <div class="field">
-          <label for="bg-upload">Background image</label>
-          <input type="file" id="bg-upload" accept="image/*" />
-        </div>
-        <!-- Image controls group, shown only when Photo upload is active -->
-        <div id="image-controls-group" style="display: none;">
+        </summary>
+        <div class="panel-section__body">
           <div class="field">
-            <label for="bg-image-size">Size Mode</label>
-            <select id="bg-image-size">
-              <option value="cover">Cover (Fill)</option>
-              <option value="contain">Contain (Fit)</option>
-              <option value="stretch">Stretch</option>
-              <option value="original">Original</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="bg-image-scale">
-              Zoom <span class="field__value" id="bg-image-scale-val">100%</span>
-            </label>
-            <input type="range" id="bg-image-scale" min="10" max="300" value="100" />
-          </div>
-          <div class="field">
-            <label for="bg-image-opacity">
-              Opacity <span class="field__value" id="bg-image-opacity-val">90%</span>
-            </label>
-            <input type="range" id="bg-image-opacity" min="0" max="100" value="90" />
-          </div>
-        </div>
-        <div class="field field--checkbox">
-          <label class="checkbox-control" for="show-masthead-toggle">
-            <input type="checkbox" id="show-masthead-toggle" />
-            <span class="checkbox-text">Discreet Creator Mark</span>
-          </label>
-        </div>
-      </section>
-
-      <section class="panel-section">
-        <div class="panel-section__head">
-          <h3 class="panel-section__title">Studio Frame</h3>
-          <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-
-        <div class="field">
-          <label>Frame Style</label>
-          <div class="frame-style-grid" role="group" aria-label="Studio Frame Style">
-            <button type="button" class="frame-style-btn is-active" data-frame="none" title="Edge-to-Edge Canvas">
-              <span class="frame-btn-icon">▢</span>
-              <span class="frame-btn-label">None</span>
-            </button>
-            <button type="button" class="frame-style-btn" data-frame="macos" title="macOS Window Mockup">
-              <span class="frame-btn-icon">💻</span>
-              <span class="frame-btn-label">macOS</span>
-            </button>
-            <button type="button" class="frame-style-btn" data-frame="glass" title="Frosted Acrylic Glass">
-              <span class="frame-btn-icon">✨</span>
-              <span class="frame-btn-label">Glass</span>
-            </button>
-            <button type="button" class="frame-style-btn" data-frame="browser" title="Browser Chrome Mockup">
-              <span class="frame-btn-icon">🌐</span>
-              <span class="frame-btn-label">Browser</span>
-            </button>
-            <button type="button" class="frame-style-btn" data-frame="tweet" title="Social Quote / Tweet Card">
-              <span class="frame-btn-icon">💬</span>
-              <span class="frame-btn-label">Tweet</span>
-            </button>
-            <button type="button" class="frame-style-btn" data-frame="editorial" title="Editorial Gallery Frame">
-              <span class="frame-btn-icon">🏛️</span>
-              <span class="frame-btn-label">Editorial</span>
-            </button>
-          </div>
-        </div>
-
-        <div id="frame-options-group" class="frame-options-group" style="display: none;">
-          <div class="field">
-            <label for="card-padding">
-              Card Margin <span class="field__value" id="card-padding-val">56px</span>
-            </label>
-            <input type="range" id="card-padding" min="16" max="120" step="4" value="56" />
-          </div>
-
-          <div class="field">
-            <label for="card-radius">
-              Corner Radius <span class="field__value" id="card-radius-val">16px</span>
-            </label>
-            <input type="range" id="card-radius" min="0" max="36" step="2" value="16" />
-          </div>
-
-          <div class="field">
-            <label for="card-shadow">Shadow Depth</label>
-            <select id="card-shadow">
-              <option value="none">None (Flat)</option>
-              <option value="subtle">Subtle Soft</option>
-              <option value="float" selected>3D Studio Float</option>
-              <option value="glow">Cyber Neon Glow</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Author Attribution -->
-        <div class="field field--author">
-          <div class="field field--checkbox">
-            <label class="checkbox-control" for="author-signature-toggle">
-              <input type="checkbox" id="author-signature-toggle" />
-              <span class="checkbox-text">Show Author Attribution</span>
-            </label>
-          </div>
-          <div id="author-inputs-group" class="author-inputs-group" style="display: none;">
-            <div class="field field--row author-name-row">
-              <div>
-                <label for="author-name">Name</label>
-                <input type="text" id="author-name" placeholder="Alex Rivera" value="Alex Rivera" />
-              </div>
-              <div>
-                <label for="author-handle">Handle</label>
-                <input type="text" id="author-handle" placeholder="@arivera" value="@arivera" />
-              </div>
+            <span class="field__label">Curated swatches</span>
+            <div class="presets-gallery">
+              <button type="button" class="preset-swatch" data-preset="ink-mesh" title="Ink Wash" aria-label="Ink Wash" style="background: radial-gradient(circle at 25% 25%, #5a3428, #0a0a0c);"></button>
+              <button type="button" class="preset-swatch" data-preset="amber-dusk" title="Amber Dusk" aria-label="Amber Dusk" style="background: linear-gradient(135deg, #d96a3b, #f0b27a);"></button>
+              <button type="button" class="preset-swatch" data-preset="press-black" title="Press Black" aria-label="Press Black" style="background: #121214; border: 1px dashed rgba(242,239,233,0.3);"></button>
+              <button type="button" class="preset-swatch" data-preset="frosted-glass" title="Frosted Glass" aria-label="Frosted Glass" style="background: linear-gradient(135deg, #2a2a2e, #18181b); border: 1.5px solid rgba(242,239,233,0.35);"></button>
+              <button type="button" class="preset-swatch" data-preset="ink-grain" title="Ink Grain" aria-label="Ink Grain" style="background: #0a0a0c; border: 1px solid rgba(242,239,233,0.1);"></button>
+              <button type="button" class="preset-swatch" data-preset="paper" title="Paper" aria-label="Paper" style="background: #f5f1e8; border: 1px solid #ccc;"></button>
+              <button type="button" class="preset-swatch" data-preset="cinnabar-mesh" title="Cinnabar" aria-label="Cinnabar" style="background: radial-gradient(circle at 80% 80%, #ff5a36, #24100a);"></button>
             </div>
-            <div class="field field--checkbox" style="margin-top: 6px;">
-              <label class="checkbox-control" for="author-verified-toggle">
-                <input type="checkbox" id="author-verified-toggle" checked />
-                <span class="checkbox-text">Verified Badge (✓)</span>
+          </div>
+          <div class="field">
+            <label for="bg-type">Background</label>
+            <select id="bg-type">
+              <option value="solid">Solid</option>
+              <option value="gradient">Gradient</option>
+              <option value="mesh">Mesh</option>
+              <option value="glass">Glass</option>
+              <option value="noise">Grain</option>
+              <option value="image">Photo upload</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="solid-color">Fill color</label>
+            <input type="color" id="solid-color" value="#0f0f12" />
+          </div>
+          <div class="field">
+            <label for="bg-upload">Background image</label>
+            <input type="file" id="bg-upload" accept="image/*" />
+          </div>
+          <div id="image-controls-group" class="field-group" hidden>
+            <div class="field">
+              <label for="bg-image-size">Size mode</label>
+              <select id="bg-image-size">
+                <option value="cover">Cover (fill)</option>
+                <option value="contain">Contain (fit)</option>
+                <option value="stretch">Stretch</option>
+                <option value="original">Original</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="bg-image-scale">
+                Zoom <span class="field__value" id="bg-image-scale-val">100%</span>
+              </label>
+              <input type="range" id="bg-image-scale" min="10" max="300" value="100" />
+            </div>
+            <div class="field">
+              <label for="bg-image-opacity">
+                Opacity <span class="field__value" id="bg-image-opacity-val">90%</span>
+              </label>
+              <input type="range" id="bg-image-opacity" min="0" max="100" value="90" />
+            </div>
+          </div>
+          <div class="field field--checkbox">
+            <label class="checkbox-control" for="show-masthead-toggle">
+              <input type="checkbox" id="show-masthead-toggle" />
+              <span class="checkbox-text">Discreet creator mark</span>
+            </label>
+          </div>
+        </div>
+      </details>
+
+      <details class="panel-section">
+        <summary class="panel-section__head">
+          <h3 class="panel-section__title">Studio frame</h3>
+          <span class="panel-section__line" aria-hidden="true"></span>
+        </summary>
+        <div class="panel-section__body">
+          <div class="field">
+            <span class="field__label">Frame style</span>
+            <div class="frame-style-grid" role="group" aria-label="Studio frame style">
+              <button type="button" class="frame-style-btn is-active" data-frame="none" aria-pressed="true">None</button>
+              <button type="button" class="frame-style-btn" data-frame="macos" aria-pressed="false">macOS</button>
+              <button type="button" class="frame-style-btn" data-frame="glass" aria-pressed="false">Glass</button>
+              <button type="button" class="frame-style-btn" data-frame="browser" aria-pressed="false">Browser</button>
+              <button type="button" class="frame-style-btn" data-frame="tweet" aria-pressed="false">Tweet</button>
+              <button type="button" class="frame-style-btn" data-frame="editorial" aria-pressed="false">Editorial</button>
+            </div>
+          </div>
+
+          <div id="frame-options-group" class="field-group" hidden>
+            <div class="field">
+              <label for="card-padding">
+                Card margin <span class="field__value" id="card-padding-val">56px</span>
+              </label>
+              <input type="range" id="card-padding" min="16" max="120" step="4" value="56" />
+            </div>
+            <div class="field">
+              <label for="card-radius">
+                Corner radius <span class="field__value" id="card-radius-val">16px</span>
+              </label>
+              <input type="range" id="card-radius" min="0" max="36" step="2" value="16" />
+            </div>
+            <div class="field">
+              <label for="card-shadow">Shadow depth</label>
+              <select id="card-shadow">
+                <option value="none">None (flat)</option>
+                <option value="subtle">Subtle soft</option>
+                <option value="float" selected>Studio float</option>
+                <option value="glow">Neon glow</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field field--author">
+            <div class="field field--checkbox">
+              <label class="checkbox-control" for="author-signature-toggle">
+                <input type="checkbox" id="author-signature-toggle" />
+                <span class="checkbox-text">Show author attribution</span>
               </label>
             </div>
+            <div id="author-inputs-group" class="author-inputs-group" hidden>
+              <div class="field field--row author-name-row">
+                <div>
+                  <label for="author-name">Name</label>
+                  <input type="text" id="author-name" placeholder="Alex Rivera" value="Alex Rivera" />
+                </div>
+                <div>
+                  <label for="author-handle">Handle</label>
+                  <input type="text" id="author-handle" placeholder="@arivera" value="@arivera" />
+                </div>
+              </div>
+              <div class="field field--checkbox">
+                <label class="checkbox-control" for="author-verified-toggle">
+                  <input type="checkbox" id="author-verified-toggle" checked />
+                  <span class="checkbox-text">Verified badge</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </details>
 
-      <section class="panel-section">
-        <div class="panel-section__head">
+      <details class="panel-section">
+        <summary class="panel-section__head">
           <h3 class="panel-section__title">Dimensions</h3>
           <span class="panel-section__line" aria-hidden="true"></span>
-        </div>
-        <div class="field">
-          <label for="preset-size">Preset</label>
-          <select id="preset-size">
-            {presetSizes.map((p) => (
-              <option value={p.id}>{p.label}</option>
-            ))}
-          </select>
-        </div>
-        <div class="field">
-          <div class="dimensions-lock-row">
-            <label class="custom-size-label">Custom Size</label>
-            <button type="button" class="btn-lock-ratio" id="lock-ratio-btn" title="Lock aspect ratio" aria-pressed="false">
-              <span class="lock-icon" aria-hidden="true">🔓</span> Unlocked
-            </button>
+        </summary>
+        <div class="panel-section__body">
+          <div class="field">
+            <label for="preset-size">Preset</label>
+            <select id="preset-size">
+              {presetSizes.map((p) => (
+                <option value={p.id}>{p.label}</option>
+              ))}
+            </select>
           </div>
-          <div class="field field--row">
-            <div>
-              <label for="custom-width">W</label>
-              <input type="number" id="custom-width" min="400" max="4096" value="1080" />
+          <div class="field">
+            <div class="dimensions-lock-row">
+              <span class="custom-size-label">Custom size</span>
+              <button type="button" class="btn-lock-ratio" id="lock-ratio-btn" title="Lock aspect ratio" aria-pressed="false">
+                <span class="lock-icon" aria-hidden="true"></span>
+                <span class="lock-text">Unlocked</span>
+              </button>
             </div>
-            <div>
-              <label for="custom-height">H</label>
-              <input type="number" id="custom-height" min="400" max="4096" value="1080" />
+            <div class="field field--row">
+              <div>
+                <label for="custom-width">Width</label>
+                <input type="number" id="custom-width" min="400" max="4096" value="1080" />
+              </div>
+              <div>
+                <label for="custom-height">Height</label>
+                <input type="number" id="custom-height" min="400" max="4096" value="1080" />
+              </div>
             </div>
           </div>
         </div>
-        <div class="field">
-          <label for="panel-export-format">Export Format</label>
-          <select id="panel-export-format">
-            <option value="png">PNG (Lossless High Quality)</option>
-            <option value="jpeg">JPG (Standard Photo / Social)</option>
-            <option value="webp">WebP (Next-Gen Compact)</option>
-            <option value="svg">SVG (Scalable Vector)</option>
-          </select>
-        </div>
-      </section>
+      </details>
     </div>
   </aside>
 
-  <button type="button" class="btn-floating-preview" id="floating-preview-btn" title="View Artboard">
-    <span class="btn-floating-preview__icon" aria-hidden="true">👁️</span>
-    <span class="btn-floating-preview__text">Preview Artboard</span>
-  </button>
-
-  <select id="export-format" class="sr-only" tabindex="-1" aria-hidden="true">
-    <option value="png">PNG</option>
-    <option value="jpeg">JPEG</option>
-    <option value="webp">WebP</option>
-    <option value="svg">SVG</option>
-  </select>
   <div id="sr-preview-description" class="sr-only" aria-live="polite"></div>
-  <SeoContent initialTool={initialTool} />
 </div>
